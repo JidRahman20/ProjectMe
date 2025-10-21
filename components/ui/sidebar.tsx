@@ -77,6 +77,7 @@ export const Sidebar: React.FC = () => {
       <button
         onClick={() => setIsCollapsed(!isCollapsed)}
         className="absolute right-[-12px] top-24 bg-white border border-gray-200 rounded-full p-1.5 hover:bg-gray-50"
+        suppressHydrationWarning
       >
         {isCollapsed ? (
           <Menu className="w-4 h-4 text-gray-600" />
@@ -85,21 +86,23 @@ export const Sidebar: React.FC = () => {
         )}
       </button>
 
-      <div className="h-full px-3 pb-4 overflow-y-auto bg-white">
+      <div className={`h-full pb-4 overflow-y-auto bg-white ${isCollapsed ? "px-1" : "px-3"}`}>
         {/* Profile Section */}
-        <div className={`flex items-center gap-4 p-4 ${isCollapsed ? "justify-center" : ""}`}>
-          <Image
-            className="w-8 h-8 rounded-full"
-            src="/kujang.jpg"
-            alt="User"
-            width={32}
-            height={32}
-            priority
-          />
+        <div className={`flex items-center gap-4 p-4 ${isCollapsed ? "justify-center px-0" : ""}`}>
+          <div className={`${isCollapsed ? "flex justify-center w-full" : ""}`}>
+            <Image
+              className="w-8 h-8 rounded-full flex-shrink-0"
+              src="/kujang.jpg"
+              alt="User"
+              width={32}
+              height={32}
+              priority
+            />
+          </div>
           {!isCollapsed && (
-            <div>
-              <h2 className="text-base font-semibold">humaniora</h2>
-              <p className="text-sm text-gray-500">000000</p>
+            <div className="overflow-hidden">
+              <h2 className="text-base font-semibold truncate">humaniora</h2>
+              <p className="text-sm text-gray-500 truncate">000000</p>
             </div>
           )}
         </div>
@@ -118,12 +121,12 @@ export const Sidebar: React.FC = () => {
                 <li key={item.title}>
                   <Link
                     href={item.href}
-                    className={`flex items-center p-3 text-gray-900 rounded-lg hover:bg-gray-100 group ${
+                    className={`flex items-center text-gray-900 rounded-lg hover:bg-gray-100 group ${
                       isActive ? "bg-indigo-600 text-white hover:bg-indigo-700" : ""
-                    } ${isCollapsed ? "justify-center" : ""}`}
+                    } ${isCollapsed ? "justify-center p-2" : "p-3"}`}
                     title={isCollapsed ? item.title : ""}
                   >
-                    <item.icon className={`w-5 h-5 ${isActive ? "text-white" : "text-gray-500"}`} />
+                    <item.icon className={`flex-shrink-0 ${isCollapsed ? "w-5 h-5" : "w-5 h-5"} ${isActive ? "text-white" : "text-gray-500 group-hover:text-gray-900"}`} />
                     {!isCollapsed && <span className="ml-3 text-sm">{item.title}</span>}
                   </Link>
                 </li>
@@ -146,12 +149,12 @@ export const Sidebar: React.FC = () => {
                 <li key={item.title}>
                   <Link
                     href={item.href}
-                    className={`flex items-center p-3 text-gray-900 rounded-lg hover:bg-gray-100 group ${
+                    className={`flex items-center text-gray-900 rounded-lg hover:bg-gray-100 group ${
                       isActive ? "bg-indigo-600 text-white hover:bg-indigo-700" : ""
-                    } ${isCollapsed ? "justify-center" : ""}`}
+                    } ${isCollapsed ? "justify-center p-2" : "p-3"}`}
                     title={isCollapsed ? item.title : ""}
                   >
-                    <item.icon className={`w-5 h-5 ${isActive ? "text-white" : "text-gray-500"}`} />
+                    <item.icon className={`flex-shrink-0 ${isCollapsed ? "w-5 h-5" : "w-5 h-5"} ${isActive ? "text-white" : "text-gray-500 group-hover:text-gray-900"}`} />
                     {!isCollapsed && <span className="ml-3 text-sm">{item.title}</span>}
                   </Link>
                 </li>
@@ -174,12 +177,12 @@ export const Sidebar: React.FC = () => {
                 <li key={item.title}>
                   <Link
                     href={item.href}
-                    className={`flex items-center p-3 text-gray-900 rounded-lg hover:bg-gray-100 group ${
+                    className={`flex items-center text-gray-900 rounded-lg hover:bg-gray-100 group ${
                       isActive ? "bg-indigo-600 text-white hover:bg-indigo-700" : ""
-                    } ${isCollapsed ? "justify-center" : ""}`}
+                    } ${isCollapsed ? "justify-center p-2" : "p-3"}`}
                     title={isCollapsed ? item.title : ""}
                   >
-                    <item.icon className={`w-5 h-5 ${isActive ? "text-white" : "text-gray-500"}`} />
+                    <item.icon className={`flex-shrink-0 ${isCollapsed ? "w-5 h-5" : "w-5 h-5"} ${isActive ? "text-white" : "text-gray-500 group-hover:text-gray-900"}`} />
                     {!isCollapsed && <span className="ml-3 text-sm">{item.title}</span>}
                   </Link>
                 </li>
