@@ -18,7 +18,31 @@ interface Order {
 // Data menu berdasarkan waktu DAN tipe tamu
 const menuByTimeAndGuest = {
   "Pagi": {
+    "PERTA": [
+      "Nasi Uduk",
+      "Nasi Kuning",
+      "Bubur Ayam",
+      "Lontong Sayur",
+      "Roti Bakar",
+      "Donat",
+      "Kopi Hitam",
+      "Teh Manis",
+      "Teh Tawar",
+      "Air Mineral",
+    ],
     "Regular": [
+      "Nasi Uduk",
+      "Nasi Kuning",
+      "Bubur Ayam",
+      "Lontong Sayur",
+      "Roti Bakar",
+      "Donat",
+      "Kopi Hitam",
+      "Teh Manis",
+      "Teh Tawar",
+      "Air Mineral",
+    ],
+    "Standar": [
       "Nasi Uduk",
       "Nasi Kuning",
       "Bubur Ayam",
@@ -61,7 +85,31 @@ const menuByTimeAndGuest = {
     ],
   },
   "Siang": {
+    "PERTA": [
+      "Nasi Box Ayam Goreng",
+      "Nasi Box Ayam Bakar",
+      "Nasi Goreng",
+      "Mie Goreng",
+      "Nasi Putih + Lauk",
+      "Sayur Asem",
+      "Capcay",
+      "Air Mineral",
+      "Teh Botol",
+      "Es Teh",
+    ],
     "Regular": [
+      "Nasi Box Ayam Goreng",
+      "Nasi Box Ayam Bakar",
+      "Nasi Goreng",
+      "Mie Goreng",
+      "Nasi Putih + Lauk",
+      "Sayur Asem",
+      "Capcay",
+      "Air Mineral",
+      "Teh Botol",
+      "Es Teh",
+    ],
+    "Standar": [
       "Nasi Box Ayam Goreng",
       "Nasi Box Ayam Bakar",
       "Nasi Goreng",
@@ -101,7 +149,29 @@ const menuByTimeAndGuest = {
     ],
   },
   "Sore": {
+    "PERTA": [
+      "Kue Lapis",
+      "Risoles",
+      "Lemper",
+      "Pastel",
+      "Pisang Goreng",
+      "Tahu Isi",
+      "Kopi",
+      "Teh",
+      "Air Mineral",
+    ],
     "Regular": [
+      "Kue Lapis",
+      "Risoles",
+      "Lemper",
+      "Pastel",
+      "Pisang Goreng",
+      "Tahu Isi",
+      "Kopi",
+      "Teh",
+      "Air Mineral",
+    ],
+    "Standar": [
       "Kue Lapis",
       "Risoles",
       "Lemper",
@@ -139,7 +209,29 @@ const menuByTimeAndGuest = {
     ],
   },
   "Malam": {
+    "PERTA": [
+      "Nasi Box Ayam",
+      "Nasi Liwet",
+      "Soto Ayam",
+      "Gado-Gado",
+      "Pecel",
+      "Bakso",
+      "Air Mineral",
+      "Teh Panas",
+      "Kopi",
+    ],
     "Regular": [
+      "Nasi Box Ayam",
+      "Nasi Liwet",
+      "Soto Ayam",
+      "Gado-Gado",
+      "Pecel",
+      "Bakso",
+      "Air Mineral",
+      "Teh Panas",
+      "Kopi",
+    ],
+    "Standar": [
       "Nasi Box Ayam",
       "Nasi Liwet",
       "Soto Ayam",
@@ -180,7 +272,9 @@ const menuByTimeAndGuest = {
 
 // Data tipe tamu dengan multiplier porsi
 const tamuMultiplier = {
+  "PERTA": 1,
   "Regular": 1,
+  "Standar": 1,
   "VIP": 1.5,
   "VVIP": 2,
 };
@@ -201,10 +295,186 @@ export default function KonsumsiPage() {
       bagian: "Dep. Teknologi Informasi PKC",
       pengaju: "you",
       menu: [
-        { label: "Makan Pagi @ 10 Box", price: "$35.59" },
-        { label: "Air mineral @ 1 Dus", price: "$5.59" },
+        { label: "Makan Pagi @ 10 Box" },
+        { label: "Air mineral @ 1 Dus" },
       ],
       status: "Pesanan dibatalkan",
+    },
+    {
+      id: "ORD/20250717001/0039",
+      tanggalPengajuan: "17-07-2025",
+      tanggalPengiriman: "18-07-2025",
+      kegiatan: "Rapat Direksi",
+      tamu: "VVIP",
+      jumlahTamu: 8,
+      bagian: "Direksi",
+      pengaju: "Sekretaris Direksi",
+      menu: [
+        { label: "Nasi Box Wagyu Teriyaki @ 16 Box" },
+        { label: "Fresh Fruit Juice @ 16 Gelas" },
+        { label: "Dessert Tiramisu @ 16 Cup" },
+      ],
+      status: "Menunggu konfirmasi",
+    },
+    {
+      id: "ORD/20250718002/0040",
+      tanggalPengajuan: "18-07-2025",
+      tanggalPengiriman: "19-07-2025",
+      kegiatan: "Training Karyawan Baru",
+      tamu: "VIP",
+      jumlahTamu: 25,
+      bagian: "HRD",
+      pengaju: "Manager HRD",
+      menu: [
+        { label: "Nasi Box Rendang Sapi @ 38 Box" },
+        { label: "Soft Drink @ 38 Botol" },
+        { label: "Kopi Latte @ 38 Cup" },
+      ],
+      status: "Disetujui",
+    },
+    {
+      id: "ORD/20250719003/0041",
+      tanggalPengajuan: "19-07-2025",
+      tanggalPengiriman: "20-07-2025",
+      kegiatan: "Meeting Bulanan",
+      tamu: "Regular",
+      jumlahTamu: 15,
+      bagian: "Dep. Marketing",
+      pengaju: "Team Leader Marketing",
+      menu: [
+        { label: "Nasi Box Ayam Goreng @ 15 Box" },
+        { label: "Air Mineral @ 2 Dus" },
+        { label: "Teh Manis @ 15 Gelas" },
+      ],
+      status: "Menunggu Persetujuan",
+    },
+    {
+      id: "ORD/20250720004/0042",
+      tanggalPengajuan: "20-07-2025",
+      tanggalPengiriman: "21-07-2025",
+      kegiatan: "Workshop Quality Control",
+      tamu: "VIP",
+      jumlahTamu: 20,
+      bagian: "Quality Control",
+      pengaju: "Supervisor QC",
+      menu: [
+        { label: "Nasi Box Ikan Bakar @ 30 Box" },
+        { label: "Jus Buah Segar @ 30 Gelas" },
+        { label: "Kue Lapis Legit @ 30 Potong" },
+      ],
+      status: "Disetujui",
+    },
+    {
+      id: "ORD/20250721005/0043",
+      tanggalPengajuan: "21-07-2025",
+      tanggalPengiriman: "22-07-2025",
+      kegiatan: "Audit Internal",
+      tamu: "VVIP",
+      jumlahTamu: 5,
+      bagian: "Internal Audit",
+      pengaju: "Kepala Audit",
+      menu: [
+        { label: "Beef Wellington @ 10 Porsi" },
+        { label: "Wine Selection @ 10 Gelas" },
+        { label: "Premium Dessert @ 10 Porsi" },
+      ],
+      status: "Menunggu konfirmasi",
+    },
+    {
+      id: "ORD/20250722006/0044",
+      tanggalPengajuan: "22-07-2025",
+      tanggalPengiriman: "23-07-2025",
+      kegiatan: "Gathering Team IT",
+      tamu: "Regular",
+      jumlahTamu: 30,
+      bagian: "Dep. IT",
+      pengaju: "Manager IT",
+      menu: [
+        { label: "Nasi Goreng @ 30 Porsi" },
+        { label: "Ayam Geprek @ 30 Porsi" },
+        { label: "Es Teh @ 30 Gelas" },
+      ],
+      status: "Menunggu Persetujuan",
+    },
+    {
+      id: "ORD/20250723007/0045",
+      tanggalPengajuan: "23-07-2025",
+      tanggalPengiriman: "24-07-2025",
+      kegiatan: "Peluncuran Produk Baru",
+      tamu: "VVIP",
+      jumlahTamu: 12,
+      bagian: "Dep. Marketing",
+      pengaju: "Director Marketing",
+      menu: [
+        { label: "Sushi & Sashimi Set @ 24 Set" },
+        { label: "Champagne @ 24 Gelas" },
+        { label: "French Macaron @ 24 Box" },
+      ],
+      status: "Disetujui",
+    },
+    {
+      id: "ORD/20250724008/0046",
+      tanggalPengajuan: "24-07-2025",
+      tanggalPengiriman: "25-07-2025",
+      kegiatan: "Sosialisasi K3",
+      tamu: "Regular",
+      jumlahTamu: 50,
+      bagian: "HSE Department",
+      pengaju: "HSE Manager",
+      menu: [
+        { label: "Nasi Box Ayam Bakar @ 50 Box" },
+        { label: "Air Mineral @ 5 Dus" },
+        { label: "Pisang Goreng @ 50 Potong" },
+      ],
+      status: "Menunggu konfirmasi",
+    },
+    {
+      id: "ORD/20250725009/0047",
+      tanggalPengajuan: "25-07-2025",
+      tanggalPengiriman: "26-07-2025",
+      kegiatan: "Board Meeting",
+      tamu: "VVIP",
+      jumlahTamu: 10,
+      bagian: "Board of Directors",
+      pengaju: "Corporate Secretary",
+      menu: [
+        { label: "Lamb Chop @ 20 Porsi" },
+        { label: "Grilled Salmon Premium @ 20 Porsi" },
+        { label: "Wine Selection @ 20 Gelas" },
+      ],
+      status: "Disetujui",
+    },
+    {
+      id: "ORD/20250726010/0048",
+      tanggalPengajuan: "26-07-2025",
+      tanggalPengiriman: "27-07-2025",
+      kegiatan: "Pelatihan Safety",
+      tamu: "VIP",
+      jumlahTamu: 18,
+      bagian: "Safety Department",
+      pengaju: "Safety Officer",
+      menu: [
+        { label: "Nasi Box Premium Ayam Bakar @ 27 Box" },
+        { label: "Jus Alpukat @ 27 Gelas" },
+        { label: "Martabak Mini @ 27 Potong" },
+      ],
+      status: "Menunggu Persetujuan",
+    },
+    {
+      id: "ORD/20250727011/0049",
+      tanggalPengajuan: "27-07-2025",
+      tanggalPengiriman: "28-07-2025",
+      kegiatan: "Town Hall Meeting",
+      tamu: "Regular",
+      jumlahTamu: 100,
+      bagian: "Corporate Communication",
+      pengaju: "GM Corporate",
+      menu: [
+        { label: "Nasi Box Ayam @ 100 Box" },
+        { label: "Air Mineral @ 10 Dus" },
+        { label: "Kopi @ 100 Cup" },
+      ],
+      status: "Disetujui",
     },
   ]);
   const [showForm, setShowForm] = useState(false);
@@ -225,6 +495,11 @@ export default function KonsumsiPage() {
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
   const [toastType, setToastType] = useState<"success" | "error" | "info">("success");
+  
+  // State untuk Pagination
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage] = useState(5);
+  const [openDropdownId, setOpenDropdownId] = useState<string | null>(null);
   
   const [form, setForm] = useState({
     kegiatan: "",
@@ -259,9 +534,23 @@ export default function KonsumsiPage() {
   const getAvailableMenu = (): string[] => {
     if (!form.waktu || !form.tamu) return [];
     
-    const waktuParts = form.waktu.split(" - ");
-    const period = waktuParts[1] as "Pagi" | "Siang" | "Sore" | "Malam";
-    const guestType = form.tamu as "Regular" | "VIP" | "VVIP";
+    // Parse waktu format sederhana: "Sahur", "Pagi", "Siang", "Sore", "Buka puasa", "Malam", "Snack malam", "Tengah Malam"
+    let period: "Pagi" | "Siang" | "Sore" | "Malam" = "Pagi";
+    
+    const waktuLower = form.waktu.toLowerCase();
+    
+    // Mapping waktu ke periode menu
+    if (waktuLower.includes("sahur") || waktuLower.includes("pagi")) {
+      period = "Pagi";
+    } else if (waktuLower.includes("siang")) {
+      period = "Siang";
+    } else if (waktuLower.includes("sore") || waktuLower.includes("buka")) {
+      period = "Sore";
+    } else if (waktuLower.includes("malam") || waktuLower.includes("tengah")) {
+      period = "Malam";
+    }
+    
+    const guestType = form.tamu as "PERTA" | "Regular" | "Standar" | "VIP" | "VVIP";
     
     const timeMenu = menuByTimeAndGuest[period];
     if (!timeMenu) return [];
@@ -490,6 +779,28 @@ export default function KonsumsiPage() {
 
     return filtered;
   };
+
+  // Get paginated orders
+  const getPaginatedOrders = () => {
+    const filtered = getFilteredOrders();
+    const indexOfLastItem = currentPage * itemsPerPage;
+    const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+    return filtered.slice(indexOfFirstItem, indexOfLastItem);
+  };
+
+  // Calculate total pages
+  const totalPages = Math.ceil(getFilteredOrders().length / itemsPerPage);
+
+  // Handle page change
+  const handlePageChange = (pageNumber: number) => {
+    setCurrentPage(pageNumber);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  // Reset to page 1 when filters change
+  React.useEffect(() => {
+    setCurrentPage(1);
+  }, [searchQuery, filterStatus, filterDateFrom, filterDateTo]);
 
   // Calculate statistics
   const statistics = {
@@ -798,7 +1109,7 @@ export default function KonsumsiPage() {
                       : selectedOrder.status === "Menunggu Persetujuan" || selectedOrder.status === "Menunggu konfirmasi"
                       ? "bg-gradient-to-r from-yellow-500 to-yellow-600 text-white"
                       : selectedOrder.status === "Disetujui"
-                      ? "bg-gradient-to-r from-blue-500 to-blue-600 text-white"
+                      ? "bg-gradient-to-r from-green-500 to-green-600 text-white"
                       : selectedOrder.status === "Dipesan"
                       ? "bg-gradient-to-r from-purple-500 to-purple-600 text-white"
                       : selectedOrder.status === "Selesai"
@@ -1002,17 +1313,69 @@ export default function KonsumsiPage() {
                               setErrors({ ...errors, kegiatan: "" });
                             }
                           }}
-                          className={`w-full border-0 bg-white rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-purple-500 outline-none ${
+                          className={`w-full border-0 bg-white rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-purple-500 outline-none cursor-pointer ${
                             errors.kegiatan ? "ring-2 ring-red-500" : ""
                           }`}
                           suppressHydrationWarning
                         >
                           <option value="">Pilih Kegiatan...</option>
-                          <option value="Rapat Tim">Rapat Tim</option>
-                          <option value="Meeting Client">Meeting Client</option>
-                          <option value="Training">Training</option>
-                          <option value="Workshop">Workshop</option>
-                          <option value="Event Kantor">Event Kantor</option>
+                          <option value="Bahan Minum Karyawan">Bahan Minum Karyawan</option>
+                          <option value="Baporkes">Baporkes</option>
+                          <option value="BK3N">BK3N</option>
+                          <option value="Extra Fooding">Extra Fooding</option>
+                          <option value="Extra Fooding Shift">Extra Fooding Shift</option>
+                          <option value="Extra Fooding SKJ">Extra Fooding SKJ</option>
+                          <option value="Festival Inovasi">Festival Inovasi</option>
+                          <option value="Halal bil Halal">Halal bil Halal</option>
+                          <option value="Hari Guru">Hari Guru</option>
+                          <option value="Hari Raya Idul Adha">Hari Raya Idul Adha</option>
+                          <option value="Hari Raya Idul Fitri">Hari Raya Idul Fitri</option>
+                          <option value="HUT PKC">HUT PKC</option>
+                          <option value="HUT RI">HUT RI</option>
+                          <option value="Jamuan di Luar Kawasan">Jamuan di Luar Kawasan</option>
+                          <option value="Jamuan Tamu Perusahaan">Jamuan Tamu Perusahaan</option>
+                          <option value="Jum'at Bersih">Jum&apos;at Bersih</option>
+                          <option value="Ketupat Lebaran">Ketupat Lebaran</option>
+                          <option value="Konsumsi Buka Puasa">Konsumsi Buka Puasa</option>
+                          <option value="Konsumsi Makan Sahur">Konsumsi Makan Sahur</option>
+                          <option value="Konsumsi TA">Konsumsi TA</option>
+                          <option value="Lain-lain Jamuan Tamu">Lain-lain Jamuan Tamu</option>
+                          <option value="Lain-lain Perayaan">Lain-lain Perayaan</option>
+                          <option value="Lain-lain Rapat Kantor">Lain-lain Rapat Kantor</option>
+                          <option value="Lembur Perta">Lembur Perta</option>
+                          <option value="Lembur Rutin">Lembur Rutin</option>
+                          <option value="Lembur Shutdown">Lembur Shutdown</option>
+                          <option value="Not Defined">Not Defined</option>
+                          <option value="Nuzulul Quran">Nuzulul Quran</option>
+                          <option value="Open Storage">Open Storage</option>
+                          <option value="Pengajian Keliling">Pengajian Keliling</option>
+                          <option value="Pengantongan Akhir Tahun">Pengantongan Akhir Tahun</option>
+                          <option value="Pengembangan SDM">Pengembangan SDM</option>
+                          <option value="PKM Masjid Nahrul Hayat">PKM Masjid Nahrul Hayat</option>
+                          <option value="Program AKHLAK">Program AKHLAK</option>
+                          <option value="Program Makmur">Program Makmur</option>
+                          <option value="Program WMS">Program WMS</option>
+                          <option value="Proper Emas">Proper Emas</option>
+                          <option value="Proyek Replacement K1A & NZE">Proyek Replacement K1A &amp; NZE</option>
+                          <option value="Rakor Direksi Anper PI Grup">Rakor Direksi Anper PI Grup</option>
+                          <option value="Rapat Direksi">Rapat Direksi</option>
+                          <option value="Rapat Distribusi B">Rapat Distribusi B</option>
+                          <option value="Rapat Distribusi D">Rapat Distribusi D</option>
+                          <option value="Rapat Gabungan Dekom, Direksi, SVP">Rapat Gabungan Dekom, Direksi, SVP</option>
+                          <option value="Rapat Internal">Rapat Internal</option>
+                          <option value="Rapat Komite Audit">Rapat Komite Audit</option>
+                          <option value="Rapat LKS Bipartit">Rapat LKS Bipartit</option>
+                          <option value="Rapat Monitoring Anper PKC">Rapat Monitoring Anper PKC</option>
+                          <option value="Rapat Pra RUPS">Rapat Pra RUPS</option>
+                          <option value="Rapat Tamu">Rapat Tamu</option>
+                          <option value="Rumah Tahfidz">Rumah Tahfidz</option>
+                          <option value="Safari Malam Takbiran">Safari Malam Takbiran</option>
+                          <option value="Safari Ramadhan">Safari Ramadhan</option>
+                          <option value="Shutdown Pabrik">Shutdown Pabrik</option>
+                          <option value="SP2K">SP2K</option>
+                          <option value="Srikandi PKC">Srikandi PKC</option>
+                          <option value="Tabligh Akbar">Tabligh Akbar</option>
+                          <option value="Washing Pabrik">Washing Pabrik</option>
                         </select>
                         {errors.kegiatan && (
                           <p className="text-xs text-red-600 mt-1.5 font-medium">{errors.kegiatan}</p>
@@ -1053,24 +1416,26 @@ export default function KonsumsiPage() {
                               }]);
                             }
                           }}
-                          className={`w-full border-0 bg-white rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-purple-500 outline-none ${
+                          className={`w-full border-0 bg-white rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-purple-500 outline-none cursor-pointer ${
                             errors.tamu ? "ring-2 ring-red-500" : ""
                           }`}
                           suppressHydrationWarning
                         >
                           <option value="">Pilih Tipe Tamu...</option>
-                          <option value="Regular">💼 Regular (Menu Standard)</option>
-                          <option value="VIP">⭐ VIP (Menu Premium - Porsi 1.5x)</option>
-                          <option value="VVIP">👑 VVIP (Menu Exclusive - Porsi 2x)</option>
+                          <option value="PERTA">PERTA</option>
+                          <option value="Regular">Regular</option>
+                          <option value="Standar">Standar</option>
+                          <option value="VIP">VIP</option>
+                          <option value="VVIP">VVIP</option>
                         </select>
                         {errors.tamu && (
                           <p className="text-xs text-red-600 mt-1.5 font-medium">{errors.tamu}</p>
                         )}
                         {form.tamu && (
                           <p className="text-xs text-purple-600 mt-1.5 font-medium">
-                            {form.tamu === "Regular" && "💼 Menu: Standard berkualitas untuk acara internal"}
-                            {form.tamu === "VIP" && "⭐ Menu: Premium dengan bahan pilihan"}
-                            {form.tamu === "VVIP" && "👑 Menu: Exclusive dengan bahan premium & mahal"}
+                            {(form.tamu === "PERTA" || form.tamu === "Regular" || form.tamu === "Standar") && "💼 Menu: Standard berkualitas untuk acara internal"}
+                            {form.tamu === "VIP" && "⭐ Menu: Premium dengan bahan pilihan (Porsi 1.5x)"}
+                            {form.tamu === "VVIP" && "👑 Menu: Exclusive dengan bahan premium & mahal (Porsi 2x)"}
                           </p>
                         )}
                       </div>
@@ -1193,7 +1558,7 @@ export default function KonsumsiPage() {
                         <label className="block text-xs font-semibold text-purple-700 mb-1.5">
                           Lokasi Pengiriman: <span className="text-red-500">*</span>
                         </label>
-                        <input 
+                        <select 
                           name="lokasi" 
                           value={form.lokasi} 
                           onChange={(e) => {
@@ -1202,12 +1567,59 @@ export default function KonsumsiPage() {
                               setErrors({ ...errors, lokasi: "" });
                             }
                           }}
-                          placeholder="Ruang Meeting A, Kantin, Lobby"
-                          className={`w-full border-0 bg-white rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-purple-500 outline-none ${
+                          className={`w-full border-0 bg-white rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-purple-500 outline-none cursor-pointer ${
                             errors.lokasi ? "ring-2 ring-red-500" : ""
                           }`}
                           suppressHydrationWarning
-                        />
+                        >
+                          <option value="">Pilih Lokasi...</option>
+                          <option value="Bagging">Bagging</option>
+                          <option value="CCB Club House">CCB Club House</option>
+                          <option value="Departemen Riset">Departemen Riset</option>
+                          <option value="Gedung 101-K">Gedung 101-K</option>
+                          <option value="Gedung Anggrek">Gedung Anggrek</option>
+                          <option value="Gedung Bidding Center">Gedung Bidding Center</option>
+                          <option value="Gedung Contraction Office">Gedung Contraction Office</option>
+                          <option value="Gedung K3">Gedung K3</option>
+                          <option value="Gedung LC">Gedung LC</option>
+                          <option value="Gedung Maintenance Office">Gedung Maintenance Office</option>
+                          <option value="Gedung Mawar">Gedung Mawar</option>
+                          <option value="Gedung Melati">Gedung Melati</option>
+                          <option value="Gedung Purna Bhakti">Gedung Purna Bhakti</option>
+                          <option value="Gedung Pusat Administrasi">Gedung Pusat Administrasi</option>
+                          <option value="Gedung RPK">Gedung RPK</option>
+                          <option value="Gedung Saorga">Gedung Saorga</option>
+                          <option value="GH-B">GH-B</option>
+                          <option value="GH-C">GH-C</option>
+                          <option value="GPA Lt-3">GPA Lt-3</option>
+                          <option value="Gudang Bahan Baku">Gudang Bahan Baku</option>
+                          <option value="Gudang Bulk Material">Gudang Bulk Material</option>
+                          <option value="Gudang Suku Cadang Jakarta">Gudang Suku Cadang Jakarta</option>
+                          <option value="Kantor SP2K">Kantor SP2K</option>
+                          <option value="Kebon Bibit">Kebon Bibit</option>
+                          <option value="Klinik PT HPH">Klinik PT HPH</option>
+                          <option value="Kolam Pancing Type B">Kolam Pancing Type B</option>
+                          <option value="Kolam Renang">Kolam Renang</option>
+                          <option value="Kujang Kampioen Riset">Kujang Kampioen Riset</option>
+                          <option value="Laboraturium / Main Lab">Laboraturium / Main Lab</option>
+                          <option value="Lapang Basket Type B">Lapang Basket Type B</option>
+                          <option value="Lapang Futsal">Lapang Futsal</option>
+                          <option value="Lapang Sepak Bola Type E">Lapang Sepak Bola Type E</option>
+                          <option value="Lapang Tenis Type B">Lapang Tenis Type B</option>
+                          <option value="Lapang Volly Type E">Lapang Volly Type E</option>
+                          <option value="Lapangan Helipad">Lapangan Helipad</option>
+                          <option value="Lapangan Panahan">Lapangan Panahan</option>
+                          <option value="Lapangan Volley">Lapangan Volley</option>
+                          <option value="Mekanik K1A">Mekanik K1A</option>
+                          <option value="Mekanik K1B">Mekanik K1B</option>
+                          <option value="Not Defined">Not Defined</option>
+                          <option value="NPK-2">NPK-2</option>
+                          <option value="Pos Selatan 01">Pos Selatan 01</option>
+                          <option value="Posko Pengamanan Bawah">Posko Pengamanan Bawah</option>
+                          <option value="Ruang Rapat NPK-1">Ruang Rapat NPK-1</option>
+                          <option value="Ruang Rapat NPK-2">Ruang Rapat NPK-2</option>
+                          <option value="Utility K-1A">Utility K-1A</option>
+                        </select>
                         {errors.lokasi && (
                           <p className="text-xs text-red-600 mt-1.5 font-medium">{errors.lokasi}</p>
                         )}
@@ -1228,25 +1640,27 @@ export default function KonsumsiPage() {
                             // Reset menu items when time changes
                             setMenuItems([{ id: 1, jenis: "", satuan: "", qty: form.jumlahTamu > 0 && form.tamu ? Math.ceil(form.jumlahTamu * (tamuMultiplier[form.tamu as keyof typeof tamuMultiplier] || 1)) : 0 }]);
                           }}
-                          className={`w-full border-0 bg-white rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-purple-500 outline-none ${
+                          className={`w-full border-0 bg-white rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-purple-500 outline-none cursor-pointer ${
                             errors.waktu ? "ring-2 ring-red-500" : ""
                           }`}
                           suppressHydrationWarning
                         >
                           <option value="">Pilih Waktu...</option>
-                          <option value="08:00 - Pagi">🌅 08:00 - Pagi (Menu Sarapan)</option>
-                          <option value="10:00 - Pagi">☕ 10:00 - Pagi (Snack Pagi)</option>
-                          <option value="12:00 - Siang">🍱 12:00 - Siang (Menu Makan Siang)</option>
-                          <option value="14:00 - Siang">🥤 14:00 - Siang (Makan Siang)</option>
-                          <option value="16:00 - Sore">🍰 16:00 - Sore (Snack Sore)</option>
-                          <option value="18:00 - Malam">🌙 18:00 - Malam (Menu Makan Malam)</option>
+                          <option value="Sahur">Sahur</option>
+                          <option value="Pagi">Pagi</option>
+                          <option value="Siang">Siang</option>
+                          <option value="Sore">Sore</option>
+                          <option value="Buka puasa">Buka puasa</option>
+                          <option value="Malam">Malam</option>
+                          <option value="Snack malam">Snack malam</option>
+                          <option value="Tengah Malam">Tengah Malam</option>
                         </select>
                         {errors.waktu && (
                           <p className="text-xs text-red-600 mt-1.5 font-medium">{errors.waktu}</p>
                         )}
                         {form.waktu && !form.tamu && (
                           <p className="text-xs text-amber-600 mt-1.5 font-medium">
-                            ⚠️ Pilih tipe tamu terlebih dahulu untuk melihat menu yang tersedia
+                            Pilih tipe tamu terlebih dahulu untuk melihat menu yang tersedia
                           </p>
                         )}
                         {form.waktu && form.tamu && (
@@ -1385,9 +1799,9 @@ export default function KonsumsiPage() {
                                       setMenuItems(updated);
                                     }}
                                     disabled={!form.waktu || !form.tamu}
-                                    className="w-full border-0 bg-transparent text-sm focus:ring-2 focus:ring-orange-500 rounded px-2 py-1 outline-none disabled:opacity-50 disabled:cursor-not-allowed"
+                                    className="w-full border-0 bg-transparent text-sm focus:ring-2 focus:ring-orange-500 rounded px-2 py-1 outline-none disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
                                   >
-                                    <option value="">Pilih...</option>
+                                    <option value="">Pilih menu...</option>
                                     {!form.waktu && <option value="" disabled>Pilih waktu dulu</option>}
                                     {!form.tamu && form.waktu && <option value="" disabled>Pilih tipe tamu dulu</option>}
                                     {form.waktu && form.tamu && getAvailableMenu().map((menu: string, idx: number) => (
@@ -1403,7 +1817,7 @@ export default function KonsumsiPage() {
                                       updated[index].satuan = e.target.value;
                                       setMenuItems(updated);
                                     }}
-                                    className="w-full border-0 bg-transparent text-sm focus:ring-2 focus:ring-orange-500 rounded px-2 py-1 outline-none"
+                                    className="w-full border-0 bg-transparent text-sm focus:ring-2 focus:ring-orange-500 rounded px-2 py-1 outline-none cursor-pointer"
                                   >
                                     <option value="">Pilih...</option>
                                     <option value="Pax">Pax</option>
@@ -1509,159 +1923,150 @@ export default function KonsumsiPage() {
               <div className="bg-gradient-to-r from-violet-600 via-indigo-600 to-violet-600 rounded-xl shadow-lg p-4">
                 <div className="grid grid-cols-12 gap-4 text-white font-bold text-sm uppercase tracking-wide">
                   <div className="col-span-3">Order</div>
-                  <div className="col-span-3">Kegiatan</div>
-                  <div className="col-span-3">Menu</div>
+                  <div className="col-span-4">Kegiatan</div>
+                  <div className="col-span-2">Tipe Tamu</div>
                   <div className="col-span-2">Status</div>
-                  <div className="col-span-1">Aksi</div>
+                  <div className="col-span-1 text-center">Aksi</div>
                 </div>
               </div>
 
               {/* Order Cards */}
-              {getFilteredOrders().map((order) => (
+              {getPaginatedOrders().map((order) => (
                 <div 
                   key={order.id}
-                  className="bg-white rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 hover:scale-[1.02] border border-gray-200 overflow-hidden group"
+                  className={`bg-white rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 hover:scale-[1.01] border border-gray-200 ${openDropdownId === order.id ? 'relative z-50' : 'relative z-0'}`}
                 >
-                  <div className="grid grid-cols-12 gap-4 p-4">
-                    {/* Order Section */}
+                  <div className="grid grid-cols-12 gap-4 p-5 items-center relative">
+                    {/* Order ID & Date */}
                     <div className="col-span-3">
-                      <div className="h-full bg-gradient-to-br from-sky-50 to-indigo-50 rounded-xl p-5 border-l-4 border-sky-500 shadow-sm hover:shadow-md transition-shadow">
-                        <div className="flex items-center gap-2 mb-3">
-                          <div className="bg-sky-500 rounded-lg p-2">
-                            <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                            </svg>
-                          </div>
-                          <div className="text-sm font-bold text-sky-900">{order.id}</div>
+                      <div className="flex items-center gap-2.5">
+                        <div className="bg-sky-100 rounded-lg p-2">
+                          <svg className="w-4 h-4 text-sky-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                          </svg>
                         </div>
-                        <div className="space-y-2 text-xs text-sky-800">
-                          <div className="flex items-center gap-2">
-                            <Calendar className="w-3.5 h-3.5 text-sky-600" />
-                            <div>
-                              <div className="font-semibold">Pengajuan:</div>
-                              <div>{order.tanggalPengajuan}</div>
-                            </div>
-                          </div>
-                          <div className="flex items-center gap-2">
-                            <Calendar className="w-3.5 h-3.5 text-sky-600" />
-                            <div>
-                              <div className="font-semibold">Pengiriman:</div>
-                              <div>{order.tanggalPengiriman}</div>
-                            </div>
+                        <div>
+                          <div className="text-sm font-bold text-gray-900">{order.id}</div>
+                          <div className="flex items-center gap-1.5 mt-1 text-xs text-gray-600">
+                            <Calendar className="w-3.5 h-3.5" />
+                            <span>{order.tanggalPengiriman}</span>
                           </div>
                         </div>
                       </div>
                     </div>
 
-                    {/* Kegiatan Section */}
-                    <div className="col-span-3">
-                      <div className="h-full bg-gradient-to-br from-violet-50 to-purple-50 rounded-xl p-5 border-l-4 border-violet-500 shadow-sm hover:shadow-md transition-shadow">
-                        <div className="flex items-center gap-2 mb-3">
-                          <div className="bg-violet-500 rounded-lg p-2">
-                            <Building2 className="w-4 h-4 text-white" />
-                          </div>
-                          <div className="text-sm font-bold text-violet-900 line-clamp-1">{order.kegiatan}</div>
+                    {/* Kegiatan & Pengaju */}
+                    <div className="col-span-4">
+                      <div className="flex items-center gap-2.5">
+                        <div className="bg-violet-100 rounded-lg p-2">
+                          <Building2 className="w-4 h-4 text-violet-600" />
                         </div>
-                        <div className="space-y-2 text-xs text-violet-800">
-                          <div className="flex gap-2">
-                            <span className="font-semibold min-w-[50px]">Tamu:</span>
-                            <span className="font-bold text-violet-900">{order.tamu}</span>
-                          </div>
-                          <div className="flex gap-2">
-                            <span className="font-semibold min-w-[50px]">Bagian:</span>
-                            <span className="font-bold text-violet-900 line-clamp-1">{order.bagian}</span>
-                          </div>
-                          <div className="flex gap-2">
-                            <span className="font-semibold min-w-[50px]">Pengaju:</span>
-                            <span className="font-bold text-violet-900 line-clamp-1">{order.pengaju}</span>
+                        <div className="flex-1 min-w-0">
+                          <div className="text-sm font-bold text-gray-900 truncate">{order.kegiatan}</div>
+                          <div className="flex items-center gap-2 mt-1">
+                            <span className="text-xs text-gray-500">oleh</span>
+                            <span className="text-xs font-semibold text-violet-600 truncate">{order.pengaju}</span>
                           </div>
                         </div>
                       </div>
                     </div>
 
-                    {/* Menu Section */}
-                    <div className="col-span-3">
-                      <div className="h-full bg-gradient-to-br from-amber-50 to-orange-50 rounded-xl p-5 border-l-4 border-amber-500 shadow-sm hover:shadow-md transition-shadow">
-                        <div className="flex items-center gap-2 mb-3">
-                          <div className="bg-amber-500 rounded-lg p-2">
-                            <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                            </svg>
-                          </div>
-                          <div className="text-sm font-bold text-amber-900">Menu ({order.menu.length} item)</div>
-                        </div>
-                        <div className="space-y-2 max-h-[120px] overflow-y-auto custom-scrollbar">
-                          {order.menu.map((m, i) => (
-                            <div className="flex items-start gap-2.5 text-sm text-amber-900" key={i}>
-                              <span className="flex-shrink-0 w-6 h-6 rounded-full bg-gradient-to-r from-amber-500 to-orange-500 text-white text-xs font-bold flex items-center justify-center shadow-sm">
-                                {i + 1}
-                              </span>
-                              <span className="font-medium leading-6">{m.label}</span>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Status Section */}
-                    <div className="col-span-2 flex flex-col justify-center">
-                      <span className={`inline-block px-4 py-3 rounded-xl text-xs font-bold shadow-md text-center leading-relaxed ${
-                        order.status === "Pesanan dibatalkan" 
-                          ? "bg-gradient-to-r from-rose-500 to-rose-600 text-white" 
-                          : order.status === "Menunggu Persetujuan" || order.status === "Menunggu konfirmasi"
-                          ? "bg-gradient-to-r from-amber-500 to-amber-600 text-white"
-                          : order.status === "Disetujui"
-                          ? "bg-gradient-to-r from-indigo-500 to-indigo-600 text-white"
-                          : order.status === "Dipesan"
-                          ? "bg-gradient-to-r from-violet-500 to-violet-600 text-white"
-                          : order.status === "Selesai"
-                          ? "bg-gradient-to-r from-emerald-500 to-emerald-600 text-white"
-                          : "bg-gradient-to-r from-slate-500 to-slate-600 text-white"
-                      }`}>
-                        {order.status}
+                    {/* Tipe Tamu & Menu Count */}
+                    <div className="col-span-2 flex items-center">
+                      <span className="text-sm font-bold text-amber-900 bg-amber-50 px-3 py-1.5 rounded-lg">
+                        {order.tamu}
                       </span>
                     </div>
 
-                    {/* Actions Section */}
-                    <div className="col-span-1 flex flex-col justify-center gap-2">
-                      <button 
-                        className="p-3 rounded-xl bg-gradient-to-r from-indigo-500 to-indigo-600 text-white hover:from-indigo-600 hover:to-indigo-700 transition-all shadow-md hover:shadow-lg hover:scale-110"
-                        onClick={() => {
-                          setSelectedOrder(order);
-                          setShowDetailModal(true);
-                        }}
-                        suppressHydrationWarning
-                        title="Lihat Detail"
-                      >
-                        <Eye className="w-5 h-5" />
-                      </button>
-                      {(order.status === "Menunggu Persetujuan" || order.status === "Menunggu konfirmasi") && (
-                        <>
-                          <button 
-                            className="p-3 rounded-xl bg-gradient-to-r from-sky-500 to-sky-600 text-white hover:from-sky-600 hover:to-sky-700 transition-all shadow-md hover:shadow-lg hover:scale-110"
-                            onClick={() => handleEditOrder(order)}
-                            suppressHydrationWarning
-                            title="Edit Order"
-                          >
-                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                            </svg>
-                          </button>
-                          <button 
-                            className="p-3 rounded-xl bg-gradient-to-r from-rose-500 to-rose-600 text-white hover:from-rose-600 hover:to-rose-700 transition-all shadow-md hover:shadow-lg hover:scale-110"
-                            onClick={() => {
-                              setOrderToCancel(order.id);
-                              setShowCancelConfirm(true);
-                            }}
-                            suppressHydrationWarning
-                            title="Batalkan Order"
-                          >
-                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                            </svg>
-                          </button>
+                    {/* Status */}
+                    <div className="col-span-2">
+                      <div className="flex items-center">
+                        <span className={`inline-block px-2.5 py-1 rounded-md text-xs font-medium shadow-sm whitespace-nowrap ${
+                          order.status === "Pesanan dibatalkan" 
+                            ? "bg-gradient-to-r from-rose-500 to-rose-600 text-white" 
+                            : order.status === "Menunggu Persetujuan" || order.status === "Menunggu konfirmasi"
+                            ? "bg-gradient-to-r from-amber-400 to-amber-500 text-white"
+                            : order.status === "Disetujui"
+                            ? "bg-gradient-to-r from-emerald-500 to-emerald-600 text-white"
+                            : "bg-gradient-to-r from-slate-400 to-slate-500 text-white"
+                        }`}>
+                          {order.status}
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Actions */}
+                    <div className="col-span-1 flex items-center justify-center">
+                      <div className="relative">
+                        <button 
+                          className="p-2 rounded-lg bg-gradient-to-r from-indigo-500 to-indigo-600 text-white hover:from-indigo-600 hover:to-indigo-700 transition-all shadow-md hover:shadow-lg group"
+                          onClick={() => setOpenDropdownId(openDropdownId === order.id ? null : order.id)}
+                          suppressHydrationWarning
+                          title="Menu Aksi"
+                        >
+                          <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/>
+                          </svg>
+                        </button>
+
+                        {/* Dropdown Menu */}
+                        {openDropdownId === order.id && (
+                          <>
+                            {/* Backdrop to close dropdown when clicking outside */}
+                            <div 
+                              className="fixed inset-0 z-40" 
+                              onClick={() => setOpenDropdownId(null)}
+                            />
+                            <div className="absolute right-0 top-full mt-2 w-52 bg-white rounded-lg shadow-xl border border-gray-200 py-1.5 z-50">
+                            {/* Detail */}
+                            <button
+                              className="w-full px-4 py-2.5 text-left text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-700 transition-colors flex items-center gap-3"
+                              onClick={() => {
+                                setSelectedOrder(order);
+                                setShowDetailModal(true);
+                                setOpenDropdownId(null);
+                              }}
+                            >
+                              <Eye className="w-4 h-4" />
+                              <span className="font-medium">Detail Order</span>
+                            </button>
+
+                            {/* Edit - only show if status is pending */}
+                            {(order.status === "Menunggu Persetujuan" || order.status === "Menunggu konfirmasi") && (
+                              <button
+                                className="w-full px-4 py-2.5 text-left text-sm text-gray-700 hover:bg-sky-50 hover:text-sky-700 transition-colors flex items-center gap-3"
+                                onClick={() => {
+                                  handleEditOrder(order);
+                                  setOpenDropdownId(null);
+                                }}
+                              >
+                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                </svg>
+                                <span className="font-medium">Edit Order</span>
+                              </button>
+                            )}
+
+                            {/* Batalkan - only show if status is pending */}
+                            {(order.status === "Menunggu Persetujuan" || order.status === "Menunggu konfirmasi") && (
+                              <button
+                                className="w-full px-4 py-2.5 text-left text-sm text-gray-700 hover:bg-rose-50 hover:text-rose-700 transition-colors flex items-center gap-3 border-t border-gray-100"
+                                onClick={() => {
+                                  setOrderToCancel(order.id);
+                                  setShowCancelConfirm(true);
+                                  setOpenDropdownId(null);
+                                }}
+                              >
+                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                                </svg>
+                                <span className="font-medium">Batalkan Order</span>
+                              </button>
+                            )}
+                          </div>
                         </>
                       )}
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -1675,17 +2080,71 @@ export default function KonsumsiPage() {
           <div className="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-200 mt-4">
             <div className="flex items-center justify-between px-6 py-4 bg-gradient-to-r from-violet-600 via-indigo-600 to-violet-600">
               <div className="text-sm text-white font-medium">
-                Menampilkan <span className="font-bold">1-5</span> dari <span className="font-bold">100</span> data
+                Menampilkan <span className="font-bold">{((currentPage - 1) * itemsPerPage) + 1}-{Math.min(currentPage * itemsPerPage, getFilteredOrders().length)}</span> dari <span className="font-bold">{getFilteredOrders().length}</span> data
               </div>
               <div className="flex items-center gap-2">
-                <button className="px-3.5 py-2 rounded-lg bg-white/20 hover:bg-white/30 transition-all text-white shadow-sm hover:shadow-md" suppressHydrationWarning>
+                {/* Previous Button */}
+                <button 
+                  onClick={() => handlePageChange(currentPage - 1)}
+                  disabled={currentPage === 1}
+                  className={`px-3.5 py-2 rounded-lg transition-all shadow-sm hover:shadow-md ${
+                    currentPage === 1 
+                      ? 'bg-white/10 text-white/50 cursor-not-allowed' 
+                      : 'bg-white/20 hover:bg-white/30 text-white'
+                  }`}
+                  suppressHydrationWarning
+                >
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                   </svg>
                 </button>
-                <button className="px-4 py-2 rounded-lg bg-white text-violet-600 font-bold shadow-md hover:shadow-lg transition-all" suppressHydrationWarning>1</button>
-                <button className="px-4 py-2 rounded-lg bg-white/20 hover:bg-white/30 text-white font-semibold transition-all hover:shadow-md" suppressHydrationWarning>2</button>
-                <button className="px-3.5 py-2 rounded-lg bg-white/20 hover:bg-white/30 transition-all text-white shadow-sm hover:shadow-md" suppressHydrationWarning>
+
+                {/* Page Numbers */}
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map((pageNum) => {
+                  // Show first page, last page, current page, and pages around current
+                  if (
+                    pageNum === 1 ||
+                    pageNum === totalPages ||
+                    (pageNum >= currentPage - 1 && pageNum <= currentPage + 1)
+                  ) {
+                    return (
+                      <button
+                        key={pageNum}
+                        onClick={() => handlePageChange(pageNum)}
+                        className={`px-4 py-2 rounded-lg font-semibold transition-all ${
+                          currentPage === pageNum
+                            ? 'bg-white text-violet-600 shadow-md hover:shadow-lg'
+                            : 'bg-white/20 hover:bg-white/30 text-white'
+                        }`}
+                        suppressHydrationWarning
+                      >
+                        {pageNum}
+                      </button>
+                    );
+                  } else if (
+                    pageNum === currentPage - 2 ||
+                    pageNum === currentPage + 2
+                  ) {
+                    return (
+                      <span key={pageNum} className="text-white px-2">
+                        ...
+                      </span>
+                    );
+                  }
+                  return null;
+                })}
+
+                {/* Next Button */}
+                <button
+                  onClick={() => handlePageChange(currentPage + 1)}
+                  disabled={currentPage === totalPages}
+                  className={`px-3.5 py-2 rounded-lg transition-all shadow-sm hover:shadow-md ${
+                    currentPage === totalPages
+                      ? 'bg-white/10 text-white/50 cursor-not-allowed'
+                      : 'bg-white/20 hover:bg-white/30 text-white'
+                  }`}
+                  suppressHydrationWarning
+                >
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                   </svg>
