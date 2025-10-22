@@ -70,14 +70,39 @@ export const Sidebar: React.FC = () => {
   
   return (
     <aside 
-      className={`fixed top-0 left-0 z-40 h-screen pt-20 bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-700 transition-all duration-500 ease-in-out ${
+      className={`fixed top-0 left-0 z-40 h-screen bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-700 transition-all duration-500 ease-in-out ${
         isCollapsed ? "w-16" : "w-64"
       }`}
     >
+      {/* Logo/Brand Section at the top */}
+      <div className={`h-16 flex items-center justify-center border-b border-gray-200 dark:border-gray-700 ${isCollapsed ? "px-0" : "px-4"}`}>
+        {isCollapsed ? (
+          <Image
+            src="/kujang.jpg"
+            alt="Demplon Logo"
+            width={40}
+            height={40}
+            priority
+            className="rounded-lg object-cover"
+          />
+        ) : (
+          <Image
+            src="/kujang.jpg"
+            alt="Demplon Logo"
+            width={150}
+            height={40}
+            priority
+            className="h-10 w-auto object-cover rounded-lg"
+          />
+        )}
+      </div>
+
+      {/* Toggle button */}
       <button
         onClick={() => setIsCollapsed(!isCollapsed)}
-        className="absolute right-[-12px] top-24 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-full p-1.5 hover:bg-gray-50 dark:hover:bg-gray-800 transition-all duration-300 ease-in-out transform hover:scale-110"
+        className="absolute right-[-12px] top-20 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-full p-1.5 hover:bg-gray-50 dark:hover:bg-gray-800 transition-all duration-300 ease-in-out transform hover:scale-110"
         suppressHydrationWarning
+        aria-label={isCollapsed ? "Open sidebar" : "Close sidebar"}
       >
         {isCollapsed ? (
           <Menu className="w-4 h-4 text-gray-600 dark:text-gray-400" />
@@ -86,7 +111,8 @@ export const Sidebar: React.FC = () => {
         )}
       </button>
 
-      <div className={`h-full pb-4 overflow-y-auto bg-white dark:bg-gray-900 transition-all duration-300 ${isCollapsed ? "px-1" : "px-3"}`}>
+      {/* Scrollable menu content */}
+      <div className={`h-[calc(100%-4rem)] pb-4 overflow-y-auto bg-white dark:bg-gray-900 ${isCollapsed ? "px-1" : "px-3"}`}>
         {/* Profile Section */}
         <div className={`flex items-center gap-4 p-4 ${isCollapsed ? "justify-center px-0" : ""}`}>
           <div className={`${isCollapsed ? "flex justify-center w-full" : ""}`}>
