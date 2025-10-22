@@ -7,9 +7,9 @@ export function MainContent({ children }: { children: React.ReactNode }) {
 
   return (
     <main
-      className={`transition-all duration-300 ${
+      className={`transition-all duration-300 bg-gray-50 dark:bg-gray-900 min-h-screen ${
         isCollapsed ? "ml-16" : "ml-64"
-      } pt-20`}
+      } pt-16`}
     >
       {children}
     </main>
