@@ -70,23 +70,23 @@ export const Sidebar: React.FC = () => {
   
   return (
     <aside 
-      className={`fixed top-0 left-0 z-40 h-screen pt-20 bg-white border-r border-gray-200 transition-all duration-300 ${
+      className={`fixed top-0 left-0 z-40 h-screen pt-20 bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-700 transition-all duration-500 ease-in-out ${
         isCollapsed ? "w-16" : "w-64"
       }`}
     >
       <button
         onClick={() => setIsCollapsed(!isCollapsed)}
-        className="absolute right-[-12px] top-24 bg-white border border-gray-200 rounded-full p-1.5 hover:bg-gray-50"
+        className="absolute right-[-12px] top-24 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-full p-1.5 hover:bg-gray-50 dark:hover:bg-gray-800 transition-all duration-300 ease-in-out transform hover:scale-110"
         suppressHydrationWarning
       >
         {isCollapsed ? (
-          <Menu className="w-4 h-4 text-gray-600" />
+          <Menu className="w-4 h-4 text-gray-600 dark:text-gray-400" />
         ) : (
-          <ChevronLeft className="w-4 h-4 text-gray-600" />
+          <ChevronLeft className="w-4 h-4 text-gray-600 dark:text-gray-400" />
         )}
       </button>
 
-      <div className={`h-full pb-4 overflow-y-auto bg-white ${isCollapsed ? "px-1" : "px-3"}`}>
+      <div className={`h-full pb-4 overflow-y-auto bg-white dark:bg-gray-900 transition-all duration-300 ${isCollapsed ? "px-1" : "px-3"}`}>
         {/* Profile Section */}
         <div className={`flex items-center gap-4 p-4 ${isCollapsed ? "justify-center px-0" : ""}`}>
           <div className={`${isCollapsed ? "flex justify-center w-full" : ""}`}>
@@ -101,8 +101,8 @@ export const Sidebar: React.FC = () => {
           </div>
           {!isCollapsed && (
             <div className="overflow-hidden">
-              <h2 className="text-base font-semibold truncate">humaniora</h2>
-              <p className="text-sm text-gray-500 truncate">000000</p>
+              <h2 className="text-base font-semibold truncate text-gray-900 dark:text-white">humaniora</h2>
+              <p className="text-sm text-gray-500 dark:text-gray-400 truncate">000000</p>
             </div>
           )}
         </div>
@@ -110,7 +110,7 @@ export const Sidebar: React.FC = () => {
         {/* Generals Navigation */}
         <div className="mt-2">
           {!isCollapsed && (
-            <h3 className="px-4 py-2 text-xs font-semibold text-gray-500 uppercase">
+            <h3 className="px-4 py-2 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase">
               Generals
             </h3>
           )}
@@ -121,12 +121,12 @@ export const Sidebar: React.FC = () => {
                 <li key={item.title}>
                   <Link
                     href={item.href}
-                    className={`flex items-center text-gray-900 rounded-lg hover:bg-gray-100 group ${
-                      isActive ? "bg-indigo-600 text-white hover:bg-indigo-700" : ""
+                    className={`flex items-center text-gray-900 dark:text-gray-300 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 group ${
+                      isActive ? "bg-indigo-600 text-white hover:bg-indigo-700 dark:bg-indigo-600 dark:hover:bg-indigo-700" : ""
                     } ${isCollapsed ? "justify-center p-2" : "p-3"}`}
                     title={isCollapsed ? item.title : ""}
                   >
-                    <item.icon className={`flex-shrink-0 ${isCollapsed ? "w-5 h-5" : "w-5 h-5"} ${isActive ? "text-white" : "text-gray-500 group-hover:text-gray-900"}`} />
+                    <item.icon className={`flex-shrink-0 ${isCollapsed ? "w-5 h-5" : "w-5 h-5"} ${isActive ? "text-white" : "text-gray-500 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white"}`} />
                     {!isCollapsed && <span className="ml-3 text-sm">{item.title}</span>}
                   </Link>
                 </li>
@@ -138,7 +138,7 @@ export const Sidebar: React.FC = () => {
         {/* Main Menu Navigation */}
         <div className="mt-6">
           {!isCollapsed && (
-            <h3 className="px-4 py-2 text-xs font-semibold text-gray-500 uppercase">
+            <h3 className="px-4 py-2 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase">
               MAIN MENU
             </h3>
           )}
@@ -149,12 +149,12 @@ export const Sidebar: React.FC = () => {
                 <li key={item.title}>
                   <Link
                     href={item.href}
-                    className={`flex items-center text-gray-900 rounded-lg hover:bg-gray-100 group ${
-                      isActive ? "bg-indigo-600 text-white hover:bg-indigo-700" : ""
+                    className={`flex items-center text-gray-900 dark:text-gray-300 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 group transition-all duration-300 ease-in-out transform hover:translate-x-1 ${
+                      isActive ? "bg-indigo-600 text-white hover:bg-indigo-700 dark:bg-indigo-600 dark:hover:bg-indigo-700" : ""
                     } ${isCollapsed ? "justify-center p-2" : "p-3"}`}
                     title={isCollapsed ? item.title : ""}
                   >
-                    <item.icon className={`flex-shrink-0 ${isCollapsed ? "w-5 h-5" : "w-5 h-5"} ${isActive ? "text-white" : "text-gray-500 group-hover:text-gray-900"}`} />
+                    <item.icon className={`flex-shrink-0 ${isCollapsed ? "w-5 h-5" : "w-5 h-5"} ${isActive ? "text-white" : "text-gray-500 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white"} transition-colors duration-300`} />
                     {!isCollapsed && <span className="ml-3 text-sm">{item.title}</span>}
                   </Link>
                 </li>
@@ -166,7 +166,7 @@ export const Sidebar: React.FC = () => {
         {/* Apps & Features Navigation */}
         <div className="mt-6">
           {!isCollapsed && (
-            <h3 className="px-4 py-2 text-xs font-semibold text-gray-500 uppercase">
+            <h3 className="px-4 py-2 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase">
               APPS & FEATURES
             </h3>
           )}
@@ -177,12 +177,12 @@ export const Sidebar: React.FC = () => {
                 <li key={item.title}>
                   <Link
                     href={item.href}
-                    className={`flex items-center text-gray-900 rounded-lg hover:bg-gray-100 group ${
-                      isActive ? "bg-indigo-600 text-white hover:bg-indigo-700" : ""
+                    className={`flex items-center text-gray-900 dark:text-gray-300 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 group transition-all duration-300 ease-in-out transform hover:translate-x-1 ${
+                      isActive ? "bg-indigo-600 text-white hover:bg-indigo-700 dark:bg-indigo-600 dark:hover:bg-indigo-700" : ""
                     } ${isCollapsed ? "justify-center p-2" : "p-3"}`}
                     title={isCollapsed ? item.title : ""}
                   >
-                    <item.icon className={`flex-shrink-0 ${isCollapsed ? "w-5 h-5" : "w-5 h-5"} ${isActive ? "text-white" : "text-gray-500 group-hover:text-gray-900"}`} />
+                    <item.icon className={`flex-shrink-0 ${isCollapsed ? "w-5 h-5" : "w-5 h-5"} ${isActive ? "text-white" : "text-gray-500 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white"} transition-colors duration-300`} />
                     {!isCollapsed && <span className="ml-3 text-sm">{item.title}</span>}
                   </Link>
                 </li>
