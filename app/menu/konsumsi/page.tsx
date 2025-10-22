@@ -284,8 +284,15 @@ const tamuMultiplier = {
 };
 
 export default function KonsumsiPage() {
+  // Initialize with today's date in YYYY-MM-DD format
+  const getTodayDate = () => {
+    const today = new Date();
+    return today.toISOString().split('T')[0];
+  };
+
   const [showCalendar, setShowCalendar] = useState(false);
-  const [selectedDate, setSelectedDate] = useState("2025-10-22");
+  const [selectedDate, setSelectedDate] = useState(getTodayDate());
+  const minDate = getTodayDate(); // Today's date - minimum selectable date
 
   // State untuk order
   const [orders, setOrders] = useState<Order[]>([
@@ -584,9 +591,15 @@ export default function KonsumsiPage() {
     if (!form.tanggalPermintaan) {
       newErrors.tanggalPermintaan = "Tanggal permintaan wajib diisi";
       isValid = false;
+    } else if (form.tanggalPermintaan < minDate) {
+      newErrors.tanggalPermintaan = "Tanggal permintaan tidak boleh terlewat dari hari ini";
+      isValid = false;
     }
     if (!form.tanggalPengiriman) {
       newErrors.tanggalPengiriman = "Tanggal pengiriman wajib diisi";
+      isValid = false;
+    } else if (form.tanggalPengiriman < minDate) {
+      newErrors.tanggalPengiriman = "Tanggal pengiriman tidak boleh terlewat dari hari ini";
       isValid = false;
     }
     if (!form.untukBagian.trim()) {
@@ -1016,10 +1029,15 @@ export default function KonsumsiPage() {
               onClick={(e) => e.stopPropagation()}
             >
               <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-4">Pilih Tanggal</h3>
+              <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-3 mb-4">
+                <p className="text-xs font-semibold text-blue-700 dark:text-blue-300">ℹ️ Catatan:</p>
+                <p className="text-xs text-blue-600 dark:text-blue-200 mt-1">Anda hanya dapat memilih tanggal hari ini atau kemudian. Tanggal yang sudah terlewat tidak dapat dipilih.</p>
+              </div>
               <input
                 type="date"
                 value={selectedDate}
                 onChange={(e) => setSelectedDate(e.target.value)}
+                min={minDate}
                 className="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition-colors duration-300"
               />
               <button
@@ -1268,6 +1286,7 @@ export default function KonsumsiPage() {
                             setErrors({ ...errors, tanggalPermintaan: "" });
                           }
                         }}
+                        min={minDate}
                         className={`w-full border-0 bg-white dark:bg-gray-800 rounded-lg px-3 py-2.5 text-sm font-semibold text-blue-900 dark:text-blue-300 focus:ring-2 focus:ring-blue-500 outline-none ${
                           errors.tanggalPermintaan ? "ring-2 ring-red-500" : ""
                         }`}
@@ -1292,6 +1311,7 @@ export default function KonsumsiPage() {
                             setErrors({ ...errors, tanggalPengiriman: "" });
                           }
                         }}
+                        min={minDate}
                         className={`w-full border-0 bg-white dark:bg-gray-800 rounded-lg px-3 py-2.5 text-sm font-semibold text-purple-900 dark:text-purple-300 focus:ring-2 focus:ring-purple-500 outline-none ${
                           errors.tanggalPengiriman ? "ring-2 ring-red-500" : ""
                         }`}
