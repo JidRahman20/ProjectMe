@@ -4,21 +4,21 @@ import React, { useState } from "react"
 import { Bell, LogOut, Sun, Moon } from "lucide-react"
 import Image from "next/image"
 import { useTheme } from "@/context/theme-context"
+import { useSidebar } from "@/context/sidebar-context"
 
 export function Navbar() {
   const [showProfileMenu, setShowProfileMenu] = useState(false)
   const { isDark, toggleTheme } = useTheme()
+  const { isCollapsed } = useSidebar()
 
   return (
-    <nav className="fixed top-0 z-50 w-full bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 transition-colors duration-300">
+    <nav className={`fixed top-0 z-30 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 transition-all duration-300 ${
+      isCollapsed ? "left-16" : "left-64"
+    } right-0`}>
       <div className="px-3 py-3 lg:px-5 lg:pl-3">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center">
-            <span className="text-xl font-semibold text-gray-900 dark:text-white">DEMPLON</span>
-          </div>
-          
+        <div className="flex items-center justify-end">
+          {/* Search Bar & Icons - Kanan */}
           <div className="flex items-center space-x-3">
-            {/* Search Bar */}
             <div className="relative w-64">
               <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
                 <svg className="w-4 h-4 text-gray-400 dark:text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -29,6 +29,7 @@ export function Navbar() {
                 type="text"
                 placeholder="Search command..."
                 className="w-full pl-10 pr-14 py-2 text-sm text-gray-900 dark:text-white border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none"
+                suppressHydrationWarning
               />
               <div className="absolute inset-y-0 right-0 flex items-center pr-3">
                 <kbd className="px-2 py-1 text-xs font-semibold text-gray-500 dark:text-gray-400 bg-white dark:bg-gray-600 border border-gray-200 dark:border-gray-500 rounded shadow-sm">
@@ -36,10 +37,12 @@ export function Navbar() {
                 </kbd>
               </div>
             </div>
+            
             {/* Notifications */}
             <button
               type="button"
               className="relative p-2 text-gray-500 dark:text-gray-400 rounded-lg hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800 transition-all duration-300 ease-in-out transform hover:scale-110"
+              suppressHydrationWarning
             >
               <Bell className="w-5 h-5" />
               <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
@@ -51,6 +54,7 @@ export function Navbar() {
                 type="button"
                 className="flex items-center rounded-full focus:ring-2 focus:ring-gray-300 dark:focus:ring-gray-600 transition-all duration-300 transform hover:scale-105"
                 onClick={() => setShowProfileMenu(!showProfileMenu)}
+                suppressHydrationWarning
               >
                 <Image
                   src="/kujang.jpg"
@@ -126,6 +130,7 @@ export function Navbar() {
               onClick={toggleTheme}
               className="p-2 text-gray-500 dark:text-gray-400 rounded-lg hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800 transition-all duration-300 ease-in-out transform hover:scale-110 hover:rotate-12"
               title={isDark ? "Switch to Light Mode" : "Switch to Dark Mode"}
+              suppressHydrationWarning
             >
               {isDark ? (
                 <Sun className="w-5 h-5" />

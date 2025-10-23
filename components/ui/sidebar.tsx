@@ -24,6 +24,7 @@ import {
   ScrollText
 } from "lucide-react"
 import Image from "next/image"
+import DemplonLogo from "./demplon-logo"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 
@@ -61,7 +62,17 @@ const menuItems: MenuItem[] = [
   { title: "Peraturan Perundangan", icon: ScrollText, href: "/menu/peraturan", section: "apps" }
 ]
 
-export const Sidebar: React.FC = () => {
+type SidebarProps = {
+  userName?: string
+  userId?: string
+  avatarSrc?: string
+}
+
+export const Sidebar: React.FC<SidebarProps> = ({
+  userName = "User Name",
+  userId = "12345678",
+  avatarSrc = "/avatar.svg",
+}) => {
   const pathname = usePathname()
   const { isCollapsed, setIsCollapsed } = useSidebar()
   
@@ -75,32 +86,17 @@ export const Sidebar: React.FC = () => {
       }`}
     >
       {/* Logo/Brand Section at the top */}
-      <div className={`h-16 flex items-center justify-center border-b border-gray-200 dark:border-gray-700 ${isCollapsed ? "px-0" : "px-4"}`}>
-        {isCollapsed ? (
-          <Image
-            src="/kujang.jpg"
-            alt="Demplon Logo"
-            width={40}
-            height={40}
-            priority
-            className="rounded-lg object-cover"
-          />
-        ) : (
-          <Image
-            src="/kujang.jpg"
-            alt="Demplon Logo"
-            width={150}
-            height={40}
-            priority
-            className="h-10 w-auto object-cover rounded-lg"
-          />
-        )}
+      <div className={`h-16 flex items-center ${isCollapsed ? "justify-center px-2" : "px-4"}`}>
+        {/* Custom wordmark to match requested minimalist brand style */}
+        <DemplonLogo className={isCollapsed ? "scale-90" : ""} size={28} />
       </div>
-
-      {/* Toggle button */}
+      
+      {/* Toggle button - fixed di pojok kanan atas, sejajar dengan navbar */}
       <button
         onClick={() => setIsCollapsed(!isCollapsed)}
-        className="absolute right-[-12px] top-20 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-full p-1.5 hover:bg-gray-50 dark:hover:bg-gray-800 transition-all duration-300 ease-in-out transform hover:scale-110"
+        className={`fixed top-4 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-lg p-1.5 transition-all duration-500 z-50 ${
+          isCollapsed ? "left-[52px]" : "left-[240px]"
+        }`}
         suppressHydrationWarning
         aria-label={isCollapsed ? "Open sidebar" : "Close sidebar"}
       >
@@ -112,23 +108,23 @@ export const Sidebar: React.FC = () => {
       </button>
 
       {/* Scrollable menu content */}
-      <div className={`h-[calc(100%-4rem)] pb-4 overflow-y-auto bg-white dark:bg-gray-900 ${isCollapsed ? "px-1" : "px-3"}`}>
+  <div className={`h-[calc(100%-4rem)] pb-4 overflow-y-auto bg-white dark:bg-gray-900 ${isCollapsed ? "px-1" : "px-3"}`}>
         {/* Profile Section */}
         <div className={`flex items-center gap-4 p-4 ${isCollapsed ? "justify-center px-0" : ""}`}>
           <div className={`${isCollapsed ? "flex justify-center w-full" : ""}`}>
             <Image
-              className="w-8 h-8 rounded-full flex-shrink-0"
-              src="/kujang.jpg"
-              alt="User"
-              width={32}
-              height={32}
+              className="w-9 h-9 rounded-full flex-shrink-0 ring-1 ring-gray-200 dark:ring-gray-700"
+              src={avatarSrc}
+              alt="User avatar"
+              width={36}
+              height={36}
               priority
             />
           </div>
           {!isCollapsed && (
             <div className="overflow-hidden">
-              <h2 className="text-base font-semibold truncate text-gray-900 dark:text-white">humaniora</h2>
-              <p className="text-sm text-gray-500 dark:text-gray-400 truncate">000000</p>
+              <h2 className="text-sm font-semibold truncate text-gray-900 dark:text-gray-100">{userName}</h2>
+              <p className="text-xs text-gray-500 dark:text-gray-400 truncate">{userId}</p>
             </div>
           )}
         </div>
