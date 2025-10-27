@@ -174,3 +174,7 @@ select option:checked {
     background-color: #dbeafe !important;
   }
 }
+::view-transition-old(root), ::view-transition-new(root) {
+    animation: none;
+    mix-blend-mode: normal;
+}

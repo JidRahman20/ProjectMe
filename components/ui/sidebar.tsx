@@ -2,6 +2,7 @@
 
 import React from "react"
 import { useSidebar } from "@/context/sidebar-context"
+import { useAuth } from "@/context/auth-context"
 import { 
   Home, 
   UserCircle2, 
@@ -66,35 +67,55 @@ type SidebarProps = {
   userName?: string
   userId?: string
   avatarSrc?: string
+  showMobile?: boolean
+  onClose?: () => void
 }
 
 export const Sidebar: React.FC<SidebarProps> = ({
   userName = "User Name",
-  userId = "12345678",
+  userId = "00000000",
   avatarSrc = "/avatar.svg",
+  showMobile = false,
+  onClose
 }) => {
   const pathname = usePathname()
-  const { isCollapsed, setIsCollapsed } = useSidebar()
+  const { isCollapsed, setIsCollapsed, isMobileOpen, setIsMobileOpen } = useSidebar()
+  const { user } = useAuth()
   
   const generalsMenu = menuItems.filter(item => item.section === "generals")
   const mainMenu = menuItems.filter(item => item.section === "main")
   
+  // Use logged in user data if available
+  const displayName = user?.name || userName
+  const displayId = user?.id || userId
+  const displayEmail = user?.email || ""
+  
   return (
-    <aside 
-      className={`fixed top-0 left-0 z-40 h-screen bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-700 transition-all duration-500 ease-in-out ${
-        isCollapsed ? "w-16" : "w-64"
-      }`}
-    >
+    <>
+      {/* Mobile Overlay */}
+      {isMobileOpen && (
+        <div 
+          className="fixed inset-0 bg-black/30 z-30 lg:hidden"
+          onClick={() => setIsMobileOpen(false)}
+        />
+      )}
+      
+      {/* Sidebar */}
+      <aside 
+        className={`fixed top-0 left-0 z-40 h-screen bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-700 transition-all duration-300 ease-in-out 
+        ${isCollapsed ? "w-16" : "w-64"} 
+        ${isMobileOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"}`}
+      >
       {/* Logo/Brand Section at the top */}
       <div className={`h-16 flex items-center ${isCollapsed ? "justify-center px-2" : "px-4"}`}>
         {/* Custom wordmark to match requested minimalist brand style */}
         <DemplonLogo className={isCollapsed ? "scale-90" : ""} size={28} />
       </div>
       
-      {/* Toggle button - fixed di pojok kanan atas, sejajar dengan navbar */}
+      {/* Toggle button - hanya tampil di desktop (lg:block), hidden di mobile */}
       <button
         onClick={() => setIsCollapsed(!isCollapsed)}
-        className={`fixed top-4 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-lg p-1.5 transition-all duration-500 z-50 ${
+        className={`hidden lg:block fixed top-4 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-lg p-1.5 transition-all duration-500 z-50 ${
           isCollapsed ? "left-[52px]" : "left-[240px]"
         }`}
         suppressHydrationWarning
@@ -110,7 +131,10 @@ export const Sidebar: React.FC<SidebarProps> = ({
       {/* Scrollable menu content */}
   <div className={`h-[calc(100%-4rem)] pb-4 overflow-y-auto bg-white dark:bg-gray-900 ${isCollapsed ? "px-1" : "px-3"}`}>
         {/* Profile Section */}
-        <div className={`flex items-center gap-4 p-4 ${isCollapsed ? "justify-center px-0" : ""}`}>
+        <Link 
+          href="/menu/profile"
+          className={`flex items-center gap-4 p-4 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors ${isCollapsed ? "justify-center px-0" : ""}`}
+        >
           <div className={`${isCollapsed ? "flex justify-center w-full" : ""}`}>
             <Image
               className="w-9 h-9 rounded-full flex-shrink-0 ring-1 ring-gray-200 dark:ring-gray-700"
@@ -123,11 +147,11 @@ export const Sidebar: React.FC<SidebarProps> = ({
           </div>
           {!isCollapsed && (
             <div className="overflow-hidden">
-              <h2 className="text-sm font-semibold truncate text-gray-900 dark:text-gray-100">{userName}</h2>
-              <p className="text-xs text-gray-500 dark:text-gray-400 truncate">{userId}</p>
+              <h2 className="text-sm font-semibold truncate text-gray-900 dark:text-gray-100">{displayName}</h2>
+              <p className="text-xs text-gray-500 dark:text-gray-400 truncate">{displayEmail || displayId}</p>
             </div>
           )}
-        </div>
+        </Link>
 
         {/* Generals Navigation */}
         <div className="mt-2">
@@ -143,6 +167,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 <li key={item.title}>
                   <Link
                     href={item.href}
+                    onClick={() => setIsMobileOpen(false)}
                     className={`flex items-center text-gray-900 dark:text-gray-300 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 group ${
                       isActive ? "bg-indigo-600 text-white hover:bg-indigo-700 dark:bg-indigo-600 dark:hover:bg-indigo-700" : ""
                     } ${isCollapsed ? "justify-center p-2" : "p-3"}`}
@@ -171,6 +196,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 <li key={item.title}>
                   <Link
                     href={item.href}
+                    onClick={() => setIsMobileOpen(false)}
                     className={`flex items-center text-gray-900 dark:text-gray-300 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 group transition-all duration-300 ease-in-out transform hover:translate-x-1 ${
                       isActive ? "bg-indigo-600 text-white hover:bg-indigo-700 dark:bg-indigo-600 dark:hover:bg-indigo-700" : ""
                     } ${isCollapsed ? "justify-center p-2" : "p-3"}`}
@@ -199,6 +225,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 <li key={item.title}>
                   <Link
                     href={item.href}
+                    onClick={() => setIsMobileOpen(false)}
                     className={`flex items-center text-gray-900 dark:text-gray-300 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 group transition-all duration-300 ease-in-out transform hover:translate-x-1 ${
                       isActive ? "bg-indigo-600 text-white hover:bg-indigo-700 dark:bg-indigo-600 dark:hover:bg-indigo-700" : ""
                     } ${isCollapsed ? "justify-center p-2" : "p-3"}`}
@@ -214,6 +241,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
         </div>
       </div>
     </aside>
+    </>
   )
 }
 
