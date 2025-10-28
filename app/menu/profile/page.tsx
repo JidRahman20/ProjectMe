@@ -16,15 +16,15 @@ export default function ProfilePage() {
     <ProtectedRoute>
       <div className="space-y-6">
         {/* Header */}
-        <div className="bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-700 dark:to-indigo-700 rounded-xl p-6 text-white shadow-lg">
+        <div className="bg-gradient-to-r from-green-600 to-emerald-600 dark:from-green-700 dark:to-emerald-700 rounded-xl p-6 text-white shadow-lg">
           <h1 className="text-3xl font-bold mb-2">Profile Saya</h1>
-          <p className="text-blue-100">Kelola informasi profil Anda</p>
+          <p className="text-green-100">Kelola informasi profil Anda</p>
         </div>
 
         {/* Profile Card */}
         <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
           {/* Cover Image */}
-          <div className="h-32 bg-gradient-to-r from-blue-500 to-indigo-600"></div>
+          <div className="h-32 bg-gradient-to-r from-green-500 to-emerald-600"></div>
           
           {/* Profile Info */}
           <div className="px-6 pb-6">
@@ -50,7 +50,7 @@ export default function ProfilePage() {
 
             {/* Role Badge */}
             <div className="mb-6">
-              <span className="inline-flex items-center gap-2 px-4 py-2 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 rounded-full text-sm font-semibold">
+              <span className="inline-flex items-center gap-2 px-4 py-2 bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 rounded-full text-sm font-semibold">
                 <Shield className="w-4 h-4" />
                 {user.role.toUpperCase()}
               </span>
@@ -61,14 +61,14 @@ export default function ProfilePage() {
               {/* Personal Information */}
               <div className="space-y-4">
                 <h3 className="text-lg font-semibold text-gray-900 dark:text-white flex items-center gap-2">
-                  <User className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+                  <User className="w-5 h-5 text-green-600 dark:text-green-400" />
                   Informasi Personal
                 </h3>
                 
                 <div className="space-y-3">
                   <div className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
-                    <div className="w-10 h-10 rounded-lg bg-blue-100 dark:bg-blue-900 flex items-center justify-center">
-                      <User className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+                    <div className="w-10 h-10 rounded-lg bg-green-100 dark:bg-green-900 flex items-center justify-center">
+                      <User className="w-5 h-5 text-green-600 dark:text-green-400" />
                     </div>
                     <div className="flex-1">
                       <p className="text-xs text-gray-500 dark:text-gray-400">Nama Lengkap</p>
@@ -77,8 +77,8 @@ export default function ProfilePage() {
                   </div>
 
                   <div className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
-                    <div className="w-10 h-10 rounded-lg bg-purple-100 dark:bg-purple-900 flex items-center justify-center">
-                      <Shield className="w-5 h-5 text-purple-600 dark:text-purple-400" />
+                    <div className="w-10 h-10 rounded-lg bg-yellow-100 dark:bg-yellow-900 flex items-center justify-center">
+                      <Shield className="w-5 h-5 text-yellow-600 dark:text-yellow-400" />
                     </div>
                     <div className="flex-1">
                       <p className="text-xs text-gray-500 dark:text-gray-400">User ID</p>
@@ -87,8 +87,8 @@ export default function ProfilePage() {
                   </div>
 
                   <div className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
-                    <div className="w-10 h-10 rounded-lg bg-green-100 dark:bg-green-900 flex items-center justify-center">
-                      <Building className="w-5 h-5 text-green-600 dark:text-green-400" />
+                    <div className="w-10 h-10 rounded-lg bg-emerald-100 dark:bg-emerald-900 flex items-center justify-center">
+                      <Building className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
                     </div>
                     <div className="flex-1">
                       <p className="text-xs text-gray-500 dark:text-gray-400">Role</p>
@@ -101,7 +101,7 @@ export default function ProfilePage() {
               {/* Contact Information */}
               <div className="space-y-4">
                 <h3 className="text-lg font-semibold text-gray-900 dark:text-white flex items-center gap-2">
-                  <Mail className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+                  <Mail className="w-5 h-5 text-green-600 dark:text-green-400" />
                   Informasi Kontak
                 </h3>
                 
@@ -127,8 +127,8 @@ export default function ProfilePage() {
                   </div>
 
                   <div className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
-                    <div className="w-10 h-10 rounded-lg bg-indigo-100 dark:bg-indigo-900 flex items-center justify-center">
-                      <MapPin className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
+                    <div className="w-10 h-10 rounded-lg bg-teal-100 dark:bg-teal-900 flex items-center justify-center">
+                      <MapPin className="w-5 h-5 text-teal-600 dark:text-teal-400" />
                     </div>
                     <div className="flex-1">
                       <p className="text-xs text-gray-500 dark:text-gray-400">Location</p>
@@ -142,30 +142,30 @@ export default function ProfilePage() {
             {/* Account Activity */}
             <div className="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
               <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
-                <Calendar className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+                <Calendar className="w-5 h-5 text-green-600 dark:text-green-400" />
                 Aktivitas Akun
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="p-4 rounded-lg bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800">
-                  <p className="text-xs text-blue-600 dark:text-blue-400 mb-1">Bergabung Sejak</p>
-                  <p className="text-lg font-bold text-blue-800 dark:text-blue-300">
+                <div className="p-4 rounded-lg bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800">
+                  <p className="text-xs text-green-600 dark:text-green-400 mb-1">Bergabung Sejak</p>
+                  <p className="text-lg font-bold text-green-800 dark:text-green-300">
                     {new Date().toLocaleDateString("id-ID", { month: "short", year: "numeric" })}
                   </p>
                 </div>
-                <div className="p-4 rounded-lg bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800">
-                  <p className="text-xs text-green-600 dark:text-green-400 mb-1">Login Terakhir</p>
-                  <p className="text-lg font-bold text-green-800 dark:text-green-300">Hari ini</p>
+                <div className="p-4 rounded-lg bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800">
+                  <p className="text-xs text-emerald-600 dark:text-emerald-400 mb-1">Login Terakhir</p>
+                  <p className="text-lg font-bold text-emerald-800 dark:text-emerald-300">Hari ini</p>
                 </div>
-                <div className="p-4 rounded-lg bg-purple-50 dark:bg-purple-900/20 border border-purple-200 dark:border-purple-800">
-                  <p className="text-xs text-purple-600 dark:text-purple-400 mb-1">Status</p>
-                  <p className="text-lg font-bold text-purple-800 dark:text-purple-300">Active</p>
+                <div className="p-4 rounded-lg bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800">
+                  <p className="text-xs text-yellow-600 dark:text-yellow-400 mb-1">Status</p>
+                  <p className="text-lg font-bold text-yellow-800 dark:text-yellow-300">Active</p>
                 </div>
               </div>
             </div>
 
             {/* Action Buttons */}
             <div className="mt-6 flex gap-3">
-              <button className="flex-1 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors font-medium">
+              <button className="flex-1 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors font-medium">
                 Edit Profile
               </button>
               <button className="px-4 py-2 border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg transition-colors font-medium">

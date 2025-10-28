@@ -39,7 +39,7 @@ export function Navbar() {
               <input
                 type="text"
                 placeholder="Search command..."
-                className="w-full pl-10 pr-14 py-2 text-sm text-gray-900 dark:text-white border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none"
+                className="w-full pl-10 pr-14 py-2 text-sm text-gray-900 dark:text-white border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none"
                 suppressHydrationWarning
               />
               <div className="absolute inset-y-0 right-0 flex items-center pr-3">
@@ -92,7 +92,7 @@ export function Navbar() {
                       <div className="px-4 py-3 border-b border-gray-100 dark:border-gray-700">
                         <p className="text-sm font-semibold text-gray-900 dark:text-white">{user.name}</p>
                         <p className="text-xs text-gray-500 dark:text-gray-400 truncate">{user.email}</p>
-                        <span className="inline-block mt-1 px-2 py-0.5 text-xs font-medium bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 rounded">
+                        <span className="inline-block mt-1 px-2 py-0.5 text-xs font-medium bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 rounded">
                           {user.role}
                         </span>
                       </div>
@@ -100,7 +100,7 @@ export function Navbar() {
                     
                     {/* Profile */}
                     <button
-                      className="w-full px-4 py-2.5 text-left text-sm text-gray-700 dark:text-gray-300 hover:bg-indigo-50 dark:hover:bg-indigo-900/50 hover:text-indigo-700 dark:hover:text-indigo-300 transition-all duration-300 flex items-center gap-3"
+                      className="w-full px-4 py-2.5 text-left text-sm text-gray-700 dark:text-gray-300 hover:bg-green-50 dark:hover:bg-green-900/50 hover:text-green-700 dark:hover:text-green-300 transition-all duration-300 flex items-center gap-3"
                       onClick={() => {
                         router.push('/menu/profile')
                         setShowProfileMenu(false)
@@ -112,7 +112,7 @@ export function Navbar() {
 
                     {/* Settings */}
                     <button
-                      className="w-full px-4 py-2.5 text-left text-sm text-gray-700 dark:text-gray-300 hover:bg-sky-50 dark:hover:bg-sky-900/50 hover:text-sky-700 dark:hover:text-sky-300 transition-all duration-300 flex items-center gap-3"
+                      className="w-full px-4 py-2.5 text-left text-sm text-gray-700 dark:text-gray-300 hover:bg-yellow-50 dark:hover:bg-yellow-900/50 hover:text-yellow-700 dark:hover:text-yellow-300 transition-all duration-300 flex items-center gap-3"
                       onClick={() => {
                         // Navigate to settings page (you can change this route)
                         router.push('/settings')
