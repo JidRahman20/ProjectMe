@@ -867,7 +867,7 @@ export default function KonsumsiPage() {
               <span>{selectedDate.split("-").reverse().join("-")}</span>
             </button>
             <button
-              className="flex items-center gap-2 bg-gradient-to-r from-green-600 to-emerald-700 text-white px-5 py-2.5 rounded-lg font-medium hover:from-green-700 hover:to-emerald-800 transition-all duration-300 shadow-md hover:shadow-lg transform hover:scale-105"
+              className="flex items-center gap-2 bg-gradient-to-r from-purple-600 to-violet-500 text-white px-5 py-2.5 rounded-lg font-medium hover:from-purple-700 hover:to-violet-600 transition-all duration-300 shadow-md hover:shadow-lg transform hover:scale-105"
               onClick={() => setShowForm(true)}
               suppressHydrationWarning
             >
@@ -879,10 +879,10 @@ export default function KonsumsiPage() {
 
         {/* Dashboard Statistics */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-          <div className="bg-gradient-to-br from-green-500 to-green-600 rounded-xl p-5 text-white shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105">
+          <div className="bg-gradient-to-br from-purple-600 to-violet-500 rounded-xl p-5 text-white shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-green-100 text-sm font-medium">Total Order</p>
+                <p className="text-purple-100 text-sm font-medium">Total Order</p>
                 <h3 className="text-3xl font-bold mt-1">{statistics.total}</h3>
               </div>
               <div className="bg-white/20 p-3 rounded-lg">
@@ -893,10 +893,10 @@ export default function KonsumsiPage() {
             </div>
           </div>
 
-          <div className="bg-gradient-to-br from-yellow-500 to-yellow-600 rounded-xl p-5 text-white shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105">
+          <div className="bg-gradient-to-br from-violet-500 to-violet-600 rounded-xl p-5 text-white shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-yellow-100 text-sm font-medium">Pending</p>
+                <p className="text-violet-100 text-sm font-medium">Pending</p>
                 <h3 className="text-3xl font-bold mt-1">{statistics.pending}</h3>
               </div>
               <div className="bg-white/20 p-3 rounded-lg">
@@ -907,10 +907,10 @@ export default function KonsumsiPage() {
             </div>
           </div>
 
-          <div className="bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-xl p-5 text-white shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105">
+          <div className="bg-gradient-to-br from-purple-600 to-purple-700 rounded-xl p-5 text-white shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-emerald-100 text-sm font-medium">Disetujui</p>
+                <p className="text-purple-100 text-sm font-medium">Disetujui</p>
                 <h3 className="text-3xl font-bold mt-1">{statistics.approved}</h3>
               </div>
               <div className="bg-white/20 p-3 rounded-lg">
@@ -921,10 +921,10 @@ export default function KonsumsiPage() {
             </div>
           </div>
 
-          <div className="bg-gradient-to-br from-rose-500 to-rose-600 rounded-xl p-5 text-white shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105">
+          <div className="bg-gradient-to-br from-violet-600 to-violet-700 rounded-xl p-5 text-white shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-rose-100 text-sm font-medium">Dibatalkan</p>
+                <p className="text-violet-100 text-sm font-medium">Dibatalkan</p>
                 <h3 className="text-3xl font-bold mt-1">{statistics.cancelled}</h3>
               </div>
               <div className="bg-white/20 p-3 rounded-lg">
@@ -947,10 +947,10 @@ export default function KonsumsiPage() {
                   placeholder="ID, Kegiatan, Pengaju..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition-colors duration-300"
+                  className="w-full pl-10 pr-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition-colors duration-300"
                   suppressHydrationWarning
                 />
-                <svg className="w-5 h-5 text-green-400 absolute left-3 top-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-5 h-5 text-purple-400 absolute left-3 top-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                 </svg>
               </div>
@@ -961,7 +961,7 @@ export default function KonsumsiPage() {
               <select
                 value={filterStatus}
                 onChange={(e) => setFilterStatus(e.target.value)}
-                className="w-full px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition-colors duration-300"
+                className="w-full px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition-colors duration-300"
                 suppressHydrationWarning
               >
                 <option value="Semua">Semua Status</option>
@@ -978,7 +978,7 @@ export default function KonsumsiPage() {
                 type="date"
                 value={filterDateFrom}
                 onChange={(e) => setFilterDateFrom(e.target.value)}
-                className="w-full px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition-colors duration-300"
+                className="w-full px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition-colors duration-300"
                 suppressHydrationWarning
               />
             </div>
@@ -989,7 +989,7 @@ export default function KonsumsiPage() {
                 type="date"
                 value={filterDateTo}
                 onChange={(e) => setFilterDateTo(e.target.value)}
-                className="w-full px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition-colors duration-300"
+                className="w-full px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition-colors duration-300"
                 suppressHydrationWarning
               />
             </div>
@@ -998,7 +998,7 @@ export default function KonsumsiPage() {
           {(searchQuery || filterStatus !== "Semua" || filterDateFrom || filterDateTo) && (
             <div className="mt-3 flex items-center justify-between">
               <p className="text-sm text-gray-600 dark:text-gray-400">
-                Menampilkan <span className="font-bold text-green-600 dark:text-green-400">{getFilteredOrders().length}</span> dari {orders.length} order
+                Menampilkan <span className="font-bold text-purple-600 dark:text-purple-400">{getFilteredOrders().length}</span> dari {orders.length} order
               </p>
               <button
                 onClick={() => {
@@ -1007,7 +1007,7 @@ export default function KonsumsiPage() {
                   setFilterDateFrom("");
                   setFilterDateTo("");
                 }}
-                className="text-sm text-rose-600 dark:text-rose-400 hover:text-rose-700 dark:hover:text-rose-300 font-medium flex items-center gap-1 transition-colors duration-300"
+                className="text-sm text-violet-600 dark:text-violet-400 hover:text-violet-700 dark:hover:text-violet-300 font-medium flex items-center gap-1 transition-colors duration-300"
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -1029,20 +1029,20 @@ export default function KonsumsiPage() {
               onClick={(e) => e.stopPropagation()}
             >
               <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-4">Pilih Tanggal</h3>
-              <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg p-3 mb-4">
-                <p className="text-xs font-semibold text-green-700 dark:text-green-300">ℹ️ Catatan:</p>
-                <p className="text-xs text-green-600 dark:text-green-200 mt-1">Anda hanya dapat memilih tanggal hari ini atau kemudian. Tanggal yang sudah terlewat tidak dapat dipilih.</p>
+              <div className="bg-violet-50 dark:bg-violet-900/20 border border-violet-200 dark:border-violet-800 rounded-lg p-3 mb-4">
+                <p className="text-xs font-semibold text-violet-700 dark:text-violet-300">ℹ️ Catatan:</p>
+                <p className="text-xs text-violet-600 dark:text-violet-200 mt-1">Anda hanya dapat memilih tanggal hari ini atau kemudian. Tanggal yang sudah terlewat tidak dapat dipilih.</p>
               </div>
               <input
                 type="date"
                 value={selectedDate}
                 onChange={(e) => setSelectedDate(e.target.value)}
                 min={minDate}
-                className="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition-colors duration-300"
+                className="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition-colors duration-300"
               />
               <button
                 onClick={() => setShowCalendar(false)}
-                className="w-full mt-4 px-4 py-2.5 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-all duration-300 font-medium transform hover:scale-105"
+                className="w-full mt-4 px-4 py-2.5 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-all duration-300 font-medium transform hover:scale-105"
               >
                 Tutup
               </button>
@@ -1061,8 +1061,8 @@ export default function KonsumsiPage() {
               onClick={(e) => e.stopPropagation()}
             >
               <div className="flex items-center gap-3 mb-4">
-                <div className="flex-shrink-0 w-12 h-12 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center transition-colors duration-300">
-                  <svg className="w-6 h-6 text-red-600 dark:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div className="flex-shrink-0 w-12 h-12 rounded-full bg-violet-100 dark:bg-violet-900/30 flex items-center justify-center transition-colors duration-300">
+                  <svg className="w-6 h-6 text-violet-600 dark:text-violet-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                   </svg>
                 </div>
@@ -1091,7 +1091,7 @@ export default function KonsumsiPage() {
                 </button>
                 <button
                   onClick={handleCancelOrder}
-                  className="flex-1 px-4 py-2.5 rounded-lg text-sm font-bold text-white bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 transition-all duration-300 shadow-md hover:shadow-lg transform hover:scale-105"
+                  className="flex-1 px-4 py-2.5 rounded-lg text-sm font-bold text-white bg-gradient-to-r from-violet-500 to-violet-600 hover:from-violet-600 hover:to-violet-700 transition-all duration-300 shadow-md hover:shadow-lg transform hover:scale-105"
                   suppressHydrationWarning
                 >
                   Ya, Batalkan Order
@@ -1112,10 +1112,10 @@ export default function KonsumsiPage() {
               onClick={(e) => e.stopPropagation()}
             >
               {/* Header */}
-              <div className="sticky top-0 bg-gradient-to-r from-green-600 to-emerald-700 text-white px-6 py-4 rounded-t-xl flex justify-between items-center">
+              <div className="sticky top-0 bg-gradient-to-r from-purple-600 to-violet-500 text-white px-6 py-4 rounded-t-xl flex justify-between items-center">
                 <div>
                   <h3 className="text-xl font-bold">Detail Order</h3>
-                  <p className="text-sm text-green-100 mt-1">{selectedOrder.id}</p>
+                  <p className="text-sm text-purple-100 mt-1">{selectedOrder.id}</p>
                 </div>
                 <button 
                   onClick={() => setShowDetailModal(false)}
@@ -1135,15 +1135,15 @@ export default function KonsumsiPage() {
                   <span className="text-sm font-semibold text-gray-700 dark:text-gray-300">Status Order:</span>
                   <span className={`px-4 py-2 rounded-lg text-sm font-bold shadow-sm ${
                     selectedOrder.status === "Pesanan dibatalkan" 
-                      ? "bg-gradient-to-r from-red-500 to-red-600 text-white" 
+                      ? "bg-gradient-to-r from-violet-600 to-violet-700 text-white" 
                       : selectedOrder.status === "Menunggu Persetujuan" || selectedOrder.status === "Menunggu konfirmasi"
-                      ? "bg-gradient-to-r from-yellow-500 to-yellow-600 text-white"
+                      ? "bg-gradient-to-r from-violet-500 to-violet-600 text-white"
                       : selectedOrder.status === "Disetujui"
-                      ? "bg-gradient-to-r from-green-500 to-green-600 text-white"
+                      ? "bg-gradient-to-r from-purple-500 to-purple-600 text-white"
                       : selectedOrder.status === "Dipesan"
-                      ? "bg-gradient-to-r from-emerald-500 to-emerald-600 text-white"
+                      ? "bg-gradient-to-r from-purple-500 to-purple-600 text-white"
                       : selectedOrder.status === "Selesai"
-                      ? "bg-gradient-to-r from-green-500 to-green-600 text-white"
+                      ? "bg-gradient-to-r from-purple-500 to-purple-600 text-white"
                       : "bg-gradient-to-r from-gray-500 to-gray-600 text-white"
                   }`}>
                     {selectedOrder.status}
@@ -1152,19 +1152,19 @@ export default function KonsumsiPage() {
 
                 {/* Tanggal */}
                 <div className="grid grid-cols-2 gap-4">
-                  <div className="bg-green-50 dark:bg-green-900/20 rounded-lg p-4 border-l-4 border-green-500 dark:border-green-400">
-                    <p className="text-xs font-semibold text-green-700 dark:text-green-400 uppercase mb-1">Tanggal Pengajuan</p>
-                    <p className="text-lg font-bold text-green-900 dark:text-green-300">{selectedOrder.tanggalPengajuan}</p>
+                  <div className="bg-purple-50 dark:bg-purple-900/20 rounded-lg p-4 border-l-4 border-purple-500 dark:border-purple-400">
+                    <p className="text-xs font-semibold text-purple-700 dark:text-purple-400 uppercase mb-1">Tanggal Pengajuan</p>
+                    <p className="text-lg font-bold text-purple-900 dark:text-purple-300">{selectedOrder.tanggalPengajuan}</p>
                   </div>
-                  <div className="bg-yellow-50 dark:bg-yellow-900/20 rounded-lg p-4 border-l-4 border-yellow-500 dark:border-yellow-400">
-                    <p className="text-xs font-semibold text-yellow-700 dark:text-yellow-400 uppercase mb-1">Tanggal Pengiriman</p>
-                    <p className="text-lg font-bold text-yellow-900 dark:text-yellow-300">{selectedOrder.tanggalPengiriman}</p>
+                  <div className="bg-violet-50 dark:bg-violet-900/20 rounded-lg p-4 border-l-4 border-violet-500 dark:border-violet-400">
+                    <p className="text-xs font-semibold text-violet-700 dark:text-violet-400 uppercase mb-1">Tanggal Pengiriman</p>
+                    <p className="text-lg font-bold text-violet-900 dark:text-violet-300">{selectedOrder.tanggalPengiriman}</p>
                   </div>
                 </div>
 
                 {/* Informasi Kegiatan */}
-                <div className="bg-gradient-to-br from-emerald-50 to-emerald-100 dark:from-emerald-900/20 dark:to-emerald-800/20 rounded-lg p-5 border border-emerald-200 dark:border-emerald-700">
-                  <h4 className="text-sm font-bold text-emerald-900 dark:text-emerald-300 uppercase mb-3 flex items-center gap-2">
+                <div className="bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-900/20 dark:to-purple-800/20 rounded-lg p-5 border border-purple-200 dark:border-purple-700">
+                  <h4 className="text-sm font-bold text-purple-900 dark:text-purple-300 uppercase mb-3 flex items-center gap-2">
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                     </svg>
@@ -1172,27 +1172,27 @@ export default function KonsumsiPage() {
                   </h4>
                   <div className="space-y-3">
                     <div className="flex items-start">
-                      <span className="text-sm font-semibold text-emerald-700 dark:text-emerald-400 w-32">Kegiatan:</span>
-                      <span className="text-sm text-emerald-900 dark:text-emerald-200 font-medium flex-1">{selectedOrder.kegiatan}</span>
+                      <span className="text-sm font-semibold text-purple-700 dark:text-purple-400 w-32">Kegiatan:</span>
+                      <span className="text-sm text-purple-900 dark:text-purple-200 font-medium flex-1">{selectedOrder.kegiatan}</span>
                     </div>
                     <div className="flex items-start">
-                      <span className="text-sm font-semibold text-emerald-700 dark:text-emerald-400 w-32">Tamu:</span>
-                      <span className="text-sm text-emerald-900 dark:text-emerald-200">{selectedOrder.tamu}</span>
+                      <span className="text-sm font-semibold text-purple-700 dark:text-purple-400 w-32">Tamu:</span>
+                      <span className="text-sm text-purple-900 dark:text-purple-200">{selectedOrder.tamu}</span>
                     </div>
                     <div className="flex items-start">
-                      <span className="text-sm font-semibold text-emerald-700 dark:text-emerald-400 w-32">Bagian:</span>
-                      <span className="text-sm text-emerald-900 dark:text-emerald-200">{selectedOrder.bagian}</span>
+                      <span className="text-sm font-semibold text-purple-700 dark:text-purple-400 w-32">Bagian:</span>
+                      <span className="text-sm text-purple-900 dark:text-purple-200">{selectedOrder.bagian}</span>
                     </div>
                     <div className="flex items-start">
-                      <span className="text-sm font-semibold text-emerald-700 dark:text-emerald-400 w-32">Pengaju:</span>
-                      <span className="text-sm text-emerald-900 dark:text-emerald-200">{selectedOrder.pengaju}</span>
+                      <span className="text-sm font-semibold text-purple-700 dark:text-purple-400 w-32">Pengaju:</span>
+                      <span className="text-sm text-purple-900 dark:text-purple-200">{selectedOrder.pengaju}</span>
                     </div>
                   </div>
                 </div>
 
                 {/* Menu */}
-                <div className="bg-gradient-to-br from-orange-50 to-orange-100 dark:from-orange-900/20 dark:to-orange-800/20 rounded-lg p-5 border border-orange-200 dark:border-orange-700">
-                  <h4 className="text-sm font-bold text-orange-900 dark:text-orange-300 uppercase mb-3 flex items-center gap-2">
+                <div className="bg-gradient-to-br from-violet-50 to-violet-100 dark:from-violet-900/20 dark:to-violet-800/20 rounded-lg p-5 border border-violet-200 dark:border-violet-700">
+                  <h4 className="text-sm font-bold text-violet-900 dark:text-violet-300 uppercase mb-3 flex items-center gap-2">
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                     </svg>
@@ -1201,12 +1201,12 @@ export default function KonsumsiPage() {
                   <div className="space-y-2">
                     {selectedOrder.menu.map((m, i) => (
                       <div className="flex items-center gap-3 bg-white dark:bg-gray-700 rounded-lg p-3 shadow-sm" key={i}>
-                        <span className="flex-shrink-0 w-8 h-8 rounded-full bg-gradient-to-r from-orange-500 to-orange-600 text-white text-sm font-bold flex items-center justify-center">
+                        <span className="flex-shrink-0 w-8 h-8 rounded-full bg-gradient-to-r from-purple-600 to-violet-500 text-white text-sm font-bold flex items-center justify-center">
                           {i + 1}
                         </span>
-                        <span className="text-sm font-semibold text-orange-900 dark:text-orange-200 flex-1">{m.label}</span>
+                        <span className="text-sm font-semibold text-violet-900 dark:text-violet-200 flex-1">{m.label}</span>
                         {m.price && (
-                          <span className="text-sm font-bold text-orange-600 dark:text-orange-400">{m.price}</span>
+                          <span className="text-sm font-bold text-violet-600 dark:text-violet-400">{m.price}</span>
                         )}
                       </div>
                     ))}
@@ -1218,7 +1218,7 @@ export default function KonsumsiPage() {
               <div className="sticky bottom-0 bg-gray-50 dark:bg-gray-800 px-6 py-4 rounded-b-xl border-t border-gray-200 dark:border-gray-700">
                 <button
                   onClick={() => setShowDetailModal(false)}
-                  className="w-full px-4 py-2.5 rounded-lg text-sm font-semibold text-white bg-gradient-to-r from-green-600 to-emerald-700 hover:from-green-700 hover:to-emerald-800 transition-all shadow-md hover:shadow-lg"
+                  className="w-full px-4 py-2.5 rounded-lg text-sm font-semibold text-white bg-gradient-to-r from-purple-600 to-violet-500 hover:from-purple-700 hover:to-violet-600 transition-all shadow-md hover:shadow-lg"
                   suppressHydrationWarning
                 >
                   Tutup
@@ -1239,10 +1239,10 @@ export default function KonsumsiPage() {
             <div className="animate-in zoom-in-50 duration-200 w-full max-w-3xl">
               <form onSubmit={handleAddOrder} className="bg-white dark:bg-gray-900 rounded-xl shadow-2xl relative max-h-[90vh] flex flex-col">
                 {/* Header - Sticky */}
-                <div className="sticky top-0 bg-gradient-to-r from-green-600 to-emerald-700 text-white px-6 py-4 rounded-t-xl flex justify-between items-center">
+                <div className="sticky top-0 bg-gradient-to-r from-purple-600 to-violet-500 text-white px-6 py-4 rounded-t-xl flex justify-between items-center">
                   <div>
                     <h2 className="text-xl font-bold">{isEditMode ? "Edit Order" : "Tambah Order"}</h2>
-                    <p className="text-xs text-green-100 mt-1">{isEditMode ? "Perbarui data order" : "Isi formulir di bawah ini"}</p>
+                    <p className="text-xs text-purple-100 mt-1">{isEditMode ? "Perbarui data order" : "Isi formulir di bawah ini"}</p>
                   </div>
                   <button 
                     type="button"
@@ -1260,20 +1260,20 @@ export default function KonsumsiPage() {
 
                   {/* Information Boxes */}
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-700 rounded-lg p-4">
-                      <h3 className="text-sm font-semibold text-green-900 dark:text-green-300 mb-2">📋 Informasi Order</h3>
-                      <p className="text-xs text-green-700 dark:text-green-400">Order akan dieksekusi sesuai tanggal dan waktu yang dipilih. Pastikan semua data sudah benar.</p>
+                    <div className="bg-purple-50 dark:bg-purple-900/20 border border-purple-200 dark:border-purple-700 rounded-lg p-4">
+                      <h3 className="text-sm font-semibold text-purple-900 dark:text-purple-300 mb-2">📋 Informasi Order</h3>
+                      <p className="text-xs text-purple-700 dark:text-purple-400">Order akan dieksekusi sesuai tanggal dan waktu yang dipilih. Pastikan semua data sudah benar.</p>
                     </div>
-                    <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-700 rounded-lg p-4">
-                      <h3 className="text-sm font-semibold text-yellow-900 dark:text-yellow-300 mb-2">⚠️ Informasi Transaksi</h3>
-                      <p className="text-xs text-yellow-700 dark:text-yellow-400">Order memerlukan approval dari atasan sebelum diproses oleh tim konsumsi.</p>
+                    <div className="bg-violet-50 dark:bg-violet-900/20 border border-violet-200 dark:border-violet-700 rounded-lg p-4">
+                      <h3 className="text-sm font-semibold text-violet-900 dark:text-violet-300 mb-2">⚠️ Informasi Transaksi</h3>
+                      <p className="text-xs text-violet-700 dark:text-violet-400">Order memerlukan approval dari atasan sebelum diproses oleh tim konsumsi.</p>
                     </div>
                   </div>
 
                   {/* Tanggal Section */}
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="bg-green-50 dark:bg-green-900/20 border-l-4 border-green-600 dark:border-green-500 rounded-lg p-4">
-                      <label className="block text-sm font-bold text-green-900 dark:text-green-300 uppercase mb-2">
+                    <div className="bg-purple-50 dark:bg-purple-900/20 border-l-4 border-purple-600 dark:border-purple-500 rounded-lg p-4">
+                      <label className="block text-sm font-bold text-purple-900 dark:text-purple-300 uppercase mb-2">
                         Tanggal Pengajuan
                       </label>
                       <input 
@@ -1287,18 +1287,18 @@ export default function KonsumsiPage() {
                           }
                         }}
                         min={minDate}
-                        className={`w-full border-0 bg-white dark:bg-gray-800 rounded-lg px-3 py-2.5 text-sm font-semibold text-green-900 dark:text-green-300 focus:ring-2 focus:ring-green-500 outline-none ${
+                        className={`w-full border-0 bg-white dark:bg-gray-800 rounded-lg px-3 py-2.5 text-sm font-semibold text-purple-900 dark:text-purple-300 focus:ring-2 focus:ring-purple-500 outline-none ${
                           errors.tanggalPermintaan ? "ring-2 ring-red-500" : ""
                         }`}
                         suppressHydrationWarning
                       />
                       {errors.tanggalPermintaan && (
-                        <p className="text-xs text-red-600 dark:text-red-400 mt-2 font-medium">{errors.tanggalPermintaan}</p>
+                        <p className="text-xs text-violet-700 dark:text-violet-400 mt-2 font-medium">{errors.tanggalPermintaan}</p>
                       )}
                     </div>
 
-                    <div className="bg-yellow-50 dark:bg-yellow-900/20 border-l-4 border-yellow-600 dark:border-yellow-500 rounded-lg p-4">
-                      <label className="block text-sm font-bold text-yellow-900 dark:text-yellow-300 uppercase mb-2">
+                    <div className="bg-violet-50 dark:bg-violet-900/20 border-l-4 border-violet-600 dark:border-violet-500 rounded-lg p-4">
+                      <label className="block text-sm font-bold text-violet-900 dark:text-violet-300 uppercase mb-2">
                         Tanggal Pengiriman
                       </label>
                       <input 
@@ -1312,20 +1312,20 @@ export default function KonsumsiPage() {
                           }
                         }}
                         min={minDate}
-                        className={`w-full border-0 bg-white dark:bg-gray-800 rounded-lg px-3 py-2.5 text-sm font-semibold text-yellow-900 dark:text-yellow-300 focus:ring-2 focus:ring-yellow-500 outline-none ${
+                        className={`w-full border-0 bg-white dark:bg-gray-800 rounded-lg px-3 py-2.5 text-sm font-semibold text-violet-900 dark:text-violet-300 focus:ring-2 focus:ring-purple-500 outline-none ${
                           errors.tanggalPengiriman ? "ring-2 ring-red-500" : ""
                         }`}
                         suppressHydrationWarning
                       />
                       {errors.tanggalPengiriman && (
-                        <p className="text-xs text-red-600 dark:text-red-400 mt-2 font-medium">{errors.tanggalPengiriman}</p>
+                        <p className="text-xs text-violet-700 dark:text-violet-400 mt-2 font-medium">{errors.tanggalPengiriman}</p>
                       )}
                     </div>
                   </div>
 
                   {/* Informasi Kegiatan Section */}
-                  <div className="bg-gradient-to-br from-emerald-50 to-emerald-100 dark:from-emerald-900/20 dark:to-emerald-800/20 border border-emerald-200 dark:border-emerald-700 rounded-lg p-5">
-                    <h3 className="text-sm font-bold text-emerald-900 dark:text-emerald-300 uppercase mb-4 flex items-center gap-2">
+                  <div className="bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-900/20 dark:to-purple-800/20 border border-purple-200 dark:border-purple-700 rounded-lg p-5">
+                    <h3 className="text-sm font-bold text-purple-900 dark:text-purple-300 uppercase mb-4 flex items-center gap-2">
                       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                       </svg>
@@ -1333,8 +1333,8 @@ export default function KonsumsiPage() {
                     </h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>
-                        <label className="block text-xs font-semibold text-emerald-700 dark:text-emerald-400 mb-1.5">
-                          Kegiatan: <span className="text-red-500">*</span>
+                        <label className="block text-xs font-semibold text-purple-700 dark:text-purple-400 mb-1.5">
+                          Kegiatan: <span className="text-violet-600">*</span>
                         </label>
                         <select 
                           name="kegiatan" 
@@ -1345,7 +1345,7 @@ export default function KonsumsiPage() {
                               setErrors({ ...errors, kegiatan: "" });
                             }
                           }}
-                          className={`w-full border-0 bg-white dark:bg-gray-800 dark:text-gray-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-emerald-500 outline-none cursor-pointer ${
+                          className={`w-full border-0 bg-white dark:bg-gray-800 dark:text-gray-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-purple-500 outline-none cursor-pointer ${
                             errors.kegiatan ? "ring-2 ring-red-500" : ""
                           }`}
                           suppressHydrationWarning
@@ -1410,13 +1410,13 @@ export default function KonsumsiPage() {
                           <option value="Washing Pabrik">Washing Pabrik</option>
                         </select>
                         {errors.kegiatan && (
-                          <p className="text-xs text-red-600 mt-1.5 font-medium">{errors.kegiatan}</p>
+                          <p className="text-xs text-violet-700 mt-1.5 font-medium">{errors.kegiatan}</p>
                         )}
                       </div>
 
                       <div>
-                        <label className="block text-xs font-semibold text-emerald-700 dark:text-emerald-400 mb-1.5">
-                          Tipe Tamu: <span className="text-red-500">*</span>
+                        <label className="block text-xs font-semibold text-purple-700 dark:text-purple-400 mb-1.5">
+                          Tipe Tamu: <span className="text-violet-600">*</span>
                         </label>
                         <select 
                           name="tamu" 
@@ -1448,7 +1448,7 @@ export default function KonsumsiPage() {
                               }]);
                             }
                           }}
-                          className={`w-full border-0 bg-white dark:bg-gray-800 dark:text-gray-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-emerald-500 outline-none cursor-pointer ${
+                          className={`w-full border-0 bg-white dark:bg-gray-800 dark:text-gray-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-purple-500 outline-none cursor-pointer ${
                             errors.tamu ? "ring-2 ring-red-500" : ""
                           }`}
                           suppressHydrationWarning
@@ -1461,10 +1461,10 @@ export default function KonsumsiPage() {
                           <option value="VVIP">VVIP</option>
                         </select>
                         {errors.tamu && (
-                          <p className="text-xs text-red-600 dark:text-red-400 mt-1.5 font-medium">{errors.tamu}</p>
+                          <p className="text-xs text-violet-700 dark:text-violet-400 mt-1.5 font-medium">{errors.tamu}</p>
                         )}
                         {form.tamu && (
-                          <p className="text-xs text-emerald-600 dark:text-emerald-400 mt-1.5 font-medium">
+                          <p className="text-xs text-purple-600 dark:text-purple-400 mt-1.5 font-medium">
                             {(form.tamu === "PERTA" || form.tamu === "Regular" || form.tamu === "Standar") && "💼 Menu: Standard berkualitas untuk acara internal"}
                             {form.tamu === "VIP" && "⭐ Menu: Premium dengan bahan pilihan (Porsi 1.5x)"}
                             {form.tamu === "VVIP" && "👑 Menu: Exclusive dengan bahan premium & mahal (Porsi 2x)"}
@@ -1473,8 +1473,8 @@ export default function KonsumsiPage() {
                       </div>
 
                       <div>
-                        <label className="block text-xs font-semibold text-emerald-700 dark:text-emerald-400 mb-1.5">
-                          Jumlah Tamu: <span className="text-red-500">*</span>
+                        <label className="block text-xs font-semibold text-purple-700 dark:text-purple-400 mb-1.5">
+                          Jumlah Tamu: <span className="text-violet-600">*</span>
                         </label>
                         <input 
                           type="number"
@@ -1499,24 +1499,24 @@ export default function KonsumsiPage() {
                           }}
                           placeholder="Contoh: 50"
                           min="1"
-                          className={`w-full border-0 bg-white dark:bg-gray-800 dark:text-gray-200 dark:placeholder-gray-500 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-emerald-500 outline-none ${
+                          className={`w-full border-0 bg-white dark:bg-gray-800 dark:text-gray-200 dark:placeholder-gray-500 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-purple-500 outline-none ${
                             errors.jumlahTamu ? "ring-2 ring-red-500" : ""
                           }`}
                           suppressHydrationWarning
                         />
                         {errors.jumlahTamu && (
-                          <p className="text-xs text-red-600 dark:text-red-400 mt-1.5 font-medium">{errors.jumlahTamu}</p>
+                          <p className="text-xs text-violet-700 dark:text-violet-400 mt-1.5 font-medium">{errors.jumlahTamu}</p>
                         )}
                         {form.jumlahTamu > 0 && form.tamu && (
-                          <p className="text-xs text-emerald-600 dark:text-emerald-400 mt-1.5 font-medium">
+                          <p className="text-xs text-purple-600 dark:text-purple-400 mt-1.5 font-medium">
                             💡 Porsi otomatis: {Math.ceil(form.jumlahTamu * (tamuMultiplier[form.tamu as keyof typeof tamuMultiplier] || 1))} porsi
                           </p>
                         )}
                       </div>
 
                       <div>
-                        <label className="block text-xs font-semibold text-emerald-700 dark:text-emerald-400 mb-1.5">
-                          Bagian: <span className="text-red-500">*</span>
+                        <label className="block text-xs font-semibold text-purple-700 dark:text-purple-400 mb-1.5">
+                          Bagian: <span className="text-violet-600">*</span>
                         </label>
                         <input 
                           name="untukBagian" 
@@ -1528,19 +1528,19 @@ export default function KonsumsiPage() {
                             }
                           }}
                           placeholder="Dep. Teknologi Informasi PKC"
-                          className={`w-full border-0 bg-white dark:bg-gray-800 dark:text-gray-200 dark:placeholder-gray-500 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-emerald-500 outline-none ${
+                          className={`w-full border-0 bg-white dark:bg-gray-800 dark:text-gray-200 dark:placeholder-gray-500 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-purple-500 outline-none ${
                             errors.untukBagian ? "ring-2 ring-red-500" : ""
                           }`}
                           suppressHydrationWarning
                         />
                         {errors.untukBagian && (
-                          <p className="text-xs text-red-600 dark:text-red-400 mt-1.5 font-medium">{errors.untukBagian}</p>
+                          <p className="text-xs text-violet-700 dark:text-violet-400 mt-1.5 font-medium">{errors.untukBagian}</p>
                         )}
                       </div>
 
                       <div>
-                        <label className="block text-xs font-semibold text-emerald-700 dark:text-emerald-400 mb-1.5">
-                          Pengaju: <span className="text-red-500">*</span>
+                        <label className="block text-xs font-semibold text-purple-700 dark:text-purple-400 mb-1.5">
+                          Pengaju: <span className="text-violet-600">*</span>
                         </label>
                         <input 
                           name="yangMengajukan" 
@@ -1552,19 +1552,19 @@ export default function KonsumsiPage() {
                             }
                           }}
                           placeholder="nama pengaju"
-                          className={`w-full border-0 bg-white dark:bg-gray-800 dark:text-gray-200 dark:placeholder-gray-500 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-emerald-500 outline-none ${
+                          className={`w-full border-0 bg-white dark:bg-gray-800 dark:text-gray-200 dark:placeholder-gray-500 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-purple-500 outline-none ${
                             errors.yangMengajukan ? "ring-2 ring-red-500" : ""
                           }`}
                           suppressHydrationWarning
                         />
                         {errors.yangMengajukan && (
-                          <p className="text-xs text-red-600 dark:text-red-400 mt-1.5 font-medium">{errors.yangMengajukan}</p>
+                          <p className="text-xs text-violet-700 dark:text-violet-400 mt-1.5 font-medium">{errors.yangMengajukan}</p>
                         )}
                       </div>
 
                       <div>
-                        <label className="block text-xs font-semibold text-emerald-700 dark:text-emerald-400 mb-1.5">
-                          Approval: <span className="text-red-500">*</span>
+                        <label className="block text-xs font-semibold text-purple-700 dark:text-purple-400 mb-1.5">
+                          Approval: <span className="text-violet-600">*</span>
                         </label>
                         <input 
                           name="approval" 
@@ -1576,19 +1576,19 @@ export default function KonsumsiPage() {
                             }
                           }}
                           placeholder="Nama atasan yang menyetujui"
-                          className={`w-full border-0 bg-white dark:bg-gray-800 dark:text-gray-200 dark:placeholder-gray-500 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-emerald-500 outline-none ${
+                          className={`w-full border-0 bg-white dark:bg-gray-800 dark:text-gray-200 dark:placeholder-gray-500 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-purple-500 outline-none ${
                             errors.approval ? "ring-2 ring-red-500" : ""
                           }`}
                           suppressHydrationWarning
                         />
                         {errors.approval && (
-                          <p className="text-xs text-red-600 dark:text-red-400 mt-1.5 font-medium">{errors.approval}</p>
+                          <p className="text-xs text-violet-700 dark:text-violet-400 mt-1.5 font-medium">{errors.approval}</p>
                         )}
                       </div>
 
                       <div>
-                        <label className="block text-xs font-semibold text-emerald-700 dark:text-emerald-400 mb-1.5">
-                          Lokasi Pengiriman: <span className="text-red-500">*</span>
+                        <label className="block text-xs font-semibold text-purple-700 dark:text-purple-400 mb-1.5">
+                          Lokasi Pengiriman: <span className="text-violet-600">*</span>
                         </label>
                         <select 
                           name="lokasi" 
@@ -1599,7 +1599,7 @@ export default function KonsumsiPage() {
                               setErrors({ ...errors, lokasi: "" });
                             }
                           }}
-                          className={`w-full border-0 bg-white dark:bg-gray-800 dark:text-gray-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-emerald-500 outline-none cursor-pointer ${
+                          className={`w-full border-0 bg-white dark:bg-gray-800 dark:text-gray-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-purple-500 outline-none cursor-pointer ${
                             errors.lokasi ? "ring-2 ring-red-500" : ""
                           }`}
                           suppressHydrationWarning
@@ -1653,13 +1653,13 @@ export default function KonsumsiPage() {
                           <option value="Utility K-1A">Utility K-1A</option>
                         </select>
                         {errors.lokasi && (
-                          <p className="text-xs text-red-600 dark:text-red-400 mt-1.5 font-medium">{errors.lokasi}</p>
+                          <p className="text-xs text-violet-700 dark:text-violet-400 mt-1.5 font-medium">{errors.lokasi}</p>
                         )}
                       </div>
 
                       <div>
-                        <label className="block text-xs font-semibold text-emerald-700 dark:text-emerald-400 mb-1.5">
-                          Waktu: <span className="text-red-500">*</span>
+                        <label className="block text-xs font-semibold text-purple-700 dark:text-purple-400 mb-1.5">
+                          Waktu: <span className="text-violet-600">*</span>
                         </label>
                         <select 
                           name="waktu" 
@@ -1672,7 +1672,7 @@ export default function KonsumsiPage() {
                             // Reset menu items when time changes
                             setMenuItems([{ id: 1, jenis: "", satuan: "", qty: form.jumlahTamu > 0 && form.tamu ? Math.ceil(form.jumlahTamu * (tamuMultiplier[form.tamu as keyof typeof tamuMultiplier] || 1)) : 0 }]);
                           }}
-                          className={`w-full border-0 bg-white dark:bg-gray-800 dark:text-gray-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-emerald-500 outline-none cursor-pointer ${
+                          className={`w-full border-0 bg-white dark:bg-gray-800 dark:text-gray-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-purple-500 outline-none cursor-pointer ${
                             errors.waktu ? "ring-2 ring-red-500" : ""
                           }`}
                           suppressHydrationWarning
@@ -1688,15 +1688,15 @@ export default function KonsumsiPage() {
                           <option value="Tengah Malam">Tengah Malam</option>
                         </select>
                         {errors.waktu && (
-                          <p className="text-xs text-red-600 dark:text-red-400 mt-1.5 font-medium">{errors.waktu}</p>
+                          <p className="text-xs text-violet-700 dark:text-violet-400 mt-1.5 font-medium">{errors.waktu}</p>
                         )}
                         {form.waktu && !form.tamu && (
-                          <p className="text-xs text-amber-600 dark:text-amber-400 mt-1.5 font-medium">
+                          <p className="text-xs text-violet-600 dark:text-violet-400 mt-1.5 font-medium">
                             Pilih tipe tamu terlebih dahulu untuk melihat menu yang tersedia
                           </p>
                         )}
                         {form.waktu && form.tamu && (
-                          <p className="text-xs text-emerald-600 dark:text-emerald-400 mt-1.5 font-medium">
+                          <p className="text-xs text-purple-600 dark:text-purple-400 mt-1.5 font-medium">
                             ℹ️ Menu <strong>{form.tamu}</strong>: {getAvailableMenu().slice(0, 4).join(", ")}
                             {getAvailableMenu().length > 4 ? `, dan ${getAvailableMenu().length - 4} lainnya` : ""}
                           </p>
@@ -1704,7 +1704,7 @@ export default function KonsumsiPage() {
                       </div>
 
                       <div className="md:col-span-2">
-                        <label className="block text-xs font-semibold text-emerald-700 dark:text-emerald-400 mb-1.5">
+                        <label className="block text-xs font-semibold text-purple-700 dark:text-purple-400 mb-1.5">
                           Keterangan:
                         </label>
                         <textarea 
@@ -1713,7 +1713,7 @@ export default function KonsumsiPage() {
                           onChange={(e) => setForm({ ...form, keterangan: e.target.value })}
                           placeholder="Keterangan tambahan (opsional)"
                           rows={2}
-                          className="w-full border-0 bg-white dark:bg-gray-800 dark:text-gray-200 dark:placeholder-gray-500 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-emerald-500 outline-none resize-none"
+                          className="w-full border-0 bg-white dark:bg-gray-800 dark:text-gray-200 dark:placeholder-gray-500 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-purple-500 outline-none resize-none"
                           suppressHydrationWarning
                         />
                       </div>
@@ -1721,9 +1721,9 @@ export default function KonsumsiPage() {
                   </div>
 
                   {/* Menu Section */}
-                  <div className="bg-gradient-to-br from-orange-50 to-orange-100 dark:from-orange-900/20 dark:to-orange-800/20 border border-orange-200 dark:border-orange-700 rounded-lg p-5">
+                  <div className="bg-gradient-to-br from-violet-50 to-violet-100 dark:from-violet-900/20 dark:to-violet-800/20 border border-violet-200 dark:border-violet-700 rounded-lg p-5">
                     <div className="flex justify-between items-center mb-4">
-                      <h3 className="text-sm font-bold text-orange-900 dark:text-orange-300 uppercase flex items-center gap-2">
+                      <h3 className="text-sm font-bold text-violet-900 dark:text-violet-300 uppercase flex items-center gap-2">
                         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                         </svg>
@@ -1735,7 +1735,7 @@ export default function KonsumsiPage() {
                           const baseQty = form.jumlahTamu > 0 && form.tamu ? Math.ceil(form.jumlahTamu * (tamuMultiplier[form.tamu as keyof typeof tamuMultiplier] || 1)) : 0;
                           setMenuItems([...menuItems, { id: Date.now(), jenis: '', satuan: '', qty: baseQty }]);
                         }}
-                        className="px-3 py-1.5 bg-gradient-to-r from-orange-500 to-orange-600 text-white text-xs font-semibold rounded-lg hover:from-orange-600 hover:to-orange-700 transition-all shadow-sm flex items-center gap-1.5"
+                        className="px-3 py-1.5 bg-gradient-to-r from-purple-600 to-violet-500 text-white text-xs font-semibold rounded-lg hover:from-purple-700 hover:to-violet-600 transition-all shadow-sm flex items-center gap-1.5"
                       >
                         <Plus className="w-3.5 h-3.5" />
                         Tambah Menu
@@ -1744,11 +1744,11 @@ export default function KonsumsiPage() {
 
                     {/* Info Helper */}
                     {!form.waktu && (
-                      <div className="mb-4 bg-amber-100 dark:bg-amber-900/30 border border-amber-300 dark:border-amber-700 rounded-lg p-3 flex items-start gap-2">
-                        <svg className="w-5 h-5 text-amber-600 dark:text-amber-400 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <div className="mb-4 bg-violet-100 dark:bg-violet-900/30 border border-violet-300 dark:border-violet-700 rounded-lg p-3 flex items-start gap-2">
+                        <svg className="w-5 h-5 text-violet-600 dark:text-violet-400 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                         </svg>
-                        <div className="text-xs text-amber-800 dark:text-amber-300">
+                        <div className="text-xs text-violet-800 dark:text-violet-300">
                           <p className="font-bold mb-1">⏰ Pilih waktu terlebih dahulu!</p>
                           <p>Menu yang tersedia akan disesuaikan dengan waktu kegiatan (Pagi/Siang/Sore/Malam)</p>
                         </div>
@@ -1756,11 +1756,11 @@ export default function KonsumsiPage() {
                     )}
                     
                     {form.waktu && !form.tamu && (
-                      <div className="mb-4 bg-green-100 dark:bg-green-900/30 border border-green-300 dark:border-blue-700 rounded-lg p-3 flex items-start gap-2">
-                        <svg className="w-5 h-5 text-blue-600 dark:text-blue-400 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <div className="mb-4 bg-violet-100 dark:bg-violet-900/30 border border-violet-300 dark:border-violet-700 rounded-lg p-3 flex items-start gap-2">
+                        <svg className="w-5 h-5 text-violet-600 dark:text-violet-400 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                         </svg>
-                        <div className="text-xs text-blue-800 dark:text-blue-300">
+                        <div className="text-xs text-violet-800 dark:text-violet-300">
                           <p className="font-bold mb-1">👥 Pilih tipe tamu terlebih dahulu!</p>
                           <p>Menu akan disesuaikan dengan tipe tamu:</p>
                           <ul className="mt-1 ml-4 list-disc">
@@ -1773,11 +1773,11 @@ export default function KonsumsiPage() {
                     )}
                     
                     {form.waktu && form.tamu && !form.jumlahTamu && (
-                      <div className="mb-4 bg-green-100 dark:bg-green-900/30 border border-green-300 dark:border-green-700 rounded-lg p-3 flex items-start gap-2">
-                        <svg className="w-5 h-5 text-green-600 dark:text-green-400 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <div className="mb-4 bg-purple-100 dark:bg-purple-900/30 border border-purple-300 dark:border-purple-700 rounded-lg p-3 flex items-start gap-2">
+                        <svg className="w-5 h-5 text-purple-600 dark:text-purple-400 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                         </svg>
-                        <div className="text-xs text-green-800 dark:text-green-300">
+                        <div className="text-xs text-purple-800 dark:text-purple-300">
                           <p className="font-bold mb-1">🎯 Isi jumlah tamu untuk kalkulasi otomatis!</p>
                           <p>Qty akan otomatis dihitung: Jumlah Tamu × Multiplier ({form.tamu === "Regular" ? "1x" : form.tamu === "VIP" ? "1.5x" : "2x"})</p>
                         </div>
@@ -1785,11 +1785,11 @@ export default function KonsumsiPage() {
                     )}
                     
                     {form.waktu && form.tamu && form.jumlahTamu > 0 && (
-                      <div className="mb-4 bg-emerald-100 dark:bg-emerald-900/30 border border-emerald-300 dark:border-emerald-700 rounded-lg p-3 flex items-start gap-2">
-                        <svg className="w-5 h-5 text-emerald-600 dark:text-emerald-400 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <div className="mb-4 bg-purple-100 dark:bg-purple-900/30 border border-purple-300 dark:border-purple-700 rounded-lg p-3 flex items-start gap-2">
+                        <svg className="w-5 h-5 text-purple-600 dark:text-purple-400 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                         </svg>
-                        <div className="text-xs text-emerald-800 dark:text-emerald-300">
+                        <div className="text-xs text-purple-800 dark:text-purple-300">
                           <p className="font-bold mb-1">✨ Siap menambahkan menu!</p>
                           <p>Menu tersedia untuk <strong>{form.tamu}</strong> waktu <strong>{form.waktu.split(" - ")[1]}</strong>: {getAvailableMenu().slice(0, 3).join(", ")}
                           {getAvailableMenu().length > 3 ? `, dan ${getAvailableMenu().length - 3} menu lainnya` : ""}</p>
@@ -1798,31 +1798,31 @@ export default function KonsumsiPage() {
                     )}
 
                     {menuItems.length === 0 ? (
-                      <div className="bg-white dark:bg-gray-800 rounded-lg p-8 text-center border-2 border-dashed border-orange-300 dark:border-orange-700">
-                        <p className="text-sm text-orange-600 dark:text-orange-400 font-medium">Belum ada menu ditambahkan</p>
-                        <p className="text-xs text-orange-500 dark:text-orange-500 mt-1">Klik tombol &ldquo;Tambah Menu&rdquo; untuk memulai</p>
+                      <div className="bg-white dark:bg-gray-800 rounded-lg p-6 text-center border-2 border-dashed border-violet-300 dark:border-violet-700">
+                        <p className="text-sm text-violet-600 dark:text-violet-400 font-medium">Belum ada menu ditambahkan</p>
+                        <p className="text-xs text-violet-500 dark:text-violet-500 mt-1">Klik tombol &ldquo;Tambah Menu&rdquo; untuk memulai</p>
                       </div>
                     ) : (
-                      <div className="bg-white dark:bg-gray-800 rounded-lg overflow-hidden border border-orange-200 dark:border-orange-700">
+                      <div className="bg-white dark:bg-gray-800 rounded-lg overflow-hidden border border-violet-200 dark:border-violet-700">
                         <table className="w-full">
                           <thead>
-                            <tr className="bg-gradient-to-r from-orange-500 to-orange-600 text-white text-xs uppercase">
-                              <th className="px-3 py-2.5 text-left font-bold w-12">#</th>
-                              <th className="px-3 py-2.5 text-left font-bold">Jenis Konsumsi</th>
-                              <th className="px-3 py-2.5 text-left font-bold w-32">Satuan</th>
-                              <th className="px-3 py-2.5 text-left font-bold w-24">Qty</th>
-                              <th className="px-3 py-2.5 text-center font-bold w-20">Aksi</th>
+                            <tr className="bg-gradient-to-r from-purple-600 to-violet-500 text-white text-xs uppercase">
+                              <th className="px-3 py-2 text-left font-bold w-12">#</th>
+                              <th className="px-3 py-2 text-left font-bold">Jenis Konsumsi</th>
+                              <th className="px-3 py-2 text-left font-bold w-32">Satuan</th>
+                              <th className="px-3 py-2 text-left font-bold w-24">Qty</th>
+                              <th className="px-3 py-2 text-center font-bold w-20">Aksi</th>
                             </tr>
                           </thead>
                           <tbody>
                             {menuItems.map((item, index) => (
-                              <tr key={item.id} className="border-b border-orange-100 dark:border-orange-800 hover:bg-orange-50 dark:hover:bg-gray-700 transition-colors">
-                                <td className="px-3 py-2.5">
-                                  <span className="flex items-center justify-center w-7 h-7 rounded-full bg-gradient-to-r from-orange-500 to-orange-600 text-white text-xs font-bold">
+                              <tr key={item.id} className="border-b border-violet-100 dark:border-violet-800 hover:bg-violet-50 dark:hover:bg-gray-700 transition-colors">
+                                <td className="px-3 py-2">
+                                  <span className="flex items-center justify-center w-6 h-6 rounded-full bg-gradient-to-r from-purple-600 to-violet-500 text-white text-xs font-bold">
                                     {index + 1}
                                   </span>
                                 </td>
-                                <td className="px-3 py-2.5">
+                                <td className="px-3 py-2">
                                   <select
                                     value={item.jenis}
                                     onChange={(e) => {
@@ -1831,7 +1831,7 @@ export default function KonsumsiPage() {
                                       setMenuItems(updated);
                                     }}
                                     disabled={!form.waktu || !form.tamu}
-                                    className="w-full border-0 bg-transparent dark:text-gray-200 text-sm focus:ring-2 focus:ring-orange-500 rounded px-2 py-1 outline-none disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+                                    className="w-full border-0 bg-transparent dark:text-gray-200 text-sm focus:ring-2 focus:ring-purple-500 rounded px-2 py-1 outline-none disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
                                   >
                                     <option value="">Pilih menu...</option>
                                     {!form.waktu && <option value="" disabled>Pilih waktu dulu</option>}
@@ -1841,7 +1841,7 @@ export default function KonsumsiPage() {
                                     ))}
                                   </select>
                                 </td>
-                                <td className="px-3 py-2.5">
+                                <td className="px-3 py-2">
                                   <select
                                     value={item.satuan}
                                     onChange={(e) => {
@@ -1849,7 +1849,7 @@ export default function KonsumsiPage() {
                                       updated[index].satuan = e.target.value;
                                       setMenuItems(updated);
                                     }}
-                                    className="w-full border-0 bg-transparent dark:text-gray-200 text-sm focus:ring-2 focus:ring-orange-500 rounded px-2 py-1 outline-none cursor-pointer"
+                                    className="w-full border-0 bg-transparent dark:text-gray-200 text-sm focus:ring-2 focus:ring-purple-500 rounded px-2 py-1 outline-none cursor-pointer"
                                   >
                                     <option value="">Pilih...</option>
                                     <option value="Pax">Pax</option>
@@ -1862,7 +1862,7 @@ export default function KonsumsiPage() {
                                     <option value="Pack">Pack</option>
                                   </select>
                                 </td>
-                                <td className="px-3 py-2.5">
+                                <td className="px-3 py-2">
                                   <input
                                     type="number"
                                     value={item.qty || ""}
@@ -1873,14 +1873,14 @@ export default function KonsumsiPage() {
                                     }}
                                     placeholder="0"
                                     min="0"
-                                    className="w-full border-0 bg-transparent dark:text-gray-200 dark:placeholder-gray-500 text-sm focus:ring-2 focus:ring-orange-500 rounded px-2 py-1 outline-none"
+                                    className="w-full border-0 bg-transparent dark:text-gray-200 dark:placeholder-gray-500 text-sm focus:ring-2 focus:ring-purple-500 rounded px-2 py-1 outline-none"
                                   />
                                 </td>
-                                <td className="px-3 py-2.5 text-center">
+                                <td className="px-3 py-2 text-center">
                                   <button
                                     type="button"
                                     onClick={() => setMenuItems(menuItems.filter(m => m.id !== item.id))}
-                                    className="text-red-500 hover:bg-red-50 p-1.5 rounded-lg transition-all"
+                                    className="text-violet-700 hover:bg-violet-50 p-1.5 rounded-lg transition-all"
                                     title="Hapus menu"
                                   >
                                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1908,7 +1908,7 @@ export default function KonsumsiPage() {
                   </button>
                   <button
                     type="submit"
-                    className="flex-1 px-4 py-2.5 rounded-lg text-sm font-semibold text-white bg-gradient-to-r from-green-600 to-emerald-700 hover:from-green-700 hover:to-emerald-800 transition-all shadow-md hover:shadow-lg"
+                    className="flex-1 px-4 py-2.5 rounded-lg text-sm font-semibold text-white bg-gradient-to-r from-purple-600 to-violet-500 hover:from-purple-700 hover:to-violet-600 transition-all shadow-md hover:shadow-lg"
                   >
                     {isEditMode ? "Update Order" : "Simpan Order"}
                   </button>
@@ -1923,12 +1923,12 @@ export default function KonsumsiPage() {
           {getFilteredOrders().length === 0 ? (
             <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-16 border border-gray-200 dark:border-gray-700 transition-all duration-300">
               <div className="flex flex-col items-center justify-center text-center">
-                <div className="bg-gradient-to-br from-green-100 to-emerald-100 dark:from-green-900/30 dark:to-emerald-900/30 rounded-full p-8 mb-6 transition-all duration-300">
-                  <svg className="w-20 h-20 text-green-500 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div className="bg-gradient-to-br from-purple-50 to-violet-50 dark:from-purple-900/20 dark:to-violet-900/20 rounded-full p-8 mb-6 transition-all duration-300">
+                  <svg className="w-20 h-20 text-purple-600 dark:text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                   </svg>
                 </div>
-                <h3 className="text-2xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 dark:from-green-400 dark:to-emerald-400 bg-clip-text text-transparent mb-3">
+                <h3 className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-violet-500 dark:from-purple-400 dark:to-violet-400 bg-clip-text text-transparent mb-3">
                   {searchQuery || filterStatus !== "Semua" || filterDateFrom || filterDateTo
                     ? "Tidak ada order yang sesuai filter"
                     : "Belum ada order"}
@@ -1941,7 +1941,7 @@ export default function KonsumsiPage() {
                 {!(searchQuery || filterStatus !== "Semua" || filterDateFrom || filterDateTo) && (
                   <button
                     onClick={() => setShowForm(true)}
-                    className="flex items-center gap-3 bg-gradient-to-r from-emerald-500 to-emerald-600 text-white px-8 py-4 rounded-xl font-semibold hover:from-emerald-600 hover:to-emerald-700 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105"
+                    className="flex items-center gap-3 bg-gradient-to-r from-purple-600 to-violet-500 text-white px-8 py-4 rounded-xl font-semibold hover:from-purple-700 hover:to-violet-600 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105"
                   >
                     <Plus className="w-6 h-6" />
                     <span>Tambah Order Pertama</span>
@@ -1952,7 +1952,7 @@ export default function KonsumsiPage() {
           ) : (
             <>
               {/* Header Row */}
-              <div className="bg-gradient-to-r from-green-600 via-emerald-600 to-green-600 dark:from-green-700 dark:via-emerald-700 dark:to-green-700 rounded-xl shadow-lg p-4 transition-all duration-300">
+              <div className="bg-gradient-to-r from-purple-600 via-violet-500 to-purple-700 dark:from-purple-700 dark:via-violet-600 dark:to-purple-800 rounded-xl shadow-lg p-3 transition-all duration-300">
                 <div className="grid grid-cols-12 gap-4 text-white font-bold text-sm uppercase tracking-wide">
                   <div className="col-span-3">Order</div>
                   <div className="col-span-4">Kegiatan</div>
@@ -1968,12 +1968,12 @@ export default function KonsumsiPage() {
                   key={order.id}
                   className={`bg-white dark:bg-gray-800 rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 hover:scale-[1.01] border border-gray-200 dark:border-gray-700 ${openDropdownId === order.id ? 'relative z-50' : 'relative z-0'}`}
                 >
-                  <div className="grid grid-cols-12 gap-4 p-5 items-center relative">
+                  <div className="grid grid-cols-12 gap-4 p-3.5 items-center relative">
                     {/* Order ID & Date */}
                     <div className="col-span-3">
                       <div className="flex items-center gap-2.5">
-                        <div className="bg-sky-100 dark:bg-sky-900/50 rounded-lg p-2 transition-colors duration-300">
-                          <svg className="w-4 h-4 text-sky-600 dark:text-sky-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div className="bg-purple-100 dark:bg-purple-900/50 rounded-lg p-2 transition-colors duration-300">
+                          <svg className="w-4 h-4 text-purple-600 dark:text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                           </svg>
                         </div>
@@ -1990,14 +1990,14 @@ export default function KonsumsiPage() {
                     {/* Kegiatan & Pengaju */}
                     <div className="col-span-4">
                       <div className="flex items-center gap-2.5">
-                        <div className="bg-green-100 dark:bg-green-900/50 rounded-lg p-2 transition-colors duration-300">
-                          <Building2 className="w-4 h-4 text-green-600 dark:text-green-400" />
+                        <div className="bg-violet-100 dark:bg-violet-900/50 rounded-lg p-2 transition-colors duration-300">
+                          <Building2 className="w-4 h-4 text-violet-600 dark:text-violet-400" />
                         </div>
                         <div className="flex-1 min-w-0">
                           <div className="text-sm font-bold text-gray-900 dark:text-white truncate">{order.kegiatan}</div>
                           <div className="flex items-center gap-2 mt-1">
                             <span className="text-xs text-gray-500 dark:text-gray-400">oleh</span>
-                            <span className="text-xs font-semibold text-green-600 dark:text-green-400 truncate">{order.pengaju}</span>
+                            <span className="text-xs font-semibold text-purple-700 dark:text-purple-400 truncate">{order.pengaju}</span>
                           </div>
                         </div>
                       </div>
@@ -2005,7 +2005,7 @@ export default function KonsumsiPage() {
 
                     {/* Tipe Tamu & Menu Count */}
                     <div className="col-span-2 flex items-center">
-                      <span className="text-sm font-bold text-amber-900 dark:text-amber-100 bg-amber-50 dark:bg-amber-900/50 px-3 py-1.5 rounded-lg transition-colors duration-300">
+                      <span className="text-sm font-bold text-violet-900 dark:text-violet-100 bg-violet-50 dark:bg-violet-900/50 px-3 py-1.5 rounded-lg transition-colors duration-300">
                         {order.tamu}
                       </span>
                     </div>
@@ -2015,12 +2015,12 @@ export default function KonsumsiPage() {
                       <div className="flex items-center">
                         <span className={`inline-block px-2.5 py-1 rounded-md text-xs font-medium shadow-sm whitespace-nowrap ${
                           order.status === "Pesanan dibatalkan" 
-                            ? "bg-gradient-to-r from-rose-500 to-rose-600 text-white" 
-                            : order.status === "Menunggu Persetujuan" || order.status === "Menunggu konfirmasi"
-                            ? "bg-gradient-to-r from-amber-400 to-amber-500 text-white"
+                            ? "bg-gradient-to-r from-red-500 to-red-600 text-white" 
+                            : (order.status === "Menunggu Persetujuan" || order.status === "Menunggu konfirmasi")
+                            ? "bg-gradient-to-r from-violet-500 to-violet-600 text-white"
                             : order.status === "Disetujui"
-                            ? "bg-gradient-to-r from-emerald-500 to-emerald-600 text-white"
-                            : "bg-gradient-to-r from-slate-400 to-slate-500 text-white"
+                            ? "bg-gradient-to-r from-purple-500 to-purple-600 text-white"
+                            : "bg-gradient-to-r from-purple-600 to-violet-500 text-white"
                         }`}>
                           {order.status}
                         </span>
@@ -2031,7 +2031,7 @@ export default function KonsumsiPage() {
                     <div className="col-span-1 flex items-center justify-center">
                       <div className="relative">
                         <button 
-                          className="p-2 rounded-lg bg-gradient-to-r from-green-500 to-green-600 text-white hover:from-green-600 hover:to-emerald-700 transition-all duration-300 shadow-md hover:shadow-lg group transform hover:scale-110"
+                          className="p-2 rounded-lg bg-gradient-to-r from-purple-600 to-violet-500 text-white hover:from-purple-700 hover:to-violet-600 transition-all duration-300 shadow-md hover:shadow-lg group transform hover:scale-110"
                           onClick={() => setOpenDropdownId(openDropdownId === order.id ? null : order.id)}
                           suppressHydrationWarning
                           title="Menu Aksi"
@@ -2052,7 +2052,7 @@ export default function KonsumsiPage() {
                             <div className="absolute right-0 top-full mt-2 w-52 bg-white dark:bg-gray-800 rounded-lg shadow-xl border border-gray-200 dark:border-gray-700 py-1.5 z-50 animate-in fade-in slide-in-from-top-2 duration-300">
                             {/* Detail */}
                             <button
-                              className="w-full px-4 py-2.5 text-left text-sm text-gray-700 dark:text-gray-300 hover:bg-green-50 dark:hover:bg-green-900/50 hover:text-green-700 dark:hover:text-green-300 transition-all duration-300 flex items-center gap-3"
+                              className="w-full px-4 py-2.5 text-left text-sm text-gray-700 dark:text-gray-300 hover:bg-purple-50 dark:hover:bg-purple-900/50 hover:text-purple-700 dark:hover:text-purple-300 transition-all duration-300 flex items-center gap-3"
                               onClick={() => {
                                 setSelectedOrder(order);
                                 setShowDetailModal(true);
@@ -2066,7 +2066,7 @@ export default function KonsumsiPage() {
                             {/* Edit - only show if status is pending */}
                             {(order.status === "Menunggu Persetujuan" || order.status === "Menunggu konfirmasi") && (
                               <button
-                                className="w-full px-4 py-2.5 text-left text-sm text-gray-700 dark:text-gray-300 hover:bg-sky-50 dark:hover:bg-sky-900/50 hover:text-sky-700 dark:hover:text-sky-300 transition-all duration-300 flex items-center gap-3"
+                                className="w-full px-4 py-2.5 text-left text-sm text-gray-700 dark:text-gray-300 hover:bg-violet-50 dark:hover:bg-violet-900/50 hover:text-violet-700 dark:hover:text-violet-300 transition-all duration-300 flex items-center gap-3"
                                 onClick={() => {
                                   handleEditOrder(order);
                                   setOpenDropdownId(null);
@@ -2082,7 +2082,7 @@ export default function KonsumsiPage() {
                             {/* Batalkan - only show if status is pending */}
                             {(order.status === "Menunggu Persetujuan" || order.status === "Menunggu konfirmasi") && (
                               <button
-                                className="w-full px-4 py-2.5 text-left text-sm text-gray-700 dark:text-gray-300 hover:bg-rose-50 dark:hover:bg-rose-900/50 hover:text-rose-700 dark:hover:text-rose-300 transition-all duration-300 flex items-center gap-3 border-t border-gray-100 dark:border-gray-700"
+                                className="w-full px-4 py-2.5 text-left text-sm text-gray-700 dark:text-gray-300 hover:bg-violet-100 dark:hover:bg-violet-900/50 hover:text-violet-800 dark:hover:text-violet-300 transition-all duration-300 flex items-center gap-3 border-t border-gray-100 dark:border-gray-700"
                                 onClick={() => {
                                   setOrderToCancel(order.id);
                                   setShowCancelConfirm(true);
@@ -2110,7 +2110,7 @@ export default function KonsumsiPage() {
         {/* Pagination */}
         {getFilteredOrders().length > 0 && (
           <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden border border-gray-200 dark:border-gray-700 mt-4 transition-all duration-300">
-            <div className="flex items-center justify-between px-6 py-4 bg-gradient-to-r from-green-600 via-emerald-600 to-green-600 dark:from-green-700 dark:via-emerald-700 dark:to-green-700">
+            <div className="flex items-center justify-between px-6 py-4 bg-gradient-to-r from-purple-600 via-violet-500 to-purple-700 dark:from-purple-700 dark:via-violet-600 dark:to-purple-800">
               <div className="text-sm text-white font-medium">
                 Menampilkan <span className="font-bold">{((currentPage - 1) * itemsPerPage) + 1}-{Math.min(currentPage * itemsPerPage, getFilteredOrders().length)}</span> dari <span className="font-bold">{getFilteredOrders().length}</span> data
               </div>
@@ -2119,7 +2119,7 @@ export default function KonsumsiPage() {
                 <button 
                   onClick={() => handlePageChange(currentPage - 1)}
                   disabled={currentPage === 1}
-                  className={`px-3.5 py-2 rounded-lg transition-all duration-300 shadow-sm hover:shadow-md ${
+                  className={`px-3 py-1.5 rounded-lg transition-all duration-300 shadow-sm hover:shadow-md ${
                     currentPage === 1 
                       ? 'bg-white/10 text-white/50 cursor-not-allowed' 
                       : 'bg-white/20 hover:bg-white/30 text-white transform hover:scale-105'
@@ -2143,9 +2143,9 @@ export default function KonsumsiPage() {
                       <button
                         key={pageNum}
                         onClick={() => handlePageChange(pageNum)}
-                        className={`px-4 py-2 rounded-lg font-semibold transition-all ${
+                        className={`px-3.5 py-1.5 rounded-lg font-semibold transition-all ${
                           currentPage === pageNum
-                            ? 'bg-white text-green-600 shadow-md hover:shadow-lg'
+                            ? 'bg-white text-purple-700 shadow-md hover:shadow-lg'
                             : 'bg-white/20 hover:bg-white/30 text-white'
                         }`}
                         suppressHydrationWarning
@@ -2170,7 +2170,7 @@ export default function KonsumsiPage() {
                 <button
                   onClick={() => handlePageChange(currentPage + 1)}
                   disabled={currentPage === totalPages}
-                  className={`px-3.5 py-2 rounded-lg transition-all duration-300 shadow-sm hover:shadow-md ${
+                  className={`px-3 py-1.5 rounded-lg transition-all duration-300 shadow-sm hover:shadow-md ${
                     currentPage === totalPages
                       ? 'bg-white/10 text-white/50 cursor-not-allowed'
                       : 'bg-white/20 hover:bg-white/30 text-white transform hover:scale-105'
@@ -2191,10 +2191,10 @@ export default function KonsumsiPage() {
           <div className="fixed bottom-6 right-6 z-50 animate-in slide-in-from-bottom-5 duration-300">
             <div className={`flex items-center gap-3 px-6 py-4 rounded-xl shadow-2xl min-w-[320px] ${
               toastType === "success" 
-                ? "bg-gradient-to-r from-emerald-500 to-emerald-600" 
+                ? "bg-gradient-to-r from-purple-600 to-violet-500" 
                 : toastType === "error"
-                ? "bg-gradient-to-r from-rose-500 to-rose-600"
-                : "bg-gradient-to-r from-green-500 to-green-600"
+                ? "bg-gradient-to-r from-violet-600 to-violet-700"
+                : "bg-gradient-to-r from-purple-600 to-violet-500"
             } text-white`}>
               <div className="flex-shrink-0">
                 {toastType === "success" && (
@@ -2229,3 +2229,10 @@ export default function KonsumsiPage() {
     </div>
   );
 }
+
+
+
+
+
+
+

@@ -75,6 +75,7 @@ export const AnimatedThemeToggler = ({
     <button
       ref={buttonRef}
       onClick={toggleTheme}
+      suppressHydrationWarning
       className={cn(className)}
       {...props}
     >

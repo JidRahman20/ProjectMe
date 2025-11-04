@@ -36,7 +36,7 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen flex">
       {/* Left Side - Background with Overlay Content */}
-      <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-slate-900 via-green-900 to-slate-900 relative overflow-hidden">
+  <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-slate-900 via-green-900 to-slate-900 relative overflow-hidden">
         {/* Geometric Pattern Overlay */}
         <div className="absolute inset-0 opacity-10">
           <div className="absolute inset-0" style={{
@@ -84,7 +84,7 @@ export default function LoginPage() {
 
           {/* Error Message */}
           {error && (
-            <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-800 dark:text-red-300 px-4 py-3 rounded-lg text-sm">
+            <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 text-yellow-900 dark:text-yellow-300 px-4 py-3 rounded-lg text-sm">
               {error}
             </div>
           )}

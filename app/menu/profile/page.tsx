@@ -16,7 +16,7 @@ export default function ProfilePage() {
     <ProtectedRoute>
       <div className="space-y-6">
         {/* Header */}
-        <div className="bg-gradient-to-r from-green-600 to-emerald-600 dark:from-green-700 dark:to-emerald-700 rounded-xl p-6 text-white shadow-lg">
+  <div className="bg-gradient-to-r from-green-600 to-yellow-500 dark:from-green-700 dark:to-yellow-600 rounded-xl p-6 text-white shadow-lg">
           <h1 className="text-3xl font-bold mb-2">Profile Saya</h1>
           <p className="text-green-100">Kelola informasi profil Anda</p>
         </div>
@@ -24,7 +24,7 @@ export default function ProfilePage() {
         {/* Profile Card */}
         <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
           {/* Cover Image */}
-          <div className="h-32 bg-gradient-to-r from-green-500 to-emerald-600"></div>
+          <div className="h-32 bg-gradient-to-r from-green-600 to-yellow-500"></div>
           
           {/* Profile Info */}
           <div className="px-6 pb-6">
@@ -87,8 +87,8 @@ export default function ProfilePage() {
                   </div>
 
                   <div className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
-                    <div className="w-10 h-10 rounded-lg bg-emerald-100 dark:bg-emerald-900 flex items-center justify-center">
-                      <Building className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
+                    <div className="w-10 h-10 rounded-lg bg-green-100 dark:bg-green-900 flex items-center justify-center">
+                      <Building className="w-5 h-5 text-green-600 dark:text-green-400" />
                     </div>
                     <div className="flex-1">
                       <p className="text-xs text-gray-500 dark:text-gray-400">Role</p>
@@ -107,8 +107,8 @@ export default function ProfilePage() {
                 
                 <div className="space-y-3">
                   <div className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
-                    <div className="w-10 h-10 rounded-lg bg-red-100 dark:bg-red-900 flex items-center justify-center">
-                      <Mail className="w-5 h-5 text-red-600 dark:text-red-400" />
+                    <div className="w-10 h-10 rounded-lg bg-yellow-100 dark:bg-yellow-900 flex items-center justify-center">
+                      <Mail className="w-5 h-5 text-yellow-700 dark:text-yellow-400" />
                     </div>
                     <div className="flex-1">
                       <p className="text-xs text-gray-500 dark:text-gray-400">Email</p>
@@ -117,8 +117,8 @@ export default function ProfilePage() {
                   </div>
 
                   <div className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
-                    <div className="w-10 h-10 rounded-lg bg-orange-100 dark:bg-orange-900 flex items-center justify-center">
-                      <Phone className="w-5 h-5 text-orange-600 dark:text-orange-400" />
+                    <div className="w-10 h-10 rounded-lg bg-yellow-100 dark:bg-yellow-900 flex items-center justify-center">
+                      <Phone className="w-5 h-5 text-yellow-700 dark:text-yellow-400" />
                     </div>
                     <div className="flex-1">
                       <p className="text-xs text-gray-500 dark:text-gray-400">Phone</p>
@@ -127,8 +127,8 @@ export default function ProfilePage() {
                   </div>
 
                   <div className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
-                    <div className="w-10 h-10 rounded-lg bg-teal-100 dark:bg-teal-900 flex items-center justify-center">
-                      <MapPin className="w-5 h-5 text-teal-600 dark:text-teal-400" />
+                    <div className="w-10 h-10 rounded-lg bg-green-100 dark:bg-green-900 flex items-center justify-center">
+                      <MapPin className="w-5 h-5 text-green-600 dark:text-green-400" />
                     </div>
                     <div className="flex-1">
                       <p className="text-xs text-gray-500 dark:text-gray-400">Location</p>
@@ -147,17 +147,17 @@ export default function ProfilePage() {
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div className="p-4 rounded-lg bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800">
-                  <p className="text-xs text-green-600 dark:text-green-400 mb-1">Bergabung Sejak</p>
+                  <p className="text-xs text-green-700 dark:text-green-400 mb-1">Bergabung Sejak</p>
                   <p className="text-lg font-bold text-green-800 dark:text-green-300">
                     {new Date().toLocaleDateString("id-ID", { month: "short", year: "numeric" })}
                   </p>
                 </div>
-                <div className="p-4 rounded-lg bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800">
-                  <p className="text-xs text-emerald-600 dark:text-emerald-400 mb-1">Login Terakhir</p>
-                  <p className="text-lg font-bold text-emerald-800 dark:text-emerald-300">Hari ini</p>
+                <div className="p-4 rounded-lg bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800">
+                  <p className="text-xs text-green-600 dark:text-green-400 mb-1">Login Terakhir</p>
+                  <p className="text-lg font-bold text-green-800 dark:text-green-300">Hari ini</p>
                 </div>
                 <div className="p-4 rounded-lg bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800">
-                  <p className="text-xs text-yellow-600 dark:text-yellow-400 mb-1">Status</p>
+                  <p className="text-xs text-yellow-700 dark:text-yellow-400 mb-1">Status</p>
                   <p className="text-lg font-bold text-yellow-800 dark:text-yellow-300">Active</p>
                 </div>
               </div>
@@ -165,7 +165,7 @@ export default function ProfilePage() {
 
             {/* Action Buttons */}
             <div className="mt-6 flex gap-3">
-              <button className="flex-1 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors font-medium">
+              <button className="flex-1 px-4 py-2 bg-gradient-to-r from-green-600 to-yellow-500 hover:from-green-700 hover:to-yellow-600 text-white rounded-lg transition-colors font-medium">
                 Edit Profile
               </button>
               <button className="px-4 py-2 border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg transition-colors font-medium">

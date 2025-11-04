@@ -21,46 +21,46 @@ export default function Home() {
       title: "Total Karyawan",
       value: "1,234",
       icon: Users,
-      color: "bg-green-500",
+  color: "bg-green-600",
       change: "+12%",
     },
     {
       title: "Dokumen Aktif",
       value: "856",
       icon: FileText,
-      color: "bg-yellow-500",
+      color: "bg-green-500",
       change: "+8%",
     },
     {
       title: "Absensi Hari Ini",
       value: "98%",
       icon: Calendar,
-      color: "bg-green-600",
+  color: "bg-yellow-500",
       change: "+2%",
     },
     {
       title: "Performa",
       value: "94.5%",
       icon: TrendingUp,
-      color: "bg-lime-500",
+  color: "bg-yellow-600",
       change: "+5%",
     },
   ];
 
   const quickAccess = [
-    { name: "Absen", icon: Clock, href: "/menu/absen", color: "text-green-600 dark:text-green-400" },
-    { name: "Konsumsi", icon: Activity, href: "/menu/konsumsi", color: "text-yellow-600 dark:text-yellow-400" },
-    { name: "Dokumenku", icon: FileText, href: "/menu/dokumenku", color: "text-green-700 dark:text-green-500" },
-    { name: "Library", icon: BookOpen, href: "/menu/library", color: "text-lime-600 dark:text-lime-400" },
-    { name: "Employee", icon: Users, href: "/menu/employee", color: "text-emerald-600 dark:text-emerald-400" },
-    { name: "Work Area", icon: Briefcase, href: "/menu/work-area", color: "text-teal-600 dark:text-teal-400" },
+  { name: "Absen", icon: Clock, href: "/menu/absen", color: "text-green-700 dark:text-green-400" },
+    { name: "Konsumsi", icon: Activity, href: "/menu/konsumsi", color: "text-green-600 dark:text-green-400" },
+  { name: "Dokumenku", icon: FileText, href: "/menu/dokumenku", color: "text-yellow-600 dark:text-yellow-400" },
+  { name: "Library", icon: BookOpen, href: "/menu/library", color: "text-yellow-600 dark:text-yellow-400" },
+  { name: "Employee", icon: Users, href: "/menu/employee", color: "text-green-700 dark:text-green-400" },
+  { name: "Work Area", icon: Briefcase, href: "/menu/work-area", color: "text-green-700 dark:text-green-400" },
   ];
 
   return (
     <ProtectedRoute>
       <div className="space-y-6">
         {/* Welcome Section */}
-        <div className="bg-gradient-to-r from-green-600 to-emerald-600 dark:from-green-700 dark:to-emerald-700 rounded-xl p-6 text-white shadow-lg">
+  <div className="bg-gradient-to-r from-green-600 to-yellow-500 dark:from-green-700 dark:to-yellow-600 rounded-xl p-6 text-white shadow-lg">
           <h1 className="text-3xl font-bold mb-2">
             Selamat Datang, {user?.name}! 👋
           </h1>

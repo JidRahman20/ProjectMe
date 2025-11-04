@@ -56,7 +56,7 @@ export function Navbar() {
               suppressHydrationWarning
             >
               <Bell className="w-5 h-5" />
-              <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
+              <span className="absolute top-1 right-1 w-2 h-2 bg-yellow-500 rounded-full"></span>
             </button>
 
             {/* Profile Picture with Dropdown */}
@@ -92,7 +92,7 @@ export function Navbar() {
                       <div className="px-4 py-3 border-b border-gray-100 dark:border-gray-700">
                         <p className="text-sm font-semibold text-gray-900 dark:text-white">{user.name}</p>
                         <p className="text-xs text-gray-500 dark:text-gray-400 truncate">{user.email}</p>
-                        <span className="inline-block mt-1 px-2 py-0.5 text-xs font-medium bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 rounded">
+                        <span className="inline-block mt-1 px-2 py-0.5 text-xs font-medium bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-200 rounded">
                           {user.role}
                         </span>
                       </div>
@@ -131,7 +131,7 @@ export function Navbar() {
 
                     {/* Logout */}
                     <button
-                      className="w-full px-4 py-2.5 text-left text-sm text-gray-700 dark:text-gray-300 hover:bg-rose-50 dark:hover:bg-rose-900/50 hover:text-rose-700 dark:hover:text-rose-300 transition-all duration-300 flex items-center gap-3"
+                      className="w-full px-4 py-2.5 text-left text-sm text-gray-700 dark:text-gray-300 hover:bg-yellow-50 dark:hover:bg-yellow-900/50 hover:text-yellow-700 dark:hover:text-yellow-300 transition-all duration-300 flex items-center gap-3"
                       onClick={() => {
                         logout()
                         setShowProfileMenu(false)

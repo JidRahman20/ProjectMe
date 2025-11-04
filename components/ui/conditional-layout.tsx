@@ -5,6 +5,7 @@ import { Sidebar } from "@/components/ui/sidebar";
 import { Navbar } from "@/components/ui/navbar";
 import { MainContent } from "@/components/ui/main-content";
 import { SidebarProvider } from "@/context/sidebar-context";
+import { ScrollbarActivity } from "@/components/ui/scrollbar-activity";
 
 export function ConditionalLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -22,6 +23,7 @@ export function ConditionalLayout({ children }: { children: React.ReactNode }) {
   return (
     <SidebarProvider>
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+        <ScrollbarActivity />
         <Navbar />
         <Sidebar />
         <MainContent>{children}</MainContent>
