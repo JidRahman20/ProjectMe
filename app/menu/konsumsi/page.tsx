@@ -1,6 +1,6 @@
 "use client";
 import React, { useState } from "react";
-import { Calendar, Plus, Eye, Building2 } from "lucide-react";
+import { Calendar, Plus, Eye } from "lucide-react";
 
 interface Order {
   id: string;
@@ -815,6 +815,11 @@ export default function KonsumsiPage() {
 
   // Calculate total pages
   const totalPages = Math.ceil(getFilteredOrders().length / itemsPerPage);
+  
+  // Calculate display range
+  const totalFilteredItems = getFilteredOrders().length;
+  const startItem = totalFilteredItems === 0 ? 0 : ((currentPage - 1) * itemsPerPage) + 1;
+  const endItem = Math.min(currentPage * itemsPerPage, totalFilteredItems);
 
   // Handle page change
   const handlePageChange = (pageNumber: number) => {
@@ -1919,7 +1924,7 @@ export default function KonsumsiPage() {
         )}
 
         {/* Orders Grid */}
-        <div className="space-y-4">
+        <div className="space-y-4 mb-40">
           {getFilteredOrders().length === 0 ? (
             <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-16 border border-gray-200 dark:border-gray-700 transition-all duration-300">
               <div className="flex flex-col items-center justify-center text-center">
@@ -1950,11 +1955,11 @@ export default function KonsumsiPage() {
               </div>
             </div>
           ) : (
-            <>
-              {/* Header Row */}
-              <div className="bg-gradient-to-r from-purple-600 via-violet-500 to-purple-700 dark:from-purple-700 dark:via-violet-600 dark:to-purple-800 rounded-xl shadow-lg p-3 transition-all duration-300">
-                <div className="grid grid-cols-12 gap-4 text-white font-bold text-sm uppercase tracking-wide">
-                  <div className="col-span-3">Order</div>
+            <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 overflow-visible pb-2">
+              {/* Table Header */}
+              <div className="bg-gradient-to-r from-purple-600 to-violet-500 dark:from-purple-700 dark:to-violet-600 px-6 py-4 rounded-t-2xl">
+                <div className="grid grid-cols-12 gap-4 text-white text-sm font-semibold uppercase tracking-wide">
+                  <div className="col-span-3">Order ID</div>
                   <div className="col-span-4">Kegiatan</div>
                   <div className="col-span-2">Tipe Tamu</div>
                   <div className="col-span-2">Status</div>
@@ -1962,229 +1967,219 @@ export default function KonsumsiPage() {
                 </div>
               </div>
 
-              {/* Order Cards */}
-              {getPaginatedOrders().map((order) => (
-                <div 
-                  key={order.id}
-                  className={`bg-white dark:bg-gray-800 rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 hover:scale-[1.01] border border-gray-200 dark:border-gray-700 ${openDropdownId === order.id ? 'relative z-50' : 'relative z-0'}`}
-                >
-                  <div className="grid grid-cols-12 gap-4 p-3.5 items-center relative">
-                    {/* Order ID & Date */}
-                    <div className="col-span-3">
-                      <div className="flex items-center gap-2.5">
-                        <div className="bg-purple-100 dark:bg-purple-900/50 rounded-lg p-2 transition-colors duration-300">
-                          <svg className="w-4 h-4 text-purple-600 dark:text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                          </svg>
-                        </div>
-                        <div>
-                          <div className="text-sm font-bold text-gray-900 dark:text-white">{order.id}</div>
-                          <div className="flex items-center gap-1.5 mt-1 text-xs text-gray-600 dark:text-gray-400">
+              {/* Table Body */}
+              <div className="divide-y divide-gray-200 dark:divide-gray-700">
+                {getPaginatedOrders().map((order) => {
+                  return (
+                    <div 
+                      key={order.id}
+                      className={`hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors duration-200 ${openDropdownId === order.id ? 'bg-gray-50 dark:bg-gray-700/50 z-50' : 'z-0'} relative`}
+                    >
+                    <div className="px-6 py-4">
+                      <div className="grid grid-cols-12 gap-4 items-center">
+                        {/* Order ID & Date */}
+                        <div className="col-span-3">
+                          <div className="font-semibold text-gray-900 dark:text-white text-sm mb-1">
+                            {order.id}
+                          </div>
+                          <div className="flex items-center gap-1.5 text-xs text-gray-500 dark:text-gray-400">
                             <Calendar className="w-3.5 h-3.5" />
                             <span>{order.tanggalPengiriman}</span>
                           </div>
                         </div>
-                      </div>
-                    </div>
 
-                    {/* Kegiatan & Pengaju */}
-                    <div className="col-span-4">
-                      <div className="flex items-center gap-2.5">
-                        <div className="bg-violet-100 dark:bg-violet-900/50 rounded-lg p-2 transition-colors duration-300">
-                          <Building2 className="w-4 h-4 text-violet-600 dark:text-violet-400" />
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <div className="text-sm font-bold text-gray-900 dark:text-white truncate">{order.kegiatan}</div>
-                          <div className="flex items-center gap-2 mt-1">
-                            <span className="text-xs text-gray-500 dark:text-gray-400">oleh</span>
-                            <span className="text-xs font-semibold text-purple-700 dark:text-purple-400 truncate">{order.pengaju}</span>
+                        {/* Kegiatan & Pengaju */}
+                        <div className="col-span-4">
+                          <div className="font-semibold text-gray-900 dark:text-white text-sm mb-1">
+                            {order.kegiatan}
+                          </div>
+                          <div className="flex items-center gap-1.5 text-xs text-gray-500 dark:text-gray-400">
+                            <span>oleh</span>
+                            <span className="font-medium text-purple-600 dark:text-purple-400">
+                              {order.pengaju}
+                            </span>
                           </div>
                         </div>
-                      </div>
-                    </div>
 
-                    {/* Tipe Tamu & Menu Count */}
-                    <div className="col-span-2 flex items-center">
-                      <span className="text-sm font-bold text-violet-900 dark:text-violet-100 bg-violet-50 dark:bg-violet-900/50 px-3 py-1.5 rounded-lg transition-colors duration-300">
-                        {order.tamu}
-                      </span>
-                    </div>
+                        {/* Tipe Tamu */}
+                        <div className="col-span-2">
+                          <span className="inline-flex items-center text-xs font-semibold text-purple-700 dark:text-purple-300 bg-purple-50 dark:bg-purple-900/30 px-3 py-1.5 rounded-full">
+                            {order.tamu}
+                          </span>
+                        </div>
 
-                    {/* Status */}
-                    <div className="col-span-2">
-                      <div className="flex items-center">
-                        <span className={`inline-block px-2.5 py-1 rounded-md text-xs font-medium shadow-sm whitespace-nowrap ${
-                          order.status === "Pesanan dibatalkan" 
-                            ? "bg-gradient-to-r from-red-500 to-red-600 text-white" 
-                            : (order.status === "Menunggu Persetujuan" || order.status === "Menunggu konfirmasi")
-                            ? "bg-gradient-to-r from-violet-500 to-violet-600 text-white"
-                            : order.status === "Disetujui"
-                            ? "bg-gradient-to-r from-purple-500 to-purple-600 text-white"
-                            : "bg-gradient-to-r from-purple-600 to-violet-500 text-white"
-                        }`}>
-                          {order.status}
-                        </span>
-                      </div>
-                    </div>
+                        {/* Status */}
+                        <div className="col-span-2">
+                          <span className={`inline-flex items-center px-3 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap ${
+                            order.status === "Pesanan dibatalkan" 
+                              ? "bg-red-600 text-white" 
+                              : (order.status === "Menunggu Persetujuan" || order.status === "Menunggu konfirmasi")
+                              ? "bg-amber-500 text-white"
+                              : order.status === "Disetujui"
+                              ? "bg-green-600 text-white"
+                              : "bg-gray-500 text-white"
+                          }`}>
+                            {order.status}
+                          </span>
+                        </div>
 
-                    {/* Actions */}
-                    <div className="col-span-1 flex items-center justify-center">
-                      <div className="relative">
-                        <button 
-                          className="p-2 rounded-lg bg-gradient-to-r from-purple-600 to-violet-500 text-white hover:from-purple-700 hover:to-violet-600 transition-all duration-300 shadow-md hover:shadow-lg group transform hover:scale-110"
-                          onClick={() => setOpenDropdownId(openDropdownId === order.id ? null : order.id)}
-                          suppressHydrationWarning
-                          title="Menu Aksi"
-                        >
-                          <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-                            <path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/>
-                          </svg>
-                        </button>
-
-                        {/* Dropdown Menu */}
-                        {openDropdownId === order.id && (
-                          <>
-                            {/* Backdrop to close dropdown when clicking outside */}
-                            <div 
-                              className="fixed inset-0 z-40" 
-                              onClick={() => setOpenDropdownId(null)}
-                            />
-                            <div className="absolute right-0 top-full mt-2 w-52 bg-white dark:bg-gray-800 rounded-lg shadow-xl border border-gray-200 dark:border-gray-700 py-1.5 z-50 animate-in fade-in slide-in-from-top-2 duration-300">
-                            {/* Detail */}
-                            <button
-                              className="w-full px-4 py-2.5 text-left text-sm text-gray-700 dark:text-gray-300 hover:bg-purple-50 dark:hover:bg-purple-900/50 hover:text-purple-700 dark:hover:text-purple-300 transition-all duration-300 flex items-center gap-3"
-                              onClick={() => {
-                                setSelectedOrder(order);
-                                setShowDetailModal(true);
-                                setOpenDropdownId(null);
-                              }}
+                        {/* Actions */}
+                        <div className="col-span-1 flex justify-center">
+                          <div className="relative group">
+                            <button 
+                              className="p-2 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 transition-all duration-200"
+                              onClick={() => setOpenDropdownId(openDropdownId === order.id ? null : order.id)}
+                              suppressHydrationWarning
+                              title="Menu Aksi"
                             >
-                              <Eye className="w-4 h-4" />
-                              <span className="font-medium">Detail Order</span>
+                              <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/>
+                              </svg>
                             </button>
 
-                            {/* Edit - only show if status is pending */}
-                            {(order.status === "Menunggu Persetujuan" || order.status === "Menunggu konfirmasi") && (
-                              <button
-                                className="w-full px-4 py-2.5 text-left text-sm text-gray-700 dark:text-gray-300 hover:bg-violet-50 dark:hover:bg-violet-900/50 hover:text-violet-700 dark:hover:text-violet-300 transition-all duration-300 flex items-center gap-3"
-                                onClick={() => {
-                                  handleEditOrder(order);
-                                  setOpenDropdownId(null);
-                                }}
-                              >
-                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                                </svg>
-                                <span className="font-medium">Edit Order</span>
-                              </button>
-                            )}
+                            {/* Dropdown Menu */}
+                            {openDropdownId === order.id && (
+                              <>
+                                {/* Backdrop to close dropdown when clicking outside */}
+                                <div 
+                                  className="fixed inset-0 z-[100]" 
+                                  onClick={() => setOpenDropdownId(null)}
+                                />
+                                <div className="absolute right-0 top-full mt-2 w-52 bg-white dark:bg-gray-800 rounded-lg shadow-xl border border-gray-200 dark:border-gray-700 py-1.5 z-[110] animate-in fade-in slide-in-from-top-2 duration-200">
+                                  {/* Detail */}
+                                  <button
+                                    className="w-full px-4 py-2.5 text-left text-sm text-gray-700 dark:text-gray-300 hover:bg-purple-50 dark:hover:bg-purple-900/50 hover:text-purple-700 dark:hover:text-purple-300 transition-all duration-300 flex items-center gap-3"
+                                    onClick={() => {
+                                      setSelectedOrder(order);
+                                      setShowDetailModal(true);
+                                      setOpenDropdownId(null);
+                                    }}
+                                  >
+                                    <Eye className="w-4 h-4" />
+                                    <span className="font-medium">Detail Order</span>
+                                  </button>
 
-                            {/* Batalkan - only show if status is pending */}
-                            {(order.status === "Menunggu Persetujuan" || order.status === "Menunggu konfirmasi") && (
-                              <button
-                                className="w-full px-4 py-2.5 text-left text-sm text-gray-700 dark:text-gray-300 hover:bg-violet-100 dark:hover:bg-violet-900/50 hover:text-violet-800 dark:hover:text-violet-300 transition-all duration-300 flex items-center gap-3 border-t border-gray-100 dark:border-gray-700"
-                                onClick={() => {
-                                  setOrderToCancel(order.id);
-                                  setShowCancelConfirm(true);
-                                  setOpenDropdownId(null);
-                                }}
-                              >
-                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                                </svg>
-                                <span className="font-medium">Batalkan Order</span>
-                              </button>
+                                  {/* Edit - only show if status is pending */}
+                                  {(order.status === "Menunggu Persetujuan" || order.status === "Menunggu konfirmasi") && (
+                                    <button
+                                      className="w-full px-4 py-2.5 text-left text-sm text-gray-700 dark:text-gray-300 hover:bg-violet-50 dark:hover:bg-violet-900/50 hover:text-violet-700 dark:hover:text-violet-300 transition-all duration-300 flex items-center gap-3"
+                                      onClick={() => {
+                                        handleEditOrder(order);
+                                        setOpenDropdownId(null);
+                                      }}
+                                    >
+                                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                      </svg>
+                                      <span className="font-medium">Edit Order</span>
+                                    </button>
+                                  )}
+
+                                  {/* Batalkan - only show if status is pending */}
+                                  {(order.status === "Menunggu Persetujuan" || order.status === "Menunggu konfirmasi") && (
+                                    <button
+                                      className="w-full px-4 py-2.5 text-left text-sm text-gray-700 dark:text-gray-300 hover:bg-red-50 dark:hover:bg-red-900/20 hover:text-red-700 dark:hover:text-red-400 transition-all duration-300 flex items-center gap-3 border-t border-gray-100 dark:border-gray-700"
+                                      onClick={() => {
+                                        setOrderToCancel(order.id);
+                                        setShowCancelConfirm(true);
+                                        setOpenDropdownId(null);
+                                      }}
+                                    >
+                                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                                      </svg>
+                                      <span className="font-medium">Batalkan Order</span>
+                                    </button>
+                                  )}
+                                </div>
+                              </>
                             )}
                           </div>
-                        </>
-                      )}
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
-              ))}
-            </>
-          )}
-        </div>
-
-        {/* Pagination */}
-        {getFilteredOrders().length > 0 && (
-          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden border border-gray-200 dark:border-gray-700 mt-4 transition-all duration-300">
-            <div className="flex items-center justify-between px-6 py-4 bg-gradient-to-r from-purple-600 via-violet-500 to-purple-700 dark:from-purple-700 dark:via-violet-600 dark:to-purple-800">
-              <div className="text-sm text-white font-medium">
-                Menampilkan <span className="font-bold">{((currentPage - 1) * itemsPerPage) + 1}-{Math.min(currentPage * itemsPerPage, getFilteredOrders().length)}</span> dari <span className="font-bold">{getFilteredOrders().length}</span> data
+                );
+              })}
               </div>
-              <div className="flex items-center gap-2">
-                {/* Previous Button */}
-                <button 
-                  onClick={() => handlePageChange(currentPage - 1)}
-                  disabled={currentPage === 1}
-                  className={`px-3 py-1.5 rounded-lg transition-all duration-300 shadow-sm hover:shadow-md ${
-                    currentPage === 1 
-                      ? 'bg-white/10 text-white/50 cursor-not-allowed' 
-                      : 'bg-white/20 hover:bg-white/30 text-white transform hover:scale-105'
-                  }`}
-                  suppressHydrationWarning
-                >
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                  </svg>
-                </button>
+              
+              {/* Pagination */}
+              <div className="flex items-center justify-between px-6 py-4 border-t border-gray-200 dark:border-gray-700">
+                <div className="text-sm text-gray-600 dark:text-gray-400 font-medium">
+                  Menampilkan <span className="font-bold text-gray-900 dark:text-white">{startItem}-{endItem}</span> dari <span className="font-bold text-gray-900 dark:text-white">{totalFilteredItems}</span> data
+                </div>
+                <div className="flex items-center gap-2">
+                  {/* Previous Button */}
+                  <button 
+                    onClick={() => handlePageChange(currentPage - 1)}
+                    disabled={currentPage === 1}
+                    className={`px-3 py-2 rounded-lg transition-all duration-200 ${
+                      currentPage === 1 
+                        ? 'bg-gray-100 dark:bg-gray-800 text-gray-400 dark:text-gray-600 cursor-not-allowed' 
+                        : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 shadow-sm border border-gray-200 dark:border-gray-700'
+                    }`}
+                    suppressHydrationWarning
+                  >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                    </svg>
+                  </button>
 
-                {/* Page Numbers */}
-                {Array.from({ length: totalPages }, (_, i) => i + 1).map((pageNum) => {
-                  // Show first page, last page, current page, and pages around current
-                  if (
-                    pageNum === 1 ||
-                    pageNum === totalPages ||
-                    (pageNum >= currentPage - 1 && pageNum <= currentPage + 1)
-                  ) {
-                    return (
-                      <button
-                        key={pageNum}
-                        onClick={() => handlePageChange(pageNum)}
-                        className={`px-3.5 py-1.5 rounded-lg font-semibold transition-all ${
-                          currentPage === pageNum
-                            ? 'bg-white text-purple-700 shadow-md hover:shadow-lg'
-                            : 'bg-white/20 hover:bg-white/30 text-white'
-                        }`}
-                        suppressHydrationWarning
-                      >
-                        {pageNum}
-                      </button>
-                    );
-                  } else if (
-                    pageNum === currentPage - 2 ||
-                    pageNum === currentPage + 2
-                  ) {
-                    return (
-                      <span key={pageNum} className="text-white px-2">
-                        ...
-                      </span>
-                    );
-                  }
-                  return null;
-                })}
+                  {/* Page Numbers */}
+                  {Array.from({ length: totalPages }, (_, i) => i + 1).map((pageNum) => {
+                    // Show first page, last page, current page, and pages around current
+                    if (
+                      pageNum === 1 ||
+                      pageNum === totalPages ||
+                      (pageNum >= currentPage - 1 && pageNum <= currentPage + 1)
+                    ) {
+                      return (
+                        <button
+                          key={pageNum}
+                          onClick={() => handlePageChange(pageNum)}
+                          className={`px-4 py-2 rounded-lg font-semibold transition-all ${
+                            currentPage === pageNum
+                              ? 'bg-gradient-to-r from-purple-600 to-violet-500 text-white shadow-md'
+                              : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 border border-gray-200 dark:border-gray-700'
+                          }`}
+                          suppressHydrationWarning
+                        >
+                          {pageNum}
+                        </button>
+                      );
+                    } else if (
+                      pageNum === currentPage - 2 ||
+                      pageNum === currentPage + 2
+                    ) {
+                      return (
+                        <span key={pageNum} className="text-gray-400 dark:text-gray-600 px-2">
+                          ...
+                        </span>
+                      );
+                    }
+                    return null;
+                  })}
 
-                {/* Next Button */}
-                <button
-                  onClick={() => handlePageChange(currentPage + 1)}
-                  disabled={currentPage === totalPages}
-                  className={`px-3 py-1.5 rounded-lg transition-all duration-300 shadow-sm hover:shadow-md ${
-                    currentPage === totalPages
-                      ? 'bg-white/10 text-white/50 cursor-not-allowed'
-                      : 'bg-white/20 hover:bg-white/30 text-white transform hover:scale-105'
-                  }`}
-                  suppressHydrationWarning
-                >
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                  </svg>
-                </button>
+                  {/* Next Button */}
+                  <button
+                    onClick={() => handlePageChange(currentPage + 1)}
+                    disabled={currentPage === totalPages}
+                    className={`px-3 py-2 rounded-lg transition-all duration-200 ${
+                      currentPage === totalPages
+                        ? 'bg-gray-100 dark:bg-gray-800 text-gray-400 dark:text-gray-600 cursor-not-allowed'
+                        : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 shadow-sm border border-gray-200 dark:border-gray-700'
+                    }`}
+                    suppressHydrationWarning
+                  >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                    </svg>
+                  </button>
+                </div>
               </div>
             </div>
-          </div>
-        )}
+          )}
+        </div>
 
         {/* Toast Notification */}
         {showToast && (
