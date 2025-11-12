@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
+import type { ConsumptionOrder, ConsumptionOrderMenuItem, MenuItem } from '@prisma/client'
 
 type IncomingMenuItem = {
   name: string
@@ -15,7 +16,8 @@ export async function GET() {
       orderBy: { createdAt: 'desc' },
       include: { menuItems: { include: { menuItem: true } } }
     })
-  const mapped = orders.map((o: any) => ({
+  type OrderWithItems = ConsumptionOrder & { menuItems: (ConsumptionOrderMenuItem & { menuItem: MenuItem })[] }
+  const mapped = orders.map((o: OrderWithItems) => ({
       id: o.code,
       tanggalPengajuan: o.tanggalPengajuan.toISOString().split('T')[0],
       tanggalPengiriman: o.tanggalPengiriman.toISOString().split('T')[0],
@@ -24,7 +26,7 @@ export async function GET() {
       jumlahTamu: o.jumlahTamu,
       bagian: o.bagian,
       pengaju: o.pengaju,
-  menu: o.menuItems.map((mi: any) => ({ label: `${mi.menuItem.name} @ ${mi.qty} ${mi.satuan}` })),
+  menu: o.menuItems.map((mi: ConsumptionOrderMenuItem & { menuItem: MenuItem }) => ({ label: `${mi.menuItem.name} @ ${mi.qty} ${mi.satuan}` })),
       status: o.status
     }))
     return NextResponse.json({ orders: mapped })
