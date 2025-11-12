@@ -1,0 +1,62 @@
+// Prisma schema for ProjectMe
+// Using SQLite for local development convenience
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  name      String
+  email     String   @unique
+  password  String
+  role      String   @default("user")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model MenuItem {
+  id         Int        @id @default(autoincrement())
+  name       String
+  timePeriod String    // expected values: PAGI, SIANG, SORE, MALAM
+  guestType  String    // expected values: PERTA, REGULAR, STANDAR, VIP, VVIP
+  active     Boolean    @default(true)
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
+  orders     ConsumptionOrderMenuItem[]
+  @@unique([name, timePeriod, guestType], name: "name_timePeriod_guestType")
+}
+
+model ConsumptionOrder {
+  id                Int                          @id @default(autoincrement())
+  code              String                       @unique
+  kegiatan          String
+  tamu              String  // GuestType value
+  jumlahTamu        Int
+  bagian            String
+  pengaju           String
+  tanggalPengajuan  DateTime
+  tanggalPengiriman DateTime
+  status            String
+  catatan           String?
+  createdAt         DateTime                     @default(now())
+  updatedAt         DateTime                     @updatedAt
+  menuItems         ConsumptionOrderMenuItem[]
+}
+
+model ConsumptionOrderMenuItem {
+  id          Int               @id @default(autoincrement())
+  order       ConsumptionOrder  @relation(fields: [orderId], references: [id])
+  orderId     Int
+  menuItem    MenuItem          @relation(fields: [menuItemId], references: [id])
+  menuItemId  Int
+  qty         Int
+  satuan      String
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+}

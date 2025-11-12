@@ -1,6 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import { Calendar, Plus, Eye } from "lucide-react";
+import SearchableCombobox from "@/components/ui/searchable-combobox";
 
 interface Order {
   id: string;
@@ -294,7 +295,7 @@ export default function KonsumsiPage() {
   const [selectedDate, setSelectedDate] = useState(getTodayDate());
   const minDate = getTodayDate(); // Today's date - minimum selectable date
 
-  // State untuk order
+  // State untuk order (now loaded from API)
   const [orders, setOrders] = useState<Order[]>([
     {
       id: "ORD/20250716339/0038",
@@ -488,6 +489,21 @@ export default function KonsumsiPage() {
       status: "Disetujui",
     },
   ]);
+
+  // Load orders from database
+  React.useEffect(() => {
+    const load = async () => {
+      try {
+        const res = await fetch('/api/konsumsi/orders', { cache: 'no-store' })
+        if (!res.ok) return
+        const data = await res.json()
+        if (Array.isArray(data.orders)) setOrders(data.orders)
+      } catch (e) {
+        console.error('Failed to load orders', e)
+      }
+    }
+    load()
+  }, [])
   const [showForm, setShowForm] = useState(false);
   const [showCancelConfirm, setShowCancelConfirm] = useState(false);
   const [orderToCancel, setOrderToCancel] = useState<string | null>(null);
@@ -511,6 +527,130 @@ export default function KonsumsiPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(5);
   const [openDropdownId, setOpenDropdownId] = useState<string | null>(null);
+  const guestTypeOptions = React.useMemo(() => ([
+    { label: "PERTA", value: "PERTA" },
+    { label: "Regular", value: "Regular" },
+    { label: "Standar", value: "Standar" },
+    { label: "VIP", value: "VIP" },
+    { label: "VVIP", value: "VVIP" },
+  ]), []);
+  const lokasiOptions = React.useMemo(() => ([
+    "Bagging",
+    "CCB Club House",
+    "Departemen Riset",
+    "Gedung 101-K",
+    "Gedung Anggrek",
+    "Gedung Bidding Center",
+    "Gedung Contraction Office",
+    "Gedung K3",
+    "Gedung LC",
+    "Gedung Maintenance Office",
+    "Gedung Mawar",
+    "Gedung Melati",
+    "Gedung Purna Bhakti",
+    "Gedung Pusat Administrasi",
+    "Gedung RPK",
+    "Gedung Saorga",
+    "GH-B",
+    "GH-C",
+    "GPA Lt-3",
+    "Gudang Bahan Baku",
+    "Gudang Bulk Material",
+    "Gudang Suku Cadang Jakarta",
+    "Kantor SP2K",
+    "Kebon Bibit",
+    "Klinik PT HPH",
+    "Kolam Pancing Type B",
+    "Kolam Renang",
+    "Kujang Kampioen Riset",
+    "Laboraturium / Main Lab",
+    "Lapang Basket Type B",
+    "Lapang Futsal",
+    "Lapang Sepak Bola Type E",
+    "Lapang Tenis Type B",
+    "Lapang Volly Type E",
+    "Lapangan Helipad",
+    "Lapangan Panahan",
+    "Lapangan Volley",
+    "Mekanik K1A",
+    "Mekanik K1B",
+    "Not Defined",
+    "NPK-2",
+    "Pos Selatan 01",
+    "Posko Pengamanan Bawah",
+    "Ruang Rapat NPK-1",
+    "Ruang Rapat NPK-2",
+    "Utility K-1A"
+  ].map(l => ({ label: l, value: l }))), []);
+  const waktuOptions = React.useMemo(() => ([
+    "Sahur",
+    "Pagi",
+    "Siang",
+    "Sore",
+    "Buka puasa",
+    "Malam",
+    "Snack malam",
+    "Tengah Malam"
+  ].map(w => ({ label: w, value: w }))), []);
+  const kegiatanOptions = React.useMemo(() => ([
+    "Bahan Minum Karyawan",
+    "Baporkes",
+    "BK3N",
+    "Extra Fooding",
+    "Extra Fooding Shift",
+    "Extra Fooding SKJ",
+    "Festival Inovasi",
+    "Halal bil Halal",
+    "Hari Guru",
+    "Hari Raya Idul Adha",
+    "Hari Raya Idul Fitri",
+    "HUT PKC",
+    "HUT RI",
+    "Jamuan di Luar Kawasan",
+    "Jamuan Tamu Perusahaan",
+    "Jum'at Bersih",
+    "Ketupat Lebaran",
+    "Konsumsi Buka Puasa",
+    "Konsumsi Makan Sahur",
+    "Konsumsi TA",
+    "Lain-lain Jamuan Tamu",
+    "Lain-lain Perayaan",
+    "Lain-lain Rapat Kantor",
+    "Lembur Perta",
+    "Lembur Rutin",
+    "Lembur Shutdown",
+    "Not Defined",
+    "Nuzulul Quran",
+    "Open Storage",
+    "Pengajian Keliling",
+    "Pengantongan Akhir Tahun",
+    "Pengembangan SDM",
+    "PKM Masjid Nahrul Hayat",
+    "Program AKHLAK",
+    "Program Makmur",
+    "Program WMS",
+    "Proper Emas",
+    "Proyek Replacement K1A & NZE",
+    "Rakor Direksi Anper PI Grup",
+    "Rapat Direksi",
+    "Rapat Distribusi B",
+    "Rapat Distribusi D",
+    "Rapat Gabungan Dekom, Direksi, SVP",
+    "Rapat Internal",
+    "Rapat Komite Audit",
+    "Rapat LKS Bipartit",
+    "Rapat Monitoring Anper PKC",
+    "Rapat Pra RUPS",
+    "Rapat Tamu",
+    "Rumah Tahfidz",
+    "Safari Malam Takbiran",
+    "Safari Ramadhan",
+    "Shutdown Pabrik",
+    "SP2K",
+    "Srikandi PKC",
+    "Tabligh Akbar",
+    "Washing Pabrik"
+  ].map(k => ({ label: k, value: k }))), []);
   
   const [form, setForm] = useState({
     kegiatan: "",
@@ -635,69 +775,71 @@ export default function KonsumsiPage() {
     return isValid;
   };
 
-  const handleAddOrder = (e: React.FormEvent) => {
+  const handleAddOrder = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    if (!validateForm()) {
-      return;
-    }
 
-    // Build menu labels from menuItems
-    const menuLabels = menuItems
-      .filter(item => item.jenis && item.satuan && item.qty > 0)
-      .map(item => ({ label: `${item.jenis} @ ${item.qty} ${item.satuan}` }));
+    if (!validateForm()) return;
 
-    if (menuLabels.length === 0) {
+    const validMenu = menuItems.filter(item => item.jenis && item.satuan && item.qty > 0);
+    if (validMenu.length === 0) {
       alert("Harap tambahkan minimal 1 menu konsumsi!");
       return;
     }
 
     if (isEditMode && editOrderId) {
-      // Edit existing order
-      setOrders(orders.map(order => 
-        order.id === editOrderId
-          ? {
-              ...order,
-              tanggalPengajuan: form.tanggalPermintaan.split("-").reverse().join("-"),
-              tanggalPengiriman: form.tanggalPengiriman.split("-").reverse().join("-"),
-              kegiatan: form.kegiatan,
-              tamu: form.tamu,
-              jumlahTamu: form.jumlahTamu,
-              bagian: form.untukBagian,
-              pengaju: form.yangMengajukan,
-              menu: menuLabels,
-              approval: form.approval,
-              lokasi: form.lokasi,
-              waktu: form.waktu,
-              keterangan: form.keterangan,
-            }
-          : order
-      ));
+      // For now local edit only (could implement PATCH later)
+      setOrders(orders.map(order => order.id === editOrderId ? {
+        ...order,
+        tanggalPengajuan: form.tanggalPermintaan.split("-").reverse().join("-"),
+        tanggalPengiriman: form.tanggalPengiriman.split("-").reverse().join("-"),
+        kegiatan: form.kegiatan,
+        tamu: form.tamu,
+        jumlahTamu: form.jumlahTamu,
+        bagian: form.untukBagian,
+        pengaju: form.yangMengajukan,
+        menu: validMenu.map(m => ({ label: `${m.jenis} @ ${m.qty} ${m.satuan}` })),
+        status: "Menunggu konfirmasi",
+        approval: form.approval,
+        lokasi: form.lokasi,
+        waktu: form.waktu,
+        keterangan: form.keterangan,
+      } : order));
       showToastNotification("Order berhasil diupdate!", "success");
     } else {
-      // Add new order
-      setOrders([
-        ...orders,
-        {
-          id: `ORD/${Date.now()}`,
-          tanggalPengajuan: form.tanggalPermintaan.split("-").reverse().join("-"),
-          tanggalPengiriman: form.tanggalPengiriman.split("-").reverse().join("-"),
+      try {
+        const payload = {
           kegiatan: form.kegiatan,
           tamu: form.tamu,
-          jumlahTamu: form.jumlahTamu,
+            jumlahTamu: form.jumlahTamu,
           bagian: form.untukBagian,
           pengaju: form.yangMengajukan,
-          menu: menuLabels,
-          status: "Menunggu konfirmasi",
-          approval: form.approval,
-          lokasi: form.lokasi,
-          waktu: form.waktu,
-          keterangan: form.keterangan,
-        },
-      ]);
-      showToastNotification("Order berhasil ditambahkan!", "success");
+          tanggalPengajuan: form.tanggalPermintaan,
+          tanggalPengiriman: form.tanggalPengiriman,
+          menu: validMenu.map(m => ({
+            name: m.jenis,
+            qty: m.qty,
+            satuan: m.satuan,
+            timePeriod: form.waktu ? form.waktu.toUpperCase() : 'PAGI'
+          }))
+        };
+        const res = await fetch('/api/konsumsi/orders', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        if (!res.ok) throw new Error('Gagal menyimpan order');
+        const data = await res.json();
+        if (data.order) {
+          setOrders(prev => [data.order, ...prev]);
+          showToastNotification("Order berhasil ditambahkan!", "success");
+        }
+      } catch (err) {
+        console.error(err);
+        showToastNotification("Terjadi kesalahan menyimpan order", "error");
+        return;
+      }
     }
-    
+
     setShowForm(false);
     setIsEditMode(false);
     setEditOrderId(null);
@@ -1341,79 +1483,17 @@ export default function KonsumsiPage() {
                         <label className="block text-xs font-semibold text-purple-700 dark:text-purple-400 mb-1.5">
                           Kegiatan: <span className="text-violet-600">*</span>
                         </label>
-                        <select 
-                          name="kegiatan" 
-                          value={form.kegiatan} 
-                          onChange={(e) => {
-                            setForm({ ...form, kegiatan: e.target.value });
-                            if (errors.kegiatan) {
-                              setErrors({ ...errors, kegiatan: "" });
-                            }
+                        <SearchableCombobox
+                          name="kegiatan"
+                          value={form.kegiatan}
+                          options={kegiatanOptions}
+                          placeholder="Pilih / cari kegiatan..."
+                          onChange={(val) => {
+                            setForm({ ...form, kegiatan: val });
+                            if (errors.kegiatan) setErrors({ ...errors, kegiatan: "" });
                           }}
-                          className={`w-full border-0 bg-white dark:bg-gray-800 dark:text-gray-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-purple-500 outline-none cursor-pointer ${
-                            errors.kegiatan ? "ring-2 ring-red-500" : ""
-                          }`}
-                          suppressHydrationWarning
-                        >
-                          <option value="">Pilih Kegiatan...</option>
-                          <option value="Bahan Minum Karyawan">Bahan Minum Karyawan</option>
-                          <option value="Baporkes">Baporkes</option>
-                          <option value="BK3N">BK3N</option>
-                          <option value="Extra Fooding">Extra Fooding</option>
-                          <option value="Extra Fooding Shift">Extra Fooding Shift</option>
-                          <option value="Extra Fooding SKJ">Extra Fooding SKJ</option>
-                          <option value="Festival Inovasi">Festival Inovasi</option>
-                          <option value="Halal bil Halal">Halal bil Halal</option>
-                          <option value="Hari Guru">Hari Guru</option>
-                          <option value="Hari Raya Idul Adha">Hari Raya Idul Adha</option>
-                          <option value="Hari Raya Idul Fitri">Hari Raya Idul Fitri</option>
-                          <option value="HUT PKC">HUT PKC</option>
-                          <option value="HUT RI">HUT RI</option>
-                          <option value="Jamuan di Luar Kawasan">Jamuan di Luar Kawasan</option>
-                          <option value="Jamuan Tamu Perusahaan">Jamuan Tamu Perusahaan</option>
-                          <option value="Jum'at Bersih">Jum&apos;at Bersih</option>
-                          <option value="Ketupat Lebaran">Ketupat Lebaran</option>
-                          <option value="Konsumsi Buka Puasa">Konsumsi Buka Puasa</option>
-                          <option value="Konsumsi Makan Sahur">Konsumsi Makan Sahur</option>
-                          <option value="Konsumsi TA">Konsumsi TA</option>
-                          <option value="Lain-lain Jamuan Tamu">Lain-lain Jamuan Tamu</option>
-                          <option value="Lain-lain Perayaan">Lain-lain Perayaan</option>
-                          <option value="Lain-lain Rapat Kantor">Lain-lain Rapat Kantor</option>
-                          <option value="Lembur Perta">Lembur Perta</option>
-                          <option value="Lembur Rutin">Lembur Rutin</option>
-                          <option value="Lembur Shutdown">Lembur Shutdown</option>
-                          <option value="Not Defined">Not Defined</option>
-                          <option value="Nuzulul Quran">Nuzulul Quran</option>
-                          <option value="Open Storage">Open Storage</option>
-                          <option value="Pengajian Keliling">Pengajian Keliling</option>
-                          <option value="Pengantongan Akhir Tahun">Pengantongan Akhir Tahun</option>
-                          <option value="Pengembangan SDM">Pengembangan SDM</option>
-                          <option value="PKM Masjid Nahrul Hayat">PKM Masjid Nahrul Hayat</option>
-                          <option value="Program AKHLAK">Program AKHLAK</option>
-                          <option value="Program Makmur">Program Makmur</option>
-                          <option value="Program WMS">Program WMS</option>
-                          <option value="Proper Emas">Proper Emas</option>
-                          <option value="Proyek Replacement K1A & NZE">Proyek Replacement K1A &amp; NZE</option>
-                          <option value="Rakor Direksi Anper PI Grup">Rakor Direksi Anper PI Grup</option>
-                          <option value="Rapat Direksi">Rapat Direksi</option>
-                          <option value="Rapat Distribusi B">Rapat Distribusi B</option>
-                          <option value="Rapat Distribusi D">Rapat Distribusi D</option>
-                          <option value="Rapat Gabungan Dekom, Direksi, SVP">Rapat Gabungan Dekom, Direksi, SVP</option>
-                          <option value="Rapat Internal">Rapat Internal</option>
-                          <option value="Rapat Komite Audit">Rapat Komite Audit</option>
-                          <option value="Rapat LKS Bipartit">Rapat LKS Bipartit</option>
-                          <option value="Rapat Monitoring Anper PKC">Rapat Monitoring Anper PKC</option>
-                          <option value="Rapat Pra RUPS">Rapat Pra RUPS</option>
-                          <option value="Rapat Tamu">Rapat Tamu</option>
-                          <option value="Rumah Tahfidz">Rumah Tahfidz</option>
-                          <option value="Safari Malam Takbiran">Safari Malam Takbiran</option>
-                          <option value="Safari Ramadhan">Safari Ramadhan</option>
-                          <option value="Shutdown Pabrik">Shutdown Pabrik</option>
-                          <option value="SP2K">SP2K</option>
-                          <option value="Srikandi PKC">Srikandi PKC</option>
-                          <option value="Tabligh Akbar">Tabligh Akbar</option>
-                          <option value="Washing Pabrik">Washing Pabrik</option>
-                        </select>
+                          className={errors.kegiatan ? "ring-2 ring-red-500" : undefined}
+                        />
                         {errors.kegiatan && (
                           <p className="text-xs text-violet-700 mt-1.5 font-medium">{errors.kegiatan}</p>
                         )}
@@ -1423,18 +1503,17 @@ export default function KonsumsiPage() {
                         <label className="block text-xs font-semibold text-purple-700 dark:text-purple-400 mb-1.5">
                           Tipe Tamu: <span className="text-violet-600">*</span>
                         </label>
-                        <select 
-                          name="tamu" 
-                          value={form.tamu} 
-                          onChange={(e) => {
-                            const newTamu = e.target.value;
+                        <SearchableCombobox
+                          name="tamu"
+                          value={form.tamu}
+                          options={guestTypeOptions}
+                          placeholder="Pilih atau ketik tipe tamu..."
+                          onChange={(newTamu) => {
                             setForm({ ...form, tamu: newTamu });
-                            if (errors.tamu) {
-                              setErrors({ ...errors, tamu: "" });
-                            }
-                            
-                            // Update qty based on tamu type and jumlah tamu
-                            if (form.jumlahTamu > 0) {
+                            if (errors.tamu) setErrors({ ...errors, tamu: "" });
+
+                            // Update qty berdasarkan tipe tamu dan jumlah tamu
+                            if (form.jumlahTamu > 0 && newTamu) {
                               const multiplier = tamuMultiplier[newTamu as keyof typeof tamuMultiplier] || 1;
                               const updatedMenuItems = menuItems.map(item => ({
                                 ...item,
@@ -1442,29 +1521,14 @@ export default function KonsumsiPage() {
                               }));
                               setMenuItems(updatedMenuItems);
                             }
-                            
-                            // Reset menu items when guest type changes (karena menu berbeda)
+
+                            // Reset menu saat tipe tamu berubah (menu berbeda tiap tipe)
                             if (form.waktu) {
-                              setMenuItems([{ 
-                                id: 1, 
-                                jenis: "", 
-                                satuan: "", 
-                                qty: form.jumlahTamu > 0 ? Math.ceil(form.jumlahTamu * (tamuMultiplier[newTamu as keyof typeof tamuMultiplier] || 1)) : 0 
-                              }]);
+                              setMenuItems([{ id: 1, jenis: "", satuan: "", qty: form.jumlahTamu > 0 && newTamu ? Math.ceil(form.jumlahTamu * (tamuMultiplier[newTamu as keyof typeof tamuMultiplier] || 1)) : 0 }]);
                             }
                           }}
-                          className={`w-full border-0 bg-white dark:bg-gray-800 dark:text-gray-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-purple-500 outline-none cursor-pointer ${
-                            errors.tamu ? "ring-2 ring-red-500" : ""
-                          }`}
-                          suppressHydrationWarning
-                        >
-                          <option value="">Pilih Tipe Tamu...</option>
-                          <option value="PERTA">PERTA</option>
-                          <option value="Regular">Regular</option>
-                          <option value="Standar">Standar</option>
-                          <option value="VIP">VIP</option>
-                          <option value="VVIP">VVIP</option>
-                        </select>
+                          className={errors.tamu ? "ring-2 ring-red-500" : undefined}
+                        />
                         {errors.tamu && (
                           <p className="text-xs text-violet-700 dark:text-violet-400 mt-1.5 font-medium">{errors.tamu}</p>
                         )}
@@ -1595,68 +1659,17 @@ export default function KonsumsiPage() {
                         <label className="block text-xs font-semibold text-purple-700 dark:text-purple-400 mb-1.5">
                           Lokasi Pengiriman: <span className="text-violet-600">*</span>
                         </label>
-                        <select 
-                          name="lokasi" 
-                          value={form.lokasi} 
-                          onChange={(e) => {
-                            setForm({ ...form, lokasi: e.target.value });
-                            if (errors.lokasi) {
-                              setErrors({ ...errors, lokasi: "" });
-                            }
+                        <SearchableCombobox
+                          name="lokasi"
+                          value={form.lokasi}
+                          options={lokasiOptions}
+                          placeholder="Pilih / cari lokasi..."
+                          onChange={(val) => {
+                            setForm({ ...form, lokasi: val });
+                            if (errors.lokasi) setErrors({ ...errors, lokasi: "" });
                           }}
-                          className={`w-full border-0 bg-white dark:bg-gray-800 dark:text-gray-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-purple-500 outline-none cursor-pointer ${
-                            errors.lokasi ? "ring-2 ring-red-500" : ""
-                          }`}
-                          suppressHydrationWarning
-                        >
-                          <option value="">Pilih Lokasi...</option>
-                          <option value="Bagging">Bagging</option>
-                          <option value="CCB Club House">CCB Club House</option>
-                          <option value="Departemen Riset">Departemen Riset</option>
-                          <option value="Gedung 101-K">Gedung 101-K</option>
-                          <option value="Gedung Anggrek">Gedung Anggrek</option>
-                          <option value="Gedung Bidding Center">Gedung Bidding Center</option>
-                          <option value="Gedung Contraction Office">Gedung Contraction Office</option>
-                          <option value="Gedung K3">Gedung K3</option>
-                          <option value="Gedung LC">Gedung LC</option>
-                          <option value="Gedung Maintenance Office">Gedung Maintenance Office</option>
-                          <option value="Gedung Mawar">Gedung Mawar</option>
-                          <option value="Gedung Melati">Gedung Melati</option>
-                          <option value="Gedung Purna Bhakti">Gedung Purna Bhakti</option>
-                          <option value="Gedung Pusat Administrasi">Gedung Pusat Administrasi</option>
-                          <option value="Gedung RPK">Gedung RPK</option>
-                          <option value="Gedung Saorga">Gedung Saorga</option>
-                          <option value="GH-B">GH-B</option>
-                          <option value="GH-C">GH-C</option>
-                          <option value="GPA Lt-3">GPA Lt-3</option>
-                          <option value="Gudang Bahan Baku">Gudang Bahan Baku</option>
-                          <option value="Gudang Bulk Material">Gudang Bulk Material</option>
-                          <option value="Gudang Suku Cadang Jakarta">Gudang Suku Cadang Jakarta</option>
-                          <option value="Kantor SP2K">Kantor SP2K</option>
-                          <option value="Kebon Bibit">Kebon Bibit</option>
-                          <option value="Klinik PT HPH">Klinik PT HPH</option>
-                          <option value="Kolam Pancing Type B">Kolam Pancing Type B</option>
-                          <option value="Kolam Renang">Kolam Renang</option>
-                          <option value="Kujang Kampioen Riset">Kujang Kampioen Riset</option>
-                          <option value="Laboraturium / Main Lab">Laboraturium / Main Lab</option>
-                          <option value="Lapang Basket Type B">Lapang Basket Type B</option>
-                          <option value="Lapang Futsal">Lapang Futsal</option>
-                          <option value="Lapang Sepak Bola Type E">Lapang Sepak Bola Type E</option>
-                          <option value="Lapang Tenis Type B">Lapang Tenis Type B</option>
-                          <option value="Lapang Volly Type E">Lapang Volly Type E</option>
-                          <option value="Lapangan Helipad">Lapangan Helipad</option>
-                          <option value="Lapangan Panahan">Lapangan Panahan</option>
-                          <option value="Lapangan Volley">Lapangan Volley</option>
-                          <option value="Mekanik K1A">Mekanik K1A</option>
-                          <option value="Mekanik K1B">Mekanik K1B</option>
-                          <option value="Not Defined">Not Defined</option>
-                          <option value="NPK-2">NPK-2</option>
-                          <option value="Pos Selatan 01">Pos Selatan 01</option>
-                          <option value="Posko Pengamanan Bawah">Posko Pengamanan Bawah</option>
-                          <option value="Ruang Rapat NPK-1">Ruang Rapat NPK-1</option>
-                          <option value="Ruang Rapat NPK-2">Ruang Rapat NPK-2</option>
-                          <option value="Utility K-1A">Utility K-1A</option>
-                        </select>
+                          className={errors.lokasi ? "ring-2 ring-red-500" : undefined}
+                        />
                         {errors.lokasi && (
                           <p className="text-xs text-violet-700 dark:text-violet-400 mt-1.5 font-medium">{errors.lokasi}</p>
                         )}
@@ -1666,32 +1679,20 @@ export default function KonsumsiPage() {
                         <label className="block text-xs font-semibold text-purple-700 dark:text-purple-400 mb-1.5">
                           Waktu: <span className="text-violet-600">*</span>
                         </label>
-                        <select 
-                          name="waktu" 
-                          value={form.waktu} 
-                          onChange={(e) => {
-                            setForm({ ...form, waktu: e.target.value });
-                            if (errors.waktu) {
-                              setErrors({ ...errors, waktu: "" });
-                            }
+                        <SearchableCombobox
+                          name="waktu"
+                          value={form.waktu}
+                          options={waktuOptions}
+                          placeholder="Pilih / cari waktu..."
+                          allowCustomValue={false}
+                          onChange={(val) => {
+                            setForm({ ...form, waktu: val });
+                            if (errors.waktu) setErrors({ ...errors, waktu: "" });
                             // Reset menu items when time changes
                             setMenuItems([{ id: 1, jenis: "", satuan: "", qty: form.jumlahTamu > 0 && form.tamu ? Math.ceil(form.jumlahTamu * (tamuMultiplier[form.tamu as keyof typeof tamuMultiplier] || 1)) : 0 }]);
                           }}
-                          className={`w-full border-0 bg-white dark:bg-gray-800 dark:text-gray-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-purple-500 outline-none cursor-pointer ${
-                            errors.waktu ? "ring-2 ring-red-500" : ""
-                          }`}
-                          suppressHydrationWarning
-                        >
-                          <option value="">Pilih Waktu...</option>
-                          <option value="Sahur">Sahur</option>
-                          <option value="Pagi">Pagi</option>
-                          <option value="Siang">Siang</option>
-                          <option value="Sore">Sore</option>
-                          <option value="Buka puasa">Buka puasa</option>
-                          <option value="Malam">Malam</option>
-                          <option value="Snack malam">Snack malam</option>
-                          <option value="Tengah Malam">Tengah Malam</option>
-                        </select>
+                          className={errors.waktu ? "ring-2 ring-red-500" : undefined}
+                        />
                         {errors.waktu && (
                           <p className="text-xs text-violet-700 dark:text-violet-400 mt-1.5 font-medium">{errors.waktu}</p>
                         )}
@@ -1796,7 +1797,7 @@ export default function KonsumsiPage() {
                         </svg>
                         <div className="text-xs text-purple-800 dark:text-purple-300">
                           <p className="font-bold mb-1">✨ Siap menambahkan menu!</p>
-                          <p>Menu tersedia untuk <strong>{form.tamu}</strong> waktu <strong>{form.waktu.split(" - ")[1]}</strong>: {getAvailableMenu().slice(0, 3).join(", ")}
+                          <p>Menu tersedia untuk <strong>{form.tamu}</strong> waktu <strong>{form.waktu}</strong>: {getAvailableMenu().slice(0, 3).join(", ")}
                           {getAvailableMenu().length > 3 ? `, dan ${getAvailableMenu().length - 3} menu lainnya` : ""}</p>
                         </div>
                       </div>
@@ -1828,44 +1829,33 @@ export default function KonsumsiPage() {
                                   </span>
                                 </td>
                                 <td className="px-3 py-2">
-                                  <select
+                                  <SearchableCombobox
                                     value={item.jenis}
-                                    onChange={(e) => {
+                                    options={(form.waktu && form.tamu ? getAvailableMenu() : []).map(m => ({ label: m, value: m }))}
+                                    placeholder={!form.waktu ? "Pilih waktu dulu" : !form.tamu ? "Pilih tipe tamu dulu" : "Pilih menu..."}
+                                    disabled={!form.waktu || !form.tamu}
+                                    onChange={(val) => {
                                       const updated = [...menuItems];
-                                      updated[index].jenis = e.target.value;
+                                      updated[index].jenis = val;
                                       setMenuItems(updated);
                                     }}
-                                    disabled={!form.waktu || !form.tamu}
-                                    className="w-full border-0 bg-transparent dark:text-gray-200 text-sm focus:ring-2 focus:ring-purple-500 rounded px-2 py-1 outline-none disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
-                                  >
-                                    <option value="">Pilih menu...</option>
-                                    {!form.waktu && <option value="" disabled>Pilih waktu dulu</option>}
-                                    {!form.tamu && form.waktu && <option value="" disabled>Pilih tipe tamu dulu</option>}
-                                    {form.waktu && form.tamu && getAvailableMenu().map((menu: string, idx: number) => (
-                                      <option key={idx} value={menu}>{menu}</option>
-                                    ))}
-                                  </select>
+                                    allowCustomValue={true}
+                                    className="w-full"
+                                  />
                                 </td>
                                 <td className="px-3 py-2">
-                                  <select
+                                  <SearchableCombobox
                                     value={item.satuan}
-                                    onChange={(e) => {
+                                    options={["Pax","Box","Porsi","Cup","Gelas","Botol","Dus","Pack"].map(s => ({ label: s, value: s }))}
+                                    placeholder="Pilih satuan..."
+                                    onChange={(val) => {
                                       const updated = [...menuItems];
-                                      updated[index].satuan = e.target.value;
+                                      updated[index].satuan = val;
                                       setMenuItems(updated);
                                     }}
-                                    className="w-full border-0 bg-transparent dark:text-gray-200 text-sm focus:ring-2 focus:ring-purple-500 rounded px-2 py-1 outline-none cursor-pointer"
-                                  >
-                                    <option value="">Pilih...</option>
-                                    <option value="Pax">Pax</option>
-                                    <option value="Box">Box</option>
-                                    <option value="Porsi">Porsi</option>
-                                    <option value="Cup">Cup</option>
-                                    <option value="Gelas">Gelas</option>
-                                    <option value="Botol">Botol</option>
-                                    <option value="Dus">Dus</option>
-                                    <option value="Pack">Pack</option>
-                                  </select>
+                                    allowCustomValue={false}
+                                    className="w-full"
+                                  />
                                 </td>
                                 <td className="px-3 py-2">
                                   <input

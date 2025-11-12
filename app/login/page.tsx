@@ -51,16 +51,7 @@ export default function LoginPage() {
             <DemplonLogo className="w-[500px] h-[500px]" standalone />
           </div>
 
-          {/* Demo Credentials */}
-          <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg p-4">
-            <p className="text-sm font-semibold text-white mb-2">
-              🔑 Demo Credentials:
-            </p>
-            <div className="text-xs text-green-100 space-y-1">
-              <p>admin@demplon.com / admin123</p>
-              <p>john@demplon.com / john123</p>
-            </div>
-          </div>
+          {/* Demo credentials removed */}
         </div>
       </div>
 
