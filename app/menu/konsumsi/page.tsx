@@ -2000,17 +2000,24 @@ export default function KonsumsiPage() {
 
                         {/* Status */}
                         <div className="col-span-2">
-                          <span className={`inline-flex items-center px-3 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap ${
-                            order.status === "Pesanan dibatalkan" 
-                              ? "bg-red-600 text-white" 
-                              : (order.status === "Menunggu Persetujuan" || order.status === "Menunggu konfirmasi")
+                          {(() => {
+                            const s = order.status;
+                            // Normalisasi beberapa variasi status agar konsisten dengan desain warna
+                            const isPending = ["Menunggu konfirmasi", "Menunggu Persetujuan", "Pending", "Menunggu"].includes(s);
+                            const isConfirmed = ["Dikonfirmasi", "Disetujui", "Confirmed"].includes(s);
+                            const isCancelled = ["Dibatalkan", "Pesanan dibatalkan", "Cancelled"].includes(s);
+                            const baseClasses = "inline-flex items-center px-3 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap shadow-sm";
+                            const colorClasses = isCancelled
+                              ? "bg-red-600 text-white"
+                              : isPending
                               ? "bg-amber-500 text-white"
-                              : order.status === "Disetujui"
-                              ? "bg-green-600 text-white"
-                              : "bg-gray-500 text-white"
-                          }`}>
-                            {order.status}
-                          </span>
+                              : isConfirmed
+                              ? "bg-emerald-600 text-white"
+                              : "bg-gray-500 text-white";
+                            return (
+                              <span className={`${baseClasses} ${colorClasses}`}>{s}</span>
+                            );
+                          })()}
                         </div>
 
                         {/* Actions */}
