@@ -37,7 +37,61 @@ async function main() {
     }
   }
 
-  console.log('Seed completed')
+  // Create two sample consumption orders if they don't exist yet
+  // Order 1: Cancelled
+  const today = new Date()
+  const formatDate = (d: Date) => d
+  const cancelledCode = 'ORD/SEED/0001'
+  const confirmedCode = 'ORD/SEED/0002'
+
+  const menuItemRegularPagi = await prisma.menuItem.findFirst({ where: { timePeriod: 'PAGI', guestType: 'REGULAR' } })
+  const menuItemVipSiang = await prisma.menuItem.findFirst({ where: { timePeriod: 'SIANG', guestType: 'VVIP' } })
+
+  if (menuItemRegularPagi && !(await prisma.consumptionOrder.findUnique({ where: { code: cancelledCode } }))) {
+    await prisma.consumptionOrder.create({
+      data: {
+        code: cancelledCode,
+        kegiatan: 'Rapat Pembatalan Anggaran',
+        tamu: 'REGULAR',
+        jumlahTamu: 15,
+        bagian: 'Keuangan',
+        pengaju: 'John Doe',
+        tanggalPengajuan: formatDate(today),
+        tanggalPengiriman: formatDate(new Date(today.getTime() + 2*24*60*60*1000)),
+        status: 'Dibatalkan',
+        catatan: 'Agenda dibatalkan oleh manajemen',
+        menuItems: {
+          create: [
+            { qty: 15, satuan: 'Porsi', menuItem: { connect: { id: menuItemRegularPagi.id } } }
+          ]
+        }
+      }
+    })
+  }
+
+  if (menuItemVipSiang && !(await prisma.consumptionOrder.findUnique({ where: { code: confirmedCode } }))) {
+    await prisma.consumptionOrder.create({
+      data: {
+        code: confirmedCode,
+        kegiatan: 'Jamuan Makan Siang Direksi',
+        tamu: 'VVIP',
+        jumlahTamu: 8,
+        bagian: 'Direksi',
+        pengaju: 'Jane Smith',
+        tanggalPengajuan: formatDate(today),
+        tanggalPengiriman: formatDate(new Date(today.getTime() + 3*24*60*60*1000)),
+        status: 'Dikonfirmasi',
+        catatan: 'Disetujui oleh sekretaris direksi',
+        menuItems: {
+          create: [
+            { qty: 8, satuan: 'Box', menuItem: { connect: { id: menuItemVipSiang.id } } }
+          ]
+        }
+      }
+    })
+  }
+
+  console.log('Seed completed (users, menu items, and sample orders)')
 }
 
 main()
