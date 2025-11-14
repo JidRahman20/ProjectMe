@@ -293,202 +293,10 @@ export default function KonsumsiPage() {
 
   const [showCalendar, setShowCalendar] = useState(false);
   const [selectedDate, setSelectedDate] = useState(getTodayDate());
-  const minDate = getTodayDate(); // Today's date - minimum selectable date
+  const minDate = getTodayDate();
 
-  // State untuk order (now loaded from API)
-  const [orders, setOrders] = useState<Order[]>([
-    {
-      id: "ORD/20250716339/0038",
-      tanggalPengajuan: "16-07-2025",
-      tanggalPengiriman: "16-07-2025",
-      kegiatan: "Shutdown Pabrik",
-      tamu: "Regular",
-      jumlahTamu: 10,
-      bagian: "Dep. Teknologi Informasi PKC",
-      pengaju: "you",
-      menu: [
-        { label: "Makan Pagi @ 10 Box" },
-        { label: "Air mineral @ 1 Dus" },
-      ],
-      status: "Pesanan dibatalkan",
-    },
-    {
-      id: "ORD/20250717001/0039",
-      tanggalPengajuan: "17-07-2025",
-      tanggalPengiriman: "18-07-2025",
-      kegiatan: "Rapat Direksi",
-      tamu: "VVIP",
-      jumlahTamu: 8,
-      bagian: "Direksi",
-      pengaju: "Sekretaris Direksi",
-      menu: [
-        { label: "Nasi Box Wagyu Teriyaki @ 16 Box" },
-        { label: "Fresh Fruit Juice @ 16 Gelas" },
-        { label: "Dessert Tiramisu @ 16 Cup" },
-      ],
-      status: "Menunggu konfirmasi",
-    },
-    {
-      id: "ORD/20250718002/0040",
-      tanggalPengajuan: "18-07-2025",
-      tanggalPengiriman: "19-07-2025",
-      kegiatan: "Training Karyawan Baru",
-      tamu: "VIP",
-      jumlahTamu: 25,
-      bagian: "HRD",
-      pengaju: "Manager HRD",
-      menu: [
-        { label: "Nasi Box Rendang Sapi @ 38 Box" },
-        { label: "Soft Drink @ 38 Botol" },
-        { label: "Kopi Latte @ 38 Cup" },
-      ],
-      status: "Disetujui",
-    },
-    {
-      id: "ORD/20250719003/0041",
-      tanggalPengajuan: "19-07-2025",
-      tanggalPengiriman: "20-07-2025",
-      kegiatan: "Meeting Bulanan",
-      tamu: "Regular",
-      jumlahTamu: 15,
-      bagian: "Dep. Marketing",
-      pengaju: "Team Leader Marketing",
-      menu: [
-        { label: "Nasi Box Ayam Goreng @ 15 Box" },
-        { label: "Air Mineral @ 2 Dus" },
-        { label: "Teh Manis @ 15 Gelas" },
-      ],
-      status: "Menunggu Persetujuan",
-    },
-    {
-      id: "ORD/20250720004/0042",
-      tanggalPengajuan: "20-07-2025",
-      tanggalPengiriman: "21-07-2025",
-      kegiatan: "Workshop Quality Control",
-      tamu: "VIP",
-      jumlahTamu: 20,
-      bagian: "Quality Control",
-      pengaju: "Supervisor QC",
-      menu: [
-        { label: "Nasi Box Ikan Bakar @ 30 Box" },
-        { label: "Jus Buah Segar @ 30 Gelas" },
-        { label: "Kue Lapis Legit @ 30 Potong" },
-      ],
-      status: "Disetujui",
-    },
-    {
-      id: "ORD/20250721005/0043",
-      tanggalPengajuan: "21-07-2025",
-      tanggalPengiriman: "22-07-2025",
-      kegiatan: "Audit Internal",
-      tamu: "VVIP",
-      jumlahTamu: 5,
-      bagian: "Internal Audit",
-      pengaju: "Kepala Audit",
-      menu: [
-        { label: "Beef Wellington @ 10 Porsi" },
-        { label: "Wine Selection @ 10 Gelas" },
-        { label: "Premium Dessert @ 10 Porsi" },
-      ],
-      status: "Menunggu konfirmasi",
-    },
-    {
-      id: "ORD/20250722006/0044",
-      tanggalPengajuan: "22-07-2025",
-      tanggalPengiriman: "23-07-2025",
-      kegiatan: "Gathering Team IT",
-      tamu: "Regular",
-      jumlahTamu: 30,
-      bagian: "Dep. IT",
-      pengaju: "Manager IT",
-      menu: [
-        { label: "Nasi Goreng @ 30 Porsi" },
-        { label: "Ayam Geprek @ 30 Porsi" },
-        { label: "Es Teh @ 30 Gelas" },
-      ],
-      status: "Menunggu Persetujuan",
-    },
-    {
-      id: "ORD/20250723007/0045",
-      tanggalPengajuan: "23-07-2025",
-      tanggalPengiriman: "24-07-2025",
-      kegiatan: "Peluncuran Produk Baru",
-      tamu: "VVIP",
-      jumlahTamu: 12,
-      bagian: "Dep. Marketing",
-      pengaju: "Director Marketing",
-      menu: [
-        { label: "Sushi & Sashimi Set @ 24 Set" },
-        { label: "Champagne @ 24 Gelas" },
-        { label: "French Macaron @ 24 Box" },
-      ],
-      status: "Disetujui",
-    },
-    {
-      id: "ORD/20250724008/0046",
-      tanggalPengajuan: "24-07-2025",
-      tanggalPengiriman: "25-07-2025",
-      kegiatan: "Sosialisasi K3",
-      tamu: "Regular",
-      jumlahTamu: 50,
-      bagian: "HSE Department",
-      pengaju: "HSE Manager",
-      menu: [
-        { label: "Nasi Box Ayam Bakar @ 50 Box" },
-        { label: "Air Mineral @ 5 Dus" },
-        { label: "Pisang Goreng @ 50 Potong" },
-      ],
-      status: "Menunggu konfirmasi",
-    },
-    {
-      id: "ORD/20250725009/0047",
-      tanggalPengajuan: "25-07-2025",
-      tanggalPengiriman: "26-07-2025",
-      kegiatan: "Board Meeting",
-      tamu: "VVIP",
-      jumlahTamu: 10,
-      bagian: "Board of Directors",
-      pengaju: "Corporate Secretary",
-      menu: [
-        { label: "Lamb Chop @ 20 Porsi" },
-        { label: "Grilled Salmon Premium @ 20 Porsi" },
-        { label: "Wine Selection @ 20 Gelas" },
-      ],
-      status: "Disetujui",
-    },
-    {
-      id: "ORD/20250726010/0048",
-      tanggalPengajuan: "26-07-2025",
-      tanggalPengiriman: "27-07-2025",
-      kegiatan: "Pelatihan Safety",
-      tamu: "VIP",
-      jumlahTamu: 18,
-      bagian: "Safety Department",
-      pengaju: "Safety Officer",
-      menu: [
-        { label: "Nasi Box Premium Ayam Bakar @ 27 Box" },
-        { label: "Jus Alpukat @ 27 Gelas" },
-        { label: "Martabak Mini @ 27 Potong" },
-      ],
-      status: "Menunggu Persetujuan",
-    },
-    {
-      id: "ORD/20250727011/0049",
-      tanggalPengajuan: "27-07-2025",
-      tanggalPengiriman: "28-07-2025",
-      kegiatan: "Town Hall Meeting",
-      tamu: "Regular",
-      jumlahTamu: 100,
-      bagian: "Corporate Communication",
-      pengaju: "GM Corporate",
-      menu: [
-        { label: "Nasi Box Ayam @ 100 Box" },
-        { label: "Air Mineral @ 10 Dus" },
-        { label: "Kopi @ 100 Cup" },
-      ],
-      status: "Disetujui",
-    },
-  ]);
+  // State untuk order (loaded from API)
+  const [orders, setOrders] = useState<Order[]>([]);
 
   // Load orders from database
   React.useEffect(() => {
@@ -504,6 +312,7 @@ export default function KonsumsiPage() {
     }
     load()
   }, [])
+  
   const [showForm, setShowForm] = useState(false);
   const [showCancelConfirm, setShowCancelConfirm] = useState(false);
   const [orderToCancel, setOrderToCancel] = useState<string | null>(null);
@@ -682,6 +491,39 @@ export default function KonsumsiPage() {
   });
   
   // Get available menu based on selected time AND guest type
+  // Map waktu to database timePeriod
+  const mapWaktuToTimePeriod = (waktu: string): 'PAGI' | 'SIANG' | 'SORE' | 'MALAM' => {
+    const waktuLower = waktu.toLowerCase();
+    if (waktuLower.includes('sahur') || waktuLower.includes('pagi')) {
+      return 'PAGI';
+    } else if (waktuLower.includes('siang')) {
+      return 'SIANG';
+    } else if (waktuLower.includes('sore') || waktuLower.includes('buka')) {
+      return 'SORE';
+    } else {
+      return 'MALAM';
+    }
+  };
+
+  // Check if form is valid and complete
+  const isFormValid = (): boolean => {
+    // Check all required fields
+    if (!form.kegiatan || !form.tanggalPermintaan || !form.tanggalPengiriman || 
+        !form.untukBagian.trim() || !form.yangMengajukan.trim() || !form.approval.trim() || 
+        !form.tamu || !form.jumlahTamu || form.jumlahTamu <= 0 || 
+        !form.lokasi || !form.waktu) {
+      return false;
+    }
+    
+    // Check if at least one valid menu item exists
+    const validMenuItems = menuItems.filter(item => item.jenis && item.satuan && item.qty > 0);
+    if (validMenuItems.length === 0) {
+      return false;
+    }
+    
+    return true;
+  };
+
   const getAvailableMenu = (): string[] => {
     if (!form.waktu || !form.tamu) return [];
     
@@ -807,10 +649,11 @@ export default function KonsumsiPage() {
       showToastNotification("Order berhasil diupdate!", "success");
     } else {
       try {
+        const timePeriod = mapWaktuToTimePeriod(form.waktu);
         const payload = {
           kegiatan: form.kegiatan,
           tamu: form.tamu,
-            jumlahTamu: form.jumlahTamu,
+          jumlahTamu: form.jumlahTamu,
           bagian: form.untukBagian,
           pengaju: form.yangMengajukan,
           tanggalPengajuan: form.tanggalPermintaan,
@@ -819,7 +662,7 @@ export default function KonsumsiPage() {
             name: m.jenis,
             qty: m.qty,
             satuan: m.satuan,
-            timePeriod: form.waktu ? form.waktu.toUpperCase() : 'PAGI'
+            timePeriod: timePeriod
           }))
         };
         const res = await fetch('/api/konsumsi/orders', {
@@ -827,15 +670,19 @@ export default function KonsumsiPage() {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload)
         });
-        if (!res.ok) throw new Error('Gagal menyimpan order');
+        if (!res.ok) {
+          const errorData = await res.json();
+          console.error('API Error:', errorData);
+          throw new Error(errorData.error || 'Gagal menyimpan order');
+        }
         const data = await res.json();
         if (data.order) {
           setOrders(prev => [data.order, ...prev]);
           showToastNotification("Order berhasil ditambahkan!", "success");
         }
       } catch (err) {
-        console.error(err);
-        showToastNotification("Terjadi kesalahan menyimpan order", "error");
+        console.error('Error saving order:', err);
+        showToastNotification(err instanceof Error ? err.message : "Terjadi kesalahan menyimpan order", "error");
         return;
       }
     }
@@ -1810,25 +1657,25 @@ export default function KonsumsiPage() {
                       </div>
                     ) : (
                       <div className="bg-white dark:bg-gray-800 rounded-lg overflow-hidden border border-violet-200 dark:border-violet-700">
-                        <table className="w-full">
+                        <table className="w-full table-fixed">
                           <thead>
                             <tr className="bg-gradient-to-r from-purple-600 to-violet-500 text-white text-xs uppercase">
-                              <th className="px-3 py-2 text-left font-bold w-12">#</th>
-                              <th className="px-3 py-2 text-left font-bold">Jenis Konsumsi</th>
-                              <th className="px-3 py-2 text-left font-bold w-32">Satuan</th>
-                              <th className="px-3 py-2 text-left font-bold w-24">Qty</th>
-                              <th className="px-3 py-2 text-center font-bold w-20">Aksi</th>
+                              <th className="px-2 py-2 text-left font-bold" style={{width: '40px'}}>#</th>
+                              <th className="px-2 py-2 text-left font-bold">Jenis Konsumsi</th>
+                              <th className="px-2 py-2 text-left font-bold" style={{width: '120px'}}>Satuan</th>
+                              <th className="px-2 py-2 text-left font-bold" style={{width: '100px'}}>QTY</th>
+                              <th className="px-2 py-2 text-center font-bold" style={{width: '60px'}}>Aksi</th>
                             </tr>
                           </thead>
                           <tbody>
                             {menuItems.map((item, index) => (
                               <tr key={item.id} className="border-b border-violet-100 dark:border-violet-800 hover:bg-violet-50 dark:hover:bg-gray-700 transition-colors">
-                                <td className="px-3 py-2">
+                                <td className="px-2 py-2">
                                   <span className="flex items-center justify-center w-6 h-6 rounded-full bg-gradient-to-r from-purple-600 to-violet-500 text-white text-xs font-bold">
                                     {index + 1}
                                   </span>
                                 </td>
-                                <td className="px-3 py-2">
+                                <td className="px-2 py-2">
                                   <SearchableCombobox
                                     value={item.jenis}
                                     options={(form.waktu && form.tamu ? getAvailableMenu() : []).map(m => ({ label: m, value: m }))}
@@ -1843,7 +1690,7 @@ export default function KonsumsiPage() {
                                     className="w-full"
                                   />
                                 </td>
-                                <td className="px-3 py-2">
+                                <td className="px-2 py-2">
                                   <SearchableCombobox
                                     value={item.satuan}
                                     options={["Pax","Box","Porsi","Cup","Gelas","Botol","Dus","Pack"].map(s => ({ label: s, value: s }))}
@@ -1854,10 +1701,11 @@ export default function KonsumsiPage() {
                                       setMenuItems(updated);
                                     }}
                                     allowCustomValue={false}
+                                    size="sm"
                                     className="w-full"
                                   />
                                 </td>
-                                <td className="px-3 py-2">
+                                <td className="px-2 py-2">
                                   <input
                                     type="number"
                                     value={item.qty || ""}
@@ -1868,10 +1716,10 @@ export default function KonsumsiPage() {
                                     }}
                                     placeholder="0"
                                     min="0"
-                                    className="w-full border-0 bg-transparent dark:text-gray-200 dark:placeholder-gray-500 text-sm focus:ring-2 focus:ring-purple-500 rounded px-2 py-1 outline-none"
+                                    className="w-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-500 text-sm focus:ring-2 focus:ring-purple-500 rounded px-2 py-1.5 outline-none"
                                   />
                                 </td>
-                                <td className="px-3 py-2 text-center">
+                                <td className="px-2 py-2 text-center">
                                   <button
                                     type="button"
                                     onClick={() => setMenuItems(menuItems.filter(m => m.id !== item.id))}
@@ -1903,7 +1751,12 @@ export default function KonsumsiPage() {
                   </button>
                   <button
                     type="submit"
-                    className="flex-1 px-4 py-2.5 rounded-lg text-sm font-semibold text-white bg-gradient-to-r from-purple-600 to-violet-500 hover:from-purple-700 hover:to-violet-600 transition-all shadow-md hover:shadow-lg"
+                    disabled={!isFormValid()}
+                    className={`flex-1 px-4 py-2.5 rounded-lg text-sm font-semibold transition-all shadow-md ${
+                      isFormValid()
+                        ? "text-white bg-gradient-to-r from-purple-600 to-violet-500 hover:from-purple-700 hover:to-violet-600 hover:shadow-lg cursor-pointer"
+                        : "text-gray-400 bg-gray-300 dark:bg-gray-600 dark:text-gray-500 cursor-not-allowed opacity-60"
+                    }`}
                   >
                     {isEditMode ? "Update Order" : "Simpan Order"}
                   </button>

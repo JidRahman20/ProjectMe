@@ -20,6 +20,7 @@ interface SearchableComboboxProps {
   disabled?: boolean;
   className?: string;
   onBlur?: React.FocusEventHandler<HTMLInputElement>;
+  size?: 'sm' | 'md'; // tambahkan size prop
 }
 
 // Lightweight searchable + typeable combobox (headless, Tailwind styled)
@@ -34,6 +35,7 @@ export const SearchableCombobox: React.FC<SearchableComboboxProps> = ({
   disabled = false,
   className,
   onBlur,
+  size = 'md', // default medium
 }) => {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
@@ -96,13 +98,21 @@ export const SearchableCombobox: React.FC<SearchableComboboxProps> = ({
   };
 
   const showClear = value.length > 0;
+  
+  // Dynamic sizing based on size prop
+  const containerPadding = size === 'sm' ? 'px-1.5 py-1' : 'px-3 py-2';
+  const inputTextSize = size === 'sm' ? 'text-xs' : 'text-sm';
+  const iconSize = size === 'sm' ? 'w-2.5 h-2.5' : 'w-4 h-4';
+  const gapClass = size === 'sm' ? '' : 'gap-2';
 
   return (
     <div ref={containerRef} className={clsx("relative", className)}>
       {name && <input type="hidden" name={name} value={value} />}
       <div
         className={clsx(
-          "flex items-center gap-2 w-full px-3 py-2 border rounded-lg bg-white dark:bg-gray-800 text-sm focus-within:ring-2 focus-within:ring-purple-500 transition", 
+          "flex items-center w-full border rounded-lg bg-white dark:bg-gray-800 text-sm focus-within:ring-2 focus-within:ring-purple-500 transition",
+          containerPadding,
+          gapClass,
           disabled && "opacity-50 cursor-not-allowed"
         )}
       >
@@ -117,25 +127,25 @@ export const SearchableCombobox: React.FC<SearchableComboboxProps> = ({
           onFocus={() => setOpen(true)}
           onBlur={onBlur}
           placeholder={placeholder}
-          className="flex-1 bg-transparent outline-none text-gray-900 dark:text-gray-100 placeholder-gray-400"
+          className={clsx("flex-1 bg-transparent outline-none text-gray-900 dark:text-gray-100 placeholder-gray-400 min-w-0", inputTextSize)}
         />
         {showClear && (
           <button
             type="button"
             onClick={() => { setQuery(""); onChange(""); }}
-            className="p-1 rounded hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-500"
+            className={clsx("rounded hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-400 hover:text-gray-600 flex-shrink-0", size === 'sm' ? '' : 'p-1')}
             aria-label="Clear"
           >
-            <X className="w-4 h-4" />
+            <X className={iconSize} />
           </button>
         )}
         <button
           type="button"
             onClick={() => setOpen(o => !o)}
-          className="p-1 rounded hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-500"
+          className={clsx("rounded hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-400 hover:text-gray-600 flex-shrink-0", size === 'sm' ? 'ml-0.5' : 'p-1')}
           aria-label="Toggle"
         >
-          <ChevronDown className={clsx("w-4 h-4 transition", open && "rotate-180")}/>
+          <ChevronDown className={clsx(iconSize, "transition", open && "rotate-180")}/>
         </button>
       </div>
 
@@ -153,7 +163,10 @@ export const SearchableCombobox: React.FC<SearchableComboboxProps> = ({
               <button
                 key={opt.value}
                 type="button"
-                onClick={() => handleSelect(opt.value, opt.label)}
+                onMouseDown={(e) => {
+                  e.preventDefault();
+                  handleSelect(opt.value, opt.label);
+                }}
                 className={clsx(
                   "flex w-full items-center gap-2 px-3 py-2 text-left text-sm hover:bg-purple-50 dark:hover:bg-gray-700", 
                   selected && "bg-purple-100 dark:bg-gray-700/60 font-semibold"
@@ -167,7 +180,10 @@ export const SearchableCombobox: React.FC<SearchableComboboxProps> = ({
           {allowCustomValue && query && !options.some(o => o.value.toLowerCase() === query.toLowerCase()) && (
             <button
               type="button"
-              onClick={() => handleSelect(query)}
+              onMouseDown={(e) => {
+                e.preventDefault();
+                handleSelect(query);
+              }}
               className="flex w-full items-center gap-2 px-3 py-2 text-left text-sm bg-violet-50 dark:bg-violet-900/30 text-violet-700 dark:text-violet-300"
             >
               Tambah &quot;{query}&quot; sebagai nilai baru

@@ -40,16 +40,24 @@ export async function GET() {
 export async function POST(request: Request) {
   try {
     const body = await request.json()
+    console.log('Received body:', JSON.stringify(body, null, 2))
     const { kegiatan, tamu, jumlahTamu, bagian, pengaju, tanggalPengajuan, tanggalPengiriman, status, menu } = body
 
     if (!kegiatan || !tamu || !jumlahTamu || !bagian || !pengaju || !tanggalPengajuan || !tanggalPengiriman) {
-      return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
+      console.error('Missing fields:', { kegiatan, tamu, jumlahTamu, bagian, pengaju, tanggalPengajuan, tanggalPengiriman })
+      return NextResponse.json({ error: 'Missing required fields', details: { kegiatan, tamu, jumlahTamu, bagian, pengaju, tanggalPengajuan, tanggalPengiriman } }, { status: 400 })
+    }
+
+    if (!menu || !Array.isArray(menu) || menu.length === 0) {
+      console.error('Invalid menu:', menu)
+      return NextResponse.json({ error: 'Menu is required and must be a non-empty array' }, { status: 400 })
     }
 
     // Generate code similar to existing pattern: ORD/YYYYMMDD/####
     const datePart = new Date().toISOString().slice(0,10).replace(/-/g,'')
     const random = Math.floor(1000 + Math.random() * 9000)
     const code = `ORD/${datePart}/${random}`
+    console.log('Generated code:', code)
 
   const created = await prisma.consumptionOrder.create({
       data: {
@@ -63,20 +71,24 @@ export async function POST(request: Request) {
         tanggalPengiriman: new Date(tanggalPengiriman),
         status: status || 'Menunggu konfirmasi',
         menuItems: {
-          create: (menu as IncomingMenuItem[] | undefined || []).map((m) => ({
-            qty: (typeof m.qty === 'string' ? parseInt(m.qty) : m.qty) || 0,
-            satuan: m.satuan || 'Unit',
-            menuItem: {
-              connectOrCreate: {
-                where: { name_timePeriod_guestType: { name: m.name, timePeriod: m.timePeriod || 'PAGI', guestType: tamu } },
-                create: { name: m.name, timePeriod: m.timePeriod || 'PAGI', guestType: tamu }
+          create: (menu as IncomingMenuItem[] | undefined || []).map((m) => {
+            console.log('Processing menu item:', m)
+            return {
+              qty: (typeof m.qty === 'string' ? parseInt(m.qty) : m.qty) || 0,
+              satuan: m.satuan || 'Unit',
+              menuItem: {
+                connectOrCreate: {
+                  where: { name_timePeriod_guestType: { name: m.name, timePeriod: m.timePeriod || 'PAGI', guestType: tamu } },
+                  create: { name: m.name, timePeriod: m.timePeriod || 'PAGI', guestType: tamu }
+                }
               }
             }
-          }))
+          })
         }
       },
       include: { menuItems: { include: { menuItem: true } } }
     })
+    console.log('Order created successfully:', created.code)
 
     return NextResponse.json({
       order: {
@@ -93,7 +105,10 @@ export async function POST(request: Request) {
       }
     }, { status: 201 })
   } catch (e) {
-    console.error(e)
-    return NextResponse.json({ error: 'Failed to create order' }, { status: 500 })
+    console.error('Error creating order:', e)
+    if (e instanceof Error) {
+      return NextResponse.json({ error: 'Failed to create order', details: e.message, stack: e.stack }, { status: 500 })
+    }
+    return NextResponse.json({ error: 'Failed to create order', details: String(e) }, { status: 500 })
   }
 }
