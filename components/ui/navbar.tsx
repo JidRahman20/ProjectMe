@@ -24,6 +24,7 @@ export function Navbar() {
           <button
             onClick={() => setIsMobileOpen(!isMobileOpen)}
             className="lg:hidden p-2 text-gray-500 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700"
+            suppressHydrationWarning
           >
             <Menu className="w-6 h-6" />
           </button>

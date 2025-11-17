@@ -298,20 +298,8 @@ export default function KonsumsiPage() {
   // State untuk order (loaded from API)
   const [orders, setOrders] = useState<Order[]>([]);
 
-  // Load orders from database
-  React.useEffect(() => {
-    const load = async () => {
-      try {
-        const res = await fetch('/api/konsumsi/orders', { cache: 'no-store' })
-        if (!res.ok) return
-        const data = await res.json()
-        if (Array.isArray(data.orders)) setOrders(data.orders)
-      } catch (e) {
-        console.error('Failed to load orders', e)
-      }
-    }
-    load()
-  }, [])
+  
+
   
   const [showForm, setShowForm] = useState(false);
   const [showCancelConfirm, setShowCancelConfirm] = useState(false);
@@ -326,6 +314,43 @@ export default function KonsumsiPage() {
   const [filterStatus, setFilterStatus] = useState("Semua");
   const [filterDateFrom, setFilterDateFrom] = useState("");
   const [filterDateTo, setFilterDateTo] = useState("");
+
+  // Normalisasi & konstanta status agar sinkron di semua tempat
+  type CanonicalStatus = "Semua" | "Dipesan" | "Pesanan Disetujui" | "Pesanan Dibatalkan";
+  const STATUS = React.useMemo(() => ({
+    ALL: "Semua",
+    ORDERED: "Dipesan",
+    APPROVED: "Pesanan Disetujui",
+    CANCELLED: "Pesanan Dibatalkan",
+  } as const), []);
+
+  const normalizeStatus = React.useCallback((s: string): CanonicalStatus => {
+    const t = (s || "").trim().toLowerCase();
+    if (["menunggu konfirmasi", "menunggu persetujuan", "pending", "menunggu", "dipesan"].includes(t)) return STATUS.ORDERED;
+    if (["disetujui", "dikonfirmasi", "confirmed", "approved", "pesanan disetujui"].includes(t)) return STATUS.APPROVED;
+    if (["dibatalkan", "pesanan dibatalkan", "cancelled", "batal"].includes(t)) return STATUS.CANCELLED;
+    return s as CanonicalStatus;
+  }, [STATUS]);
+
+  // Load orders from database (set status kanonik saat load)
+  React.useEffect(() => {
+    const load = async () => {
+      try {
+        const res = await fetch('/api/konsumsi/orders', { cache: 'no-store' })
+        if (!res.ok) return
+        const data = await res.json()
+        if (Array.isArray(data.orders)) {
+          setOrders(data.orders.map((o: Order) => ({
+            ...o,
+            status: normalizeStatus(o.status)
+          })))
+        }
+      } catch (e) {
+        console.error('Failed to load orders', e)
+      }
+    }
+    load()
+  }, [normalizeStatus])
   
   // State untuk Toast Notification
   const [showToast, setShowToast] = useState(false);
@@ -336,6 +361,7 @@ export default function KonsumsiPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(5);
   const [openDropdownId, setOpenDropdownId] = useState<string | null>(null);
+  const [menuPos, setMenuPos] = useState<{ top: number; left: number } | null>(null);
   const guestTypeOptions = React.useMemo(() => ([
     { label: "PERTA", value: "PERTA" },
     { label: "Regular", value: "Regular" },
@@ -772,9 +798,9 @@ export default function KonsumsiPage() {
       );
     }
 
-    // Filter by status
-    if (filterStatus !== "Semua") {
-      filtered = filtered.filter(order => order.status === filterStatus);
+    // Filter by status (gunakan status yang sudah dinormalisasi)
+    if (filterStatus !== STATUS.ALL) {
+      filtered = filtered.filter(order => normalizeStatus(order.status) === filterStatus);
     }
 
     // Filter by date range
@@ -821,19 +847,19 @@ export default function KonsumsiPage() {
     setCurrentPage(1);
   }, [searchQuery, filterStatus, filterDateFrom, filterDateTo]);
 
-  // Calculate statistics
+  // Calculate statistics (berdasarkan status yang dinormalisasi)
   const statistics = {
     total: orders.length,
-    pending: orders.filter(o => o.status === "Menunggu konfirmasi" || o.status === "Menunggu Persetujuan").length,
-    approved: orders.filter(o => o.status === "Disetujui").length,
-    cancelled: orders.filter(o => o.status === "Pesanan dibatalkan").length,
+    pending: orders.filter(o => normalizeStatus(o.status) === STATUS.ORDERED).length,
+    approved: orders.filter(o => normalizeStatus(o.status) === STATUS.APPROVED).length,
+    cancelled: orders.filter(o => normalizeStatus(o.status) === STATUS.CANCELLED).length,
   };
 
   const handleCancelOrder = () => {
     if (orderToCancel) {
       setOrders(orders.map(o => 
         o.id === orderToCancel 
-          ? { ...o, status: "Pesanan dibatalkan" } 
+          ? { ...o, status: STATUS.CANCELLED } 
           : o
       ));
       showToastNotification("Order berhasil dibatalkan", "info");
@@ -890,7 +916,7 @@ export default function KonsumsiPage() {
           <div className="bg-gradient-to-br from-violet-500 to-violet-600 rounded-xl p-5 text-white shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-violet-100 text-sm font-medium">Pending</p>
+                <p className="text-violet-100 text-sm font-medium">Dipesan</p>
                 <h3 className="text-3xl font-bold mt-1">{statistics.pending}</h3>
               </div>
               <div className="bg-white/20 p-3 rounded-lg">
@@ -904,7 +930,7 @@ export default function KonsumsiPage() {
           <div className="bg-gradient-to-br from-purple-600 to-purple-700 rounded-xl p-5 text-white shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-purple-100 text-sm font-medium">Disetujui</p>
+                <p className="text-purple-100 text-sm font-medium">Pesanan Disetujui</p>
                 <h3 className="text-3xl font-bold mt-1">{statistics.approved}</h3>
               </div>
               <div className="bg-white/20 p-3 rounded-lg">
@@ -918,7 +944,7 @@ export default function KonsumsiPage() {
           <div className="bg-gradient-to-br from-violet-600 to-violet-700 rounded-xl p-5 text-white shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-violet-100 text-sm font-medium">Dibatalkan</p>
+                <p className="text-violet-100 text-sm font-medium">Pesanan Dibatalkan</p>
                 <h3 className="text-3xl font-bold mt-1">{statistics.cancelled}</h3>
               </div>
               <div className="bg-white/20 p-3 rounded-lg">
@@ -958,11 +984,10 @@ export default function KonsumsiPage() {
                 className="w-full px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition-colors duration-300"
                 suppressHydrationWarning
               >
-                <option value="Semua">Semua Status</option>
-                <option value="Menunggu konfirmasi">Menunggu Konfirmasi</option>
-                <option value="Menunggu Persetujuan">Menunggu Persetujuan</option>
-                <option value="Disetujui">Disetujui</option>
-                <option value="Pesanan dibatalkan">Dibatalkan</option>
+                <option value={STATUS.ALL}>Semua Status</option>
+                <option value={STATUS.ORDERED}>Dipesan</option>
+                <option value={STATUS.APPROVED}>Pesanan Disetujui</option>
+                <option value={STATUS.CANCELLED}>Pesanan Dibatalkan</option>
               </select>
             </div>
 
@@ -1128,19 +1153,15 @@ export default function KonsumsiPage() {
                 <div className="flex items-center justify-between">
                   <span className="text-sm font-semibold text-gray-700 dark:text-gray-300">Status Order:</span>
                   <span className={`px-4 py-2 rounded-lg text-sm font-bold shadow-sm ${
-                    selectedOrder.status === "Pesanan dibatalkan" 
-                      ? "bg-gradient-to-r from-violet-600 to-violet-700 text-white" 
-                      : selectedOrder.status === "Menunggu Persetujuan" || selectedOrder.status === "Menunggu konfirmasi"
+                    normalizeStatus(selectedOrder.status) === STATUS.CANCELLED
+                      ? "bg-gradient-to-r from-violet-600 to-violet-700 text-white"
+                      : normalizeStatus(selectedOrder.status) === STATUS.ORDERED
                       ? "bg-gradient-to-r from-violet-500 to-violet-600 text-white"
-                      : selectedOrder.status === "Disetujui"
-                      ? "bg-gradient-to-r from-purple-500 to-purple-600 text-white"
-                      : selectedOrder.status === "Dipesan"
-                      ? "bg-gradient-to-r from-purple-500 to-purple-600 text-white"
-                      : selectedOrder.status === "Selesai"
+                      : normalizeStatus(selectedOrder.status) === STATUS.APPROVED
                       ? "bg-gradient-to-r from-purple-500 to-purple-600 text-white"
                       : "bg-gradient-to-r from-gray-500 to-gray-600 text-white"
                   }`}>
-                    {selectedOrder.status}
+                    {normalizeStatus(selectedOrder.status)}
                   </span>
                 </div>
 
@@ -1656,25 +1677,19 @@ export default function KonsumsiPage() {
                         <p className="text-xs text-violet-500 dark:text-violet-500 mt-1">Klik tombol &ldquo;Tambah Menu&rdquo; untuk memulai</p>
                       </div>
                     ) : (
-                      <div className="bg-white dark:bg-gray-800 rounded-lg overflow-hidden border border-violet-200 dark:border-violet-700">
-                        <table className="w-full table-fixed">
-                          <thead>
-                            <tr className="bg-gradient-to-r from-purple-600 to-violet-500 text-white text-xs uppercase">
-                              <th className="px-2 py-2 text-left font-bold" style={{width: '40px'}}>#</th>
-                              <th className="px-2 py-2 text-left font-bold">Jenis Konsumsi</th>
-                              <th className="px-2 py-2 text-left font-bold" style={{width: '120px'}}>Satuan</th>
-                              <th className="px-2 py-2 text-left font-bold" style={{width: '100px'}}>QTY</th>
-                              <th className="px-2 py-2 text-center font-bold" style={{width: '60px'}}>Aksi</th>
+                      <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 overflow-x-auto">
+                        <table className="w-full text-sm">
+                          <thead className="bg-violet-50 dark:bg-violet-900/30">
+                            <tr>
+                              <th className="px-3 py-2 text-left font-semibold text-gray-700 dark:text-gray-300">Menu</th>
+                              <th className="px-3 py-2 text-left font-semibold text-gray-700 dark:text-gray-300">Satuan</th>
+                              <th className="px-3 py-2 text-left font-semibold text-gray-700 dark:text-gray-300">Qty</th>
+                              <th className="px-3 py-2 text-center font-semibold text-gray-700 dark:text-gray-300">Aksi</th>
                             </tr>
                           </thead>
-                          <tbody>
+                          <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
                             {menuItems.map((item, index) => (
-                              <tr key={item.id} className="border-b border-violet-100 dark:border-violet-800 hover:bg-violet-50 dark:hover:bg-gray-700 transition-colors">
-                                <td className="px-2 py-2">
-                                  <span className="flex items-center justify-center w-6 h-6 rounded-full bg-gradient-to-r from-purple-600 to-violet-500 text-white text-xs font-bold">
-                                    {index + 1}
-                                  </span>
-                                </td>
+                              <tr key={item.id}>
                                 <td className="px-2 py-2">
                                   <SearchableCombobox
                                     value={item.jenis}
@@ -1790,6 +1805,7 @@ export default function KonsumsiPage() {
                   <button
                     onClick={() => setShowForm(true)}
                     className="flex items-center gap-3 bg-gradient-to-r from-purple-600 to-violet-500 text-white px-8 py-4 rounded-xl font-semibold hover:from-purple-700 hover:to-violet-600 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105"
+                    suppressHydrationWarning
                   >
                     <Plus className="w-6 h-6" />
                     <span>Tambah Order Pertama</span>
@@ -1798,104 +1814,109 @@ export default function KonsumsiPage() {
               </div>
             </div>
           ) : (
-            <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 overflow-visible pb-2">
-              {/* Table Header */}
-              <div className="bg-gradient-to-r from-purple-600 to-violet-500 dark:from-purple-700 dark:to-violet-600 px-6 py-4 rounded-t-2xl">
-                <div className="grid grid-cols-12 gap-4 text-white text-sm font-semibold uppercase tracking-wide">
-                  <div className="col-span-3">Order ID</div>
-                  <div className="col-span-4">Kegiatan</div>
-                  <div className="col-span-2">Tipe Tamu</div>
-                  <div className="col-span-2">Status</div>
-                  <div className="col-span-1 text-center">Aksi</div>
-                </div>
-              </div>
+            <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 overflow-visible">
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead className="bg-gradient-to-r from-purple-600 to-violet-500 dark:from-purple-700 dark:to-violet-600">
+                    <tr>
+                      <th className="px-4 py-4 text-left text-xs font-semibold text-white uppercase tracking-wider" style={{width: '20%'}}>Order ID</th>
+                      <th className="px-4 py-4 text-left text-xs font-semibold text-white uppercase tracking-wider" style={{width: '30%'}}>Kegiatan</th>
+                      <th className="px-4 py-4 text-left text-xs font-semibold text-white uppercase tracking-wider" style={{width: '15%'}}>Tipe Tamu</th>
+                      <th className="px-4 py-4 text-left text-xs font-semibold text-white uppercase tracking-wider" style={{width: '20%'}}>Status</th>
+                      <th className="px-4 py-4 text-center text-xs font-semibold text-white uppercase tracking-wider" style={{width: '15%'}}>Aksi</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
+                    {getPaginatedOrders().map((order) => {
+                      return (
+                        <tr 
+                          key={order.id}
+                          className={`hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors duration-200 ${openDropdownId === order.id ? 'bg-gray-50 dark:bg-gray-700/50' : ''} relative`}
+                        >
+                          {/* Order ID & Date */}
+                          <td className="px-4 py-4">
+                            <div className="font-semibold text-gray-900 dark:text-white text-sm mb-1 truncate" title={order.id}>
+                              {order.id}
+                            </div>
+                            <div className="flex items-center gap-1.5 text-xs text-gray-500 dark:text-gray-400">
+                              <Calendar className="w-3.5 h-3.5 flex-shrink-0" />
+                              <span className="whitespace-nowrap">{order.tanggalPengiriman}</span>
+                            </div>
+                          </td>
 
-              {/* Table Body */}
-              <div className="divide-y divide-gray-200 dark:divide-gray-700">
-                {getPaginatedOrders().map((order) => {
-                  return (
-                    <div 
-                      key={order.id}
-                      className={`hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors duration-200 ${openDropdownId === order.id ? 'bg-gray-50 dark:bg-gray-700/50 z-50' : 'z-0'} relative`}
-                    >
-                    <div className="px-6 py-4">
-                      <div className="grid grid-cols-12 gap-4 items-center">
-                        {/* Order ID & Date */}
-                        <div className="col-span-3">
-                          <div className="font-semibold text-gray-900 dark:text-white text-sm mb-1">
-                            {order.id}
-                          </div>
-                          <div className="flex items-center gap-1.5 text-xs text-gray-500 dark:text-gray-400">
-                            <Calendar className="w-3.5 h-3.5" />
-                            <span>{order.tanggalPengiriman}</span>
-                          </div>
-                        </div>
+                          {/* Kegiatan & Pengaju */}
+                          <td className="px-4 py-4">
+                            <div className="font-semibold text-gray-900 dark:text-white text-sm mb-1 truncate" title={order.kegiatan}>
+                              {order.kegiatan}
+                            </div>
+                            <div className="flex items-center gap-1.5 text-xs text-gray-500 dark:text-gray-400">
+                              <span>oleh</span>
+                              <span className="font-medium text-purple-600 dark:text-purple-400 truncate" title={order.pengaju}>
+                                {order.pengaju}
+                              </span>
+                            </div>
+                          </td>
 
-                        {/* Kegiatan & Pengaju */}
-                        <div className="col-span-4">
-                          <div className="font-semibold text-gray-900 dark:text-white text-sm mb-1">
-                            {order.kegiatan}
-                          </div>
-                          <div className="flex items-center gap-1.5 text-xs text-gray-500 dark:text-gray-400">
-                            <span>oleh</span>
-                            <span className="font-medium text-purple-600 dark:text-purple-400">
-                              {order.pengaju}
+                          {/* Tipe Tamu */}
+                          <td className="px-4 py-4">
+                            <span className="inline-flex items-center text-xs font-semibold text-purple-700 dark:text-purple-300 bg-purple-50 dark:bg-purple-900/30 px-3 py-1.5 rounded-full whitespace-nowrap">
+                              {order.tamu}
                             </span>
-                          </div>
-                        </div>
+                          </td>
 
-                        {/* Tipe Tamu */}
-                        <div className="col-span-2">
-                          <span className="inline-flex items-center text-xs font-semibold text-purple-700 dark:text-purple-300 bg-purple-50 dark:bg-purple-900/30 px-3 py-1.5 rounded-full">
-                            {order.tamu}
-                          </span>
-                        </div>
+                          {/* Status */}
+                          <td className="px-4 py-4">
+                            {(() => {
+                              const s = normalizeStatus(order.status);
+                              const baseClasses = "inline-flex items-center px-3 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap shadow-sm";
+                              const colorClasses = s === STATUS.CANCELLED
+                                ? "bg-red-600 text-white"
+                                : s === STATUS.ORDERED
+                                ? "bg-amber-500 text-white"
+                                : s === STATUS.APPROVED
+                                ? "bg-emerald-600 text-white"
+                                : "bg-gray-500 text-white";
+                              return (
+                                <span className={`${baseClasses} ${colorClasses}`}>{s}</span>
+                              );
+                            })()}
+                          </td>
 
-                        {/* Status */}
-                        <div className="col-span-2">
-                          {(() => {
-                            const s = order.status;
-                            // Normalisasi beberapa variasi status agar konsisten dengan desain warna
-                            const isPending = ["Menunggu konfirmasi", "Menunggu Persetujuan", "Pending", "Menunggu"].includes(s);
-                            const isConfirmed = ["Dikonfirmasi", "Disetujui", "Confirmed"].includes(s);
-                            const isCancelled = ["Dibatalkan", "Pesanan dibatalkan", "Cancelled"].includes(s);
-                            const baseClasses = "inline-flex items-center px-3 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap shadow-sm";
-                            const colorClasses = isCancelled
-                              ? "bg-red-600 text-white"
-                              : isPending
-                              ? "bg-amber-500 text-white"
-                              : isConfirmed
-                              ? "bg-emerald-600 text-white"
-                              : "bg-gray-500 text-white";
-                            return (
-                              <span className={`${baseClasses} ${colorClasses}`}>{s}</span>
-                            );
-                          })()}
-                        </div>
+                          {/* Actions */}
+                          <td className="px-4 py-4">
+                            <div className="flex justify-center">
+                              <div className="relative">
+                                <button 
+                                  className="p-2 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 transition-all duration-200"
+                                  onClick={(e) => {
+                                    const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
+                                    const MENU_WIDTH = 208; // ~w-52
+                                    const PADDING = 8;
+                                    const left = Math.min(rect.left, window.innerWidth - MENU_WIDTH - PADDING);
+                                    const top = rect.bottom + PADDING;
+                                    setMenuPos({ top, left });
+                                    setOpenDropdownId(openDropdownId === order.id ? null : order.id);
+                                  }}
+                                  suppressHydrationWarning
+                                  title="Menu Aksi"
+                                >
+                                  <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/>
+                                  </svg>
+                                </button>
 
-                        {/* Actions */}
-                        <div className="col-span-1 flex justify-center">
-                          <div className="relative group">
-                            <button 
-                              className="p-2 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 transition-all duration-200"
-                              onClick={() => setOpenDropdownId(openDropdownId === order.id ? null : order.id)}
-                              suppressHydrationWarning
-                              title="Menu Aksi"
-                            >
-                              <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-                                <path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/>
-                              </svg>
-                            </button>
-
-                            {/* Dropdown Menu */}
-                            {openDropdownId === order.id && (
+                            {/* Dropdown Menu (fixed to viewport to avoid clipping) */}
+                            {openDropdownId === order.id && menuPos && (
                               <>
                                 {/* Backdrop to close dropdown when clicking outside */}
                                 <div 
                                   className="fixed inset-0 z-[100]" 
-                                  onClick={() => setOpenDropdownId(null)}
+                                  onClick={() => { setOpenDropdownId(null); setMenuPos(null); }}
                                 />
-                                <div className="absolute right-0 top-full mt-2 w-52 bg-white dark:bg-gray-800 rounded-lg shadow-xl border border-gray-200 dark:border-gray-700 py-1.5 z-[110] animate-in fade-in slide-in-from-top-2 duration-200">
+                                <div 
+                                  className="fixed w-52 bg-white dark:bg-gray-800 rounded-lg shadow-xl border border-gray-200 dark:border-gray-700 py-1.5 z-[110] animate-in fade-in slide-in-from-top-2 duration-200"
+                                  style={{ top: menuPos.top, left: menuPos.left }}
+                                >
                                   {/* Detail */}
                                   <button
                                     className="w-full px-4 py-2.5 text-left text-sm text-gray-700 dark:text-gray-300 hover:bg-purple-50 dark:hover:bg-purple-900/50 hover:text-purple-700 dark:hover:text-purple-300 transition-all duration-300 flex items-center gap-3"
@@ -1910,7 +1931,7 @@ export default function KonsumsiPage() {
                                   </button>
 
                                   {/* Edit - only show if status is pending */}
-                                  {(order.status === "Menunggu Persetujuan" || order.status === "Menunggu konfirmasi") && (
+                                  {(normalizeStatus(order.status) === STATUS.ORDERED) && (
                                     <button
                                       className="w-full px-4 py-2.5 text-left text-sm text-gray-700 dark:text-gray-300 hover:bg-violet-50 dark:hover:bg-violet-900/50 hover:text-violet-700 dark:hover:text-violet-300 transition-all duration-300 flex items-center gap-3"
                                       onClick={() => {
@@ -1926,7 +1947,7 @@ export default function KonsumsiPage() {
                                   )}
 
                                   {/* Batalkan - only show if status is pending */}
-                                  {(order.status === "Menunggu Persetujuan" || order.status === "Menunggu konfirmasi") && (
+                                  {(normalizeStatus(order.status) === STATUS.ORDERED) && (
                                     <button
                                       className="w-full px-4 py-2.5 text-left text-sm text-gray-700 dark:text-gray-300 hover:bg-red-50 dark:hover:bg-red-900/20 hover:text-red-700 dark:hover:text-red-400 transition-all duration-300 flex items-center gap-3 border-t border-gray-100 dark:border-gray-700"
                                       onClick={() => {
@@ -1944,13 +1965,14 @@ export default function KonsumsiPage() {
                                 </div>
                               </>
                             )}
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                );
-              })}
+                              </div>
+                            </div>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
               </div>
               
               {/* Pagination */}
