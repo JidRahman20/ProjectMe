@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import { Calendar, Plus, Eye } from "lucide-react";
 import SearchableCombobox from "@/components/ui/searchable-combobox";
+import Image from "next/image";
 
 interface Order {
   id: string;
@@ -869,119 +870,197 @@ export default function KonsumsiPage() {
   };
 
   return (
-    <div className="flex-1 overflow-auto bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
+    <div className="flex-1 overflow-auto bg-gradient-to-br from-purple-50 via-violet-50 to-purple-100 dark:from-gray-900 dark:via-purple-950 dark:to-gray-900 min-h-screen transition-colors duration-300">
       <div className="p-6">
-        {/* Header */}
-        <div className="flex justify-between items-center mb-6">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Konsumsi</h1>
-            <p className="text-gray-600 dark:text-gray-400 text-sm mt-1">Kelola permintaan konsumsi</p>
-          </div>
-          <div className="flex items-center gap-3">
-            <button
-              className="flex items-center gap-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 px-5 py-2.5 rounded-lg font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-all duration-300 shadow-sm transform hover:scale-105"
-              onClick={() => setShowCalendar(true)}
-              suppressHydrationWarning
-            >
-              <Calendar className="w-4 h-4" />
-              <span>{selectedDate.split("-").reverse().join("-")}</span>
-            </button>
-            <button
-              className="flex items-center gap-2 bg-gradient-to-r from-purple-600 to-violet-500 text-white px-5 py-2.5 rounded-lg font-medium hover:from-purple-700 hover:to-violet-600 transition-all duration-300 shadow-md hover:shadow-lg transform hover:scale-105"
-              onClick={() => setShowForm(true)}
-              suppressHydrationWarning
-            >
-              <Plus className="w-4 h-4" />
-              <span>Tambah Order</span>
-            </button>
+        {/* Header with gradient background */}
+        <div className="relative mb-6 bg-gradient-to-r from-purple-600 via-violet-600 to-purple-700 rounded-2xl p-6 shadow-2xl overflow-hidden">
+          {/* Decorative elements */}
+          <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full -mr-32 -mt-32 blur-3xl"></div>
+          <div className="absolute bottom-0 left-0 w-48 h-48 bg-violet-500/10 rounded-full -ml-24 -mb-24 blur-2xl"></div>
+          
+          <div className="relative flex justify-between items-center">
+            <div className="flex items-center gap-4">
+              <div className="bg-white/20 backdrop-blur-sm p-4 rounded-xl">
+                <Image
+                  src="/logo.png"
+                  alt="Ikon Konsumsi"
+                  className="w-12 h-12 object-contain"
+                  width={48}
+                  height={48}
+                  priority
+                />
+              </div>
+              <div>
+                <h1 className="text-4xl font-extrabold text-white tracking-tight">Konsumsi</h1>
+                <p className="text-purple-100 text-base mt-1 font-medium">Kelola permintaan konsumsi dengan mudah</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-3">
+              <button
+                className="group relative flex items-center gap-2 bg-white/20 backdrop-blur-md border border-white/30 px-5 py-3 rounded-xl font-semibold text-white hover:bg-white/30 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 overflow-hidden"
+                onClick={() => setShowCalendar(true)}
+                suppressHydrationWarning
+              >
+                {/* Shimmer effect */}
+                <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+                  <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-700 bg-gradient-to-r from-transparent via-white/40 to-transparent"></div>
+                </div>
+                <Calendar className="w-5 h-5 relative z-10" />
+                <span className="relative z-10">{selectedDate.split("-").reverse().join("-")}</span>
+              </button>
+              <button
+                className="group relative flex items-center gap-2 bg-white text-purple-700 px-6 py-3 rounded-xl font-bold hover:bg-purple-50 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 overflow-hidden"
+                onClick={() => setShowForm(true)}
+                suppressHydrationWarning
+              >
+                {/* Shimmer effect */}
+                <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+                  <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-700 bg-gradient-to-r from-transparent via-purple-200/50 to-transparent"></div>
+                </div>
+                <Plus className="w-5 h-5 relative z-10" />
+                <span className="relative z-10">Tambah Order</span>
+              </button>
+            </div>
           </div>
         </div>
 
-        {/* Dashboard Statistics */}
+        {/* Dashboard Statistics - Enhanced Purple Theme */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-          <div className="bg-gradient-to-br from-purple-600 to-violet-500 rounded-xl p-5 text-white shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-purple-100 text-sm font-medium">Total Order</p>
-                <h3 className="text-3xl font-bold mt-1">{statistics.total}</h3>
+          {/* Total Order Card */}
+          <div className="group relative bg-gradient-to-br from-purple-600 via-purple-600 to-violet-600 rounded-xl p-4 text-white shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 hover:-translate-y-1 overflow-hidden">
+            <div className="absolute inset-0 bg-white/0 group-hover:bg-white/10 transition-all duration-300"></div>
+            {/* Shimmer effect */}
+            <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+              <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 bg-gradient-to-r from-transparent via-white/30 to-transparent skew-x-12"></div>
+            </div>
+            <div className="relative flex items-center justify-between">
+              <div className="space-y-1">
+                <p className="text-purple-100 text-xs font-bold uppercase tracking-wider">Total Order</p>
+                <h3 className="text-3xl font-extrabold">{statistics.total}</h3>
+                <div className="flex items-center gap-1 text-xs text-purple-200">
+                  <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z" clipRule="evenodd" />
+                  </svg>
+                  <span>Semua pesanan</span>
+                </div>
               </div>
-              <div className="bg-white/20 p-3 rounded-lg">
+              <div className="bg-white/20 backdrop-blur-sm p-3 rounded-xl group-hover:bg-white/30 transition-all duration-300">
                 <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                 </svg>
               </div>
             </div>
+            <div className="absolute bottom-0 right-0 w-24 h-24 bg-white/5 rounded-full -mr-12 -mb-12 blur-xl"></div>
           </div>
 
-          <div className="bg-gradient-to-br from-violet-500 to-violet-600 rounded-xl p-5 text-white shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-violet-100 text-sm font-medium">Dipesan</p>
-                <h3 className="text-3xl font-bold mt-1">{statistics.pending}</h3>
+          {/* Dipesan Card */}
+          <div className="group relative bg-gradient-to-br from-violet-500 via-violet-600 to-purple-600 rounded-xl p-4 text-white shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 hover:-translate-y-1 overflow-hidden">
+            <div className="absolute inset-0 bg-white/0 group-hover:bg-white/10 transition-all duration-300"></div>
+            {/* Shimmer effect */}
+            <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+              <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 bg-gradient-to-r from-transparent via-white/30 to-transparent skew-x-12"></div>
+            </div>
+            <div className="relative flex items-center justify-between">
+              <div className="space-y-1">
+                <p className="text-violet-100 text-xs font-bold uppercase tracking-wider">Dipesan</p>
+                <h3 className="text-3xl font-extrabold">{statistics.pending}</h3>
+                <div className="flex items-center gap-1 text-xs text-violet-200">
+                  <svg className="w-3 h-3 animate-pulse" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clipRule="evenodd" />
+                  </svg>
+                  <span>Menunggu konfirmasi</span>
+                </div>
               </div>
-              <div className="bg-white/20 p-3 rounded-lg">
+              <div className="bg-white/20 backdrop-blur-sm p-3 rounded-xl group-hover:bg-white/30 transition-all duration-300">
                 <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
               </div>
             </div>
+            <div className="absolute bottom-0 right-0 w-24 h-24 bg-white/5 rounded-full -mr-12 -mb-12 blur-xl"></div>
           </div>
 
-          <div className="bg-gradient-to-br from-purple-600 to-purple-700 rounded-xl p-5 text-white shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-purple-100 text-sm font-medium">Pesanan Disetujui</p>
-                <h3 className="text-3xl font-bold mt-1">{statistics.approved}</h3>
+          {/* Pesanan Disetujui Card */}
+          <div className="group relative bg-gradient-to-br from-purple-600 via-purple-700 to-violet-700 rounded-xl p-4 text-white shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 hover:-translate-y-1 overflow-hidden">
+            <div className="absolute inset-0 bg-white/0 group-hover:bg-white/10 transition-all duration-300"></div>
+            {/* Shimmer effect */}
+            <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+              <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 bg-gradient-to-r from-transparent via-white/30 to-transparent skew-x-12"></div>
+            </div>
+            <div className="relative flex items-center justify-between">
+              <div className="space-y-1">
+                <p className="text-purple-100 text-xs font-bold uppercase tracking-wider">Disetujui</p>
+                <h3 className="text-3xl font-extrabold">{statistics.approved}</h3>
+                <div className="flex items-center gap-1 text-xs text-purple-200">
+                  <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                  </svg>
+                  <span>Siap diproses</span>
+                </div>
               </div>
-              <div className="bg-white/20 p-3 rounded-lg">
+              <div className="bg-white/20 backdrop-blur-sm p-3 rounded-xl group-hover:bg-white/30 transition-all duration-300">
                 <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
               </div>
             </div>
+            <div className="absolute bottom-0 right-0 w-24 h-24 bg-white/5 rounded-full -mr-12 -mb-12 blur-xl"></div>
           </div>
 
-          <div className="bg-gradient-to-br from-violet-600 to-violet-700 rounded-xl p-5 text-white shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-violet-100 text-sm font-medium">Pesanan Dibatalkan</p>
-                <h3 className="text-3xl font-bold mt-1">{statistics.cancelled}</h3>
+          {/* Pesanan Dibatalkan Card */}
+          <div className="group relative bg-gradient-to-br from-violet-600 via-violet-700 to-purple-700 rounded-xl p-4 text-white shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 hover:-translate-y-1 overflow-hidden">
+            <div className="absolute inset-0 bg-white/0 group-hover:bg-white/10 transition-all duration-300"></div>
+            {/* Shimmer effect */}
+            <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+              <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 bg-gradient-to-r from-transparent via-white/30 to-transparent skew-x-12"></div>
+            </div>
+            <div className="relative flex items-center justify-between">
+              <div className="space-y-1">
+                <p className="text-violet-100 text-xs font-bold uppercase tracking-wider">Dibatalkan</p>
+                <h3 className="text-3xl font-extrabold">{statistics.cancelled}</h3>
+                <div className="flex items-center gap-1 text-xs text-violet-200">
+                  <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                  </svg>
+                  <span>Order dibatalkan</span>
+                </div>
               </div>
-              <div className="bg-white/20 p-3 rounded-lg">
+              <div className="bg-white/20 backdrop-blur-sm p-3 rounded-xl group-hover:bg-white/30 transition-all duration-300">
                 <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
               </div>
             </div>
+            <div className="absolute bottom-0 right-0 w-24 h-24 bg-white/5 rounded-full -mr-12 -mb-12 blur-xl"></div>
           </div>
         </div>
 
-        {/* Search & Filter Bar */}
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-4 mb-6 transition-colors duration-300">
+        {/* Search & Filter Bar - Enhanced Purple */}
+        <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl border-2 border-purple-100 dark:border-purple-900 p-5 mb-6 transition-colors duration-300">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             <div className="md:col-span-1">
-              <label className="block text-xs font-semibold text-gray-700 dark:text-gray-300 mb-2">Cari Order</label>
-              <div className="relative">
+              <label className="block text-xs font-bold text-purple-700 dark:text-purple-300 mb-2 uppercase tracking-wider">Cari Order</label>
+              <div className="relative group">
                 <input
                   type="text"
                   placeholder="ID, Kegiatan, Pengaju..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition-colors duration-300"
+                  className="w-full pl-11 pr-4 py-3 border-2 border-purple-200 dark:border-purple-700 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 outline-none text-sm bg-purple-50 dark:bg-gray-700 text-gray-900 dark:text-white transition-all duration-300 group-hover:border-purple-300"
                   suppressHydrationWarning
                 />
-                <svg className="w-5 h-5 text-purple-400 absolute left-3 top-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                <svg className="w-5 h-5 text-purple-500 absolute left-3 top-3.5 group-focus-within:text-purple-600 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                 </svg>
               </div>
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-gray-700 dark:text-gray-300 mb-2">Status</label>
+              <label className="block text-xs font-bold text-purple-700 dark:text-purple-300 mb-2 uppercase tracking-wider">Status</label>
               <select
                 value={filterStatus}
                 onChange={(e) => setFilterStatus(e.target.value)}
-                className="w-full px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition-colors duration-300"
+                className="w-full px-4 py-3 border-2 border-purple-200 dark:border-purple-700 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 outline-none text-sm bg-purple-50 dark:bg-gray-700 text-gray-900 dark:text-white transition-all duration-300 font-medium hover:border-purple-300"
                 suppressHydrationWarning
               >
                 <option value={STATUS.ALL}>Semua Status</option>
@@ -992,32 +1071,32 @@ export default function KonsumsiPage() {
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-gray-700 dark:text-gray-300 mb-2">Dari Tanggal</label>
+              <label className="block text-xs font-bold text-purple-700 dark:text-purple-300 mb-2 uppercase tracking-wider">Dari Tanggal</label>
               <input
                 type="date"
                 value={filterDateFrom}
                 onChange={(e) => setFilterDateFrom(e.target.value)}
-                className="w-full px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition-colors duration-300"
+                className="w-full px-4 py-3 border-2 border-purple-200 dark:border-purple-700 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 outline-none text-sm bg-purple-50 dark:bg-gray-700 text-gray-900 dark:text-white transition-all duration-300 hover:border-purple-300"
                 suppressHydrationWarning
               />
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-gray-700 dark:text-gray-300 mb-2">Sampai Tanggal</label>
+              <label className="block text-xs font-bold text-purple-700 dark:text-purple-300 mb-2 uppercase tracking-wider">Sampai Tanggal</label>
               <input
                 type="date"
                 value={filterDateTo}
                 onChange={(e) => setFilterDateTo(e.target.value)}
-                className="w-full px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition-colors duration-300"
+                className="w-full px-4 py-3 border-2 border-purple-200 dark:border-purple-700 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 outline-none text-sm bg-purple-50 dark:bg-gray-700 text-gray-900 dark:text-white transition-all duration-300 hover:border-purple-300"
                 suppressHydrationWarning
               />
             </div>
           </div>
 
           {(searchQuery || filterStatus !== "Semua" || filterDateFrom || filterDateTo) && (
-            <div className="mt-3 flex items-center justify-between">
-              <p className="text-sm text-gray-600 dark:text-gray-400">
-                Menampilkan <span className="font-bold text-purple-600 dark:text-purple-400">{getFilteredOrders().length}</span> dari {orders.length} order
+            <div className="mt-4 flex items-center justify-between bg-purple-50 dark:bg-purple-900/20 rounded-xl p-3 border border-purple-200 dark:border-purple-700">
+              <p className="text-sm text-gray-700 dark:text-gray-300 font-medium">
+                Menampilkan <span className="font-extrabold text-purple-700 dark:text-purple-400 text-lg">{getFilteredOrders().length}</span> dari <span className="font-bold text-purple-600 dark:text-purple-500">{orders.length}</span> order
               </p>
               <button
                 onClick={() => {
@@ -1026,10 +1105,10 @@ export default function KonsumsiPage() {
                   setFilterDateFrom("");
                   setFilterDateTo("");
                 }}
-                className="text-sm text-violet-600 dark:text-violet-400 hover:text-violet-700 dark:hover:text-violet-300 font-medium flex items-center gap-1 transition-colors duration-300"
+                className="text-sm text-white bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-700 hover:to-purple-700 font-bold px-4 py-2 rounded-lg flex items-center gap-2 transition-all duration-300 shadow-md hover:shadow-lg transform hover:scale-105"
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M6 18L18 6M6 6l12 12" />
                 </svg>
                 Reset Filter
               </button>
@@ -1804,26 +1883,30 @@ export default function KonsumsiPage() {
                 {!(searchQuery || filterStatus !== "Semua" || filterDateFrom || filterDateTo) && (
                   <button
                     onClick={() => setShowForm(true)}
-                    className="flex items-center gap-3 bg-gradient-to-r from-purple-600 to-violet-500 text-white px-8 py-4 rounded-xl font-semibold hover:from-purple-700 hover:to-violet-600 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105"
+                    className="group relative flex items-center gap-3 bg-gradient-to-r from-purple-600 to-violet-500 text-white px-8 py-4 rounded-xl font-semibold hover:from-purple-700 hover:to-violet-600 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 overflow-hidden"
                     suppressHydrationWarning
                   >
-                    <Plus className="w-6 h-6" />
-                    <span>Tambah Order Pertama</span>
+                    {/* Shimmer effect */}
+                    <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+                      <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 bg-gradient-to-r from-transparent via-white/30 to-transparent skew-x-12"></div>
+                    </div>
+                    <Plus className="w-6 h-6 relative z-10" />
+                    <span className="relative z-10">Tambah Order Pertama</span>
                   </button>
                 )}
               </div>
             </div>
           ) : (
-            <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 overflow-visible">
-              <div className="overflow-x-auto">
-                <table className="w-full">
+            <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
+              <div className="overflow-hidden">
+                <table className="w-full table-fixed">
                   <thead className="bg-gradient-to-r from-purple-600 to-violet-500 dark:from-purple-700 dark:to-violet-600">
                     <tr>
-                      <th className="px-4 py-4 text-left text-xs font-semibold text-white uppercase tracking-wider" style={{width: '20%'}}>Order ID</th>
-                      <th className="px-4 py-4 text-left text-xs font-semibold text-white uppercase tracking-wider" style={{width: '30%'}}>Kegiatan</th>
-                      <th className="px-4 py-4 text-left text-xs font-semibold text-white uppercase tracking-wider" style={{width: '15%'}}>Tipe Tamu</th>
-                      <th className="px-4 py-4 text-left text-xs font-semibold text-white uppercase tracking-wider" style={{width: '20%'}}>Status</th>
-                      <th className="px-4 py-4 text-center text-xs font-semibold text-white uppercase tracking-wider" style={{width: '15%'}}>Aksi</th>
+                      <th className="px-4 py-4 text-left text-xs font-semibold text-white uppercase tracking-wider w-[20%]">Order ID</th>
+                      <th className="px-4 py-4 text-left text-xs font-semibold text-white uppercase tracking-wider w-[30%]">Kegiatan</th>
+                      <th className="px-4 py-4 text-left text-xs font-semibold text-white uppercase tracking-wider w-[15%]">Tipe Tamu</th>
+                      <th className="px-4 py-4 text-left text-xs font-semibold text-white uppercase tracking-wider w-[20%]">Status</th>
+                      <th className="px-4 py-4 text-center text-xs font-semibold text-white uppercase tracking-wider w-[15%]">Aksi</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
@@ -1831,10 +1914,14 @@ export default function KonsumsiPage() {
                       return (
                         <tr 
                           key={order.id}
-                          className={`hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors duration-200 ${openDropdownId === order.id ? 'bg-gray-50 dark:bg-gray-700/50' : ''} relative`}
+                          className={`group relative hover:bg-purple-50/50 dark:hover:bg-purple-900/20 transition-all duration-300 ${openDropdownId === order.id ? 'bg-purple-50/50 dark:bg-purple-900/20' : ''}`}
                         >
                           {/* Order ID & Date */}
-                          <td className="px-4 py-4">
+                          <td className="px-4 py-4 relative">
+                            {/* Shimmer effect on hover - moved inside first td */}
+                            <div className="absolute inset-y-0 left-0 right-[-200%] opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none">
+                              <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 bg-gradient-to-r from-transparent via-purple-200/20 dark:via-purple-400/10 to-transparent"></div>
+                            </div>
                             <div className="font-semibold text-gray-900 dark:text-white text-sm mb-1 truncate" title={order.id}>
                               {order.id}
                             </div>
@@ -2053,40 +2140,59 @@ export default function KonsumsiPage() {
           )}
         </div>
 
-        {/* Toast Notification */}
+        {/* Toast Notification - Enhanced Purple Theme */}
         {showToast && (
           <div className="fixed bottom-6 right-6 z-50 animate-in slide-in-from-bottom-5 duration-300">
-            <div className={`flex items-center gap-3 px-6 py-4 rounded-xl shadow-2xl min-w-[320px] ${
+            <div className={`relative flex items-center gap-4 px-6 py-5 rounded-2xl shadow-2xl min-w-[360px] overflow-hidden ${
               toastType === "success" 
-                ? "bg-gradient-to-r from-purple-600 to-violet-500" 
+                ? "bg-gradient-to-r from-purple-600 via-purple-600 to-violet-600" 
                 : toastType === "error"
-                ? "bg-gradient-to-r from-violet-600 to-violet-700"
-                : "bg-gradient-to-r from-purple-600 to-violet-500"
-            } text-white`}>
-              <div className="flex-shrink-0">
-                {toastType === "success" && (
-                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                )}
-                {toastType === "error" && (
-                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                )}
-                {toastType === "info" && (
-                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                )}
+                ? "bg-gradient-to-r from-red-600 via-red-600 to-red-700"
+                : "bg-gradient-to-r from-violet-600 via-violet-600 to-purple-600"
+            } text-white backdrop-blur-lg border border-white/20`}>
+              {/* Decorative blur circles */}
+              <div className="absolute top-0 right-0 w-24 h-24 bg-white/10 rounded-full -mr-12 -mt-12 blur-2xl"></div>
+              <div className="absolute bottom-0 left-0 w-20 h-20 bg-white/10 rounded-full -ml-10 -mb-10 blur-xl"></div>
+              
+              {/* Icon with animated background */}
+              <div className="relative flex-shrink-0">
+                <div className="absolute inset-0 bg-white/20 rounded-full blur-md animate-pulse"></div>
+                <div className="relative bg-white/30 backdrop-blur-sm p-3 rounded-full">
+                  {toastType === "success" && (
+                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2.5}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                  )}
+                  {toastType === "error" && (
+                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2.5}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                  )}
+                  {toastType === "info" && (
+                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2.5}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                  )}
+                </div>
               </div>
-              <p className="font-semibold text-sm flex-1">{toastMessage}</p>
+              
+              {/* Message */}
+              <div className="relative flex-1">
+                <p className="font-bold text-base leading-tight">{toastMessage}</p>
+                <p className="text-xs text-white/80 mt-1">
+                  {toastType === "success" && "Berhasil!"}
+                  {toastType === "error" && "Terjadi kesalahan"}
+                  {toastType === "info" && "Informasi"}
+                </p>
+              </div>
+              
+              {/* Close button */}
               <button
                 onClick={() => setShowToast(false)}
-                className="flex-shrink-0 hover:bg-white/20 p-1 rounded-lg transition-colors"
+                className="relative flex-shrink-0 hover:bg-white/30 p-2 rounded-lg transition-all duration-200 hover:rotate-90 transform"
               >
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2.5}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
                 </svg>
               </button>
             </div>
