@@ -69,7 +69,7 @@ export function Navbar() {
                 suppressHydrationWarning
               >
                 <Image
-                  src="/avatar.svg"
+                  src="/himmel.jpg"
                   alt="Profile"
                   width={40}
                   height={40}

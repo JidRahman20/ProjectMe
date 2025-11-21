@@ -2208,10 +2208,3 @@ export default function KonsumsiPage() {
     </div>
   );
 }
-
-
-
-
-
-
-

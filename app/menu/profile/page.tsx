@@ -32,7 +32,7 @@ export default function ProfilePage() {
             <div className="flex items-end -mt-16 mb-4">
               <div className="relative">
                 <Image
-                  src="/avatar.svg"
+                  src="/himmel.jpg"
                   alt={user.name}
                   width={120}
                   height={120}

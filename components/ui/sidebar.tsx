@@ -74,7 +74,7 @@ type SidebarProps = {
 export const Sidebar: React.FC<SidebarProps> = ({
   userName = "User Name",
   userId = "00000000",
-  avatarSrc = "/avatar.svg",
+  avatarSrc = "/himmel.jpg",
   showMobile = false,
   onClose
 }) => {
