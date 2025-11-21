@@ -36,7 +36,7 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen flex">
       {/* Left Side - Background with Overlay Content */}
-  <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-slate-900 via-green-900 to-slate-900 relative overflow-hidden">
+  <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-green-900 via-yellow-600 to-green-700 relative overflow-hidden">
         {/* Geometric Pattern Overlay */}
         <div className="absolute inset-0 opacity-10">
           <div className="absolute inset-0" style={{
@@ -146,7 +146,7 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full bg-gray-900 dark:bg-white hover:bg-gray-800 dark:hover:bg-gray-100 text-white dark:text-gray-900 font-semibold py-3.5 px-4 rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full bg-gradient-to-r from-green-600 to-yellow-500 hover:from-green-700 hover:to-yellow-600 dark:from-green-500 dark:to-yellow-400 dark:hover:from-green-400 dark:hover:to-yellow-300 text-white font-semibold py-3.5 px-4 rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-md"
               suppressHydrationWarning
             >
               {isLoading ? "Memuat..." : "Masuk"}

@@ -13,6 +13,10 @@ export function ConditionalLayout({ children }: { children: React.ReactNode }) {
   // Routes yang tidak perlu navbar dan sidebar
   const authRoutes = ["/login"];
   const isAuthRoute = authRoutes.includes(pathname);
+  const isKonsumsiRoute = pathname.startsWith("/menu/konsumsi");
+  const backgroundClass = isKonsumsiRoute
+    ? "bg-gray-50 dark:bg-gray-900"
+    : "bg-gradient-to-br from-green-50 via-yellow-50 to-white dark:from-gray-900 dark:via-gray-800 dark:to-gray-900";
 
   if (isAuthRoute) {
     // Untuk halaman auth, tampilkan children langsung tanpa navbar/sidebar
@@ -22,7 +26,7 @@ export function ConditionalLayout({ children }: { children: React.ReactNode }) {
   // Untuk halaman lain, tampilkan dengan navbar dan sidebar
   return (
     <SidebarProvider>
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+      <div className={`min-h-screen ${backgroundClass}`}>
         <ScrollbarActivity />
         <Navbar />
         <Sidebar />

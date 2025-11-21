@@ -1435,6 +1435,7 @@ export default function KonsumsiPage() {
                           value={form.kegiatan}
                           options={kegiatanOptions}
                           placeholder="Pilih / cari kegiatan..."
+                          variant="purple"
                           onChange={(val) => {
                             setForm({ ...form, kegiatan: val });
                             if (errors.kegiatan) setErrors({ ...errors, kegiatan: "" });
@@ -1455,6 +1456,7 @@ export default function KonsumsiPage() {
                           value={form.tamu}
                           options={guestTypeOptions}
                           placeholder="Pilih atau ketik tipe tamu..."
+                          variant="purple"
                           onChange={(newTamu) => {
                             setForm({ ...form, tamu: newTamu });
                             if (errors.tamu) setErrors({ ...errors, tamu: "" });
@@ -1611,6 +1613,7 @@ export default function KonsumsiPage() {
                           value={form.lokasi}
                           options={lokasiOptions}
                           placeholder="Pilih / cari lokasi..."
+                          variant="purple"
                           onChange={(val) => {
                             setForm({ ...form, lokasi: val });
                             if (errors.lokasi) setErrors({ ...errors, lokasi: "" });
@@ -1631,6 +1634,7 @@ export default function KonsumsiPage() {
                           value={form.waktu}
                           options={waktuOptions}
                           placeholder="Pilih / cari waktu..."
+                          variant="purple"
                           allowCustomValue={false}
                           onChange={(val) => {
                             setForm({ ...form, waktu: val });
@@ -1775,6 +1779,7 @@ export default function KonsumsiPage() {
                                     options={(form.waktu && form.tamu ? getAvailableMenu() : []).map(m => ({ label: m, value: m }))}
                                     placeholder={!form.waktu ? "Pilih waktu dulu" : !form.tamu ? "Pilih tipe tamu dulu" : "Pilih menu..."}
                                     disabled={!form.waktu || !form.tamu}
+                                    variant="purple"
                                     onChange={(val) => {
                                       const updated = [...menuItems];
                                       updated[index].jenis = val;
@@ -1789,6 +1794,7 @@ export default function KonsumsiPage() {
                                     value={item.satuan}
                                     options={["Pax","Box","Porsi","Cup","Gelas","Botol","Dus","Pack"].map(s => ({ label: s, value: s }))}
                                     placeholder="Pilih satuan..."
+                                    variant="purple"
                                     onChange={(val) => {
                                       const updated = [...menuItems];
                                       updated[index].satuan = val;

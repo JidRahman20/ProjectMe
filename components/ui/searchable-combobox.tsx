@@ -9,6 +9,8 @@ export interface SearchableOption {
   value: string;
 }
 
+type ComboboxVariant = "green" | "purple";
+
 interface SearchableComboboxProps {
   name?: string;
   value: string;
@@ -21,6 +23,7 @@ interface SearchableComboboxProps {
   className?: string;
   onBlur?: React.FocusEventHandler<HTMLInputElement>;
   size?: 'sm' | 'md'; // tambahkan size prop
+  variant?: ComboboxVariant;
 }
 
 // Lightweight searchable + typeable combobox (headless, Tailwind styled)
@@ -36,6 +39,7 @@ export const SearchableCombobox: React.FC<SearchableComboboxProps> = ({
   className,
   onBlur,
   size = 'md', // default medium
+  variant = "green",
 }) => {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
@@ -98,6 +102,31 @@ export const SearchableCombobox: React.FC<SearchableComboboxProps> = ({
   };
 
   const showClear = value.length > 0;
+
+  const variantStyles: Record<ComboboxVariant, {
+    ring: string;
+    optionHover: string;
+    optionSelected: string;
+    check: string;
+    customCreate: string;
+  }> = {
+    green: {
+      ring: "focus-within:ring-green-500 focus-within:border-green-400/60",
+      optionHover: "hover:bg-green-50 dark:hover:bg-green-900/40",
+      optionSelected: "bg-green-100 dark:bg-green-900/50 font-semibold",
+      check: "text-green-600",
+      customCreate: "bg-yellow-50 dark:bg-yellow-900/40 text-yellow-700 dark:text-yellow-200",
+    },
+    purple: {
+      ring: "focus-within:ring-purple-500 focus-within:border-purple-400/60",
+      optionHover: "hover:bg-purple-50 dark:hover:bg-gray-700",
+      optionSelected: "bg-purple-100 dark:bg-gray-700/60 font-semibold",
+      check: "text-purple-600",
+      customCreate: "bg-violet-50 dark:bg-violet-900/30 text-violet-700 dark:text-violet-300",
+    },
+  };
+
+  const theme = variantStyles[variant];
   
   // Dynamic sizing based on size prop
   const containerPadding = size === 'sm' ? 'px-1.5 py-1' : 'px-3 py-2';
@@ -110,9 +139,10 @@ export const SearchableCombobox: React.FC<SearchableComboboxProps> = ({
       {name && <input type="hidden" name={name} value={value} />}
       <div
         className={clsx(
-          "flex items-center w-full border rounded-lg bg-white dark:bg-gray-800 text-sm focus-within:ring-2 focus-within:ring-purple-500 transition",
+          "flex items-center w-full border rounded-lg bg-white dark:bg-gray-800 text-sm focus-within:ring-2 transition",
           containerPadding,
           gapClass,
+          theme.ring,
           disabled && "opacity-50 cursor-not-allowed"
         )}
       >
@@ -168,12 +198,13 @@ export const SearchableCombobox: React.FC<SearchableComboboxProps> = ({
                   handleSelect(opt.value, opt.label);
                 }}
                 className={clsx(
-                  "flex w-full items-center gap-2 px-3 py-2 text-left text-sm hover:bg-purple-50 dark:hover:bg-gray-700", 
-                  selected && "bg-purple-100 dark:bg-gray-700/60 font-semibold"
+                  "flex w-full items-center gap-2 px-3 py-2 text-left text-sm transition-colors",
+                  theme.optionHover,
+                  selected && theme.optionSelected
                 )}
               >
                 <span className="flex-1 text-gray-700 dark:text-gray-200">{opt.label}</span>
-                {selected && <Check className="w-4 h-4 text-purple-600" />}
+                {selected && <Check className={clsx("w-4 h-4", theme.check)} />}
               </button>
             );
           })}
@@ -184,7 +215,7 @@ export const SearchableCombobox: React.FC<SearchableComboboxProps> = ({
                 e.preventDefault();
                 handleSelect(query);
               }}
-              className="flex w-full items-center gap-2 px-3 py-2 text-left text-sm bg-violet-50 dark:bg-violet-900/30 text-violet-700 dark:text-violet-300"
+              className={clsx("flex w-full items-center gap-2 px-3 py-2 text-left text-sm", theme.customCreate)}
             >
               Tambah &quot;{query}&quot; sebagai nilai baru
             </button>
