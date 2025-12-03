@@ -6,7 +6,7 @@ export async function POST(request: Request) {
   try {
     const { email, password: rawPassword } = await request.json()
 
-    if (!email || !password) {
+    if (!email || !rawPassword) {
       return NextResponse.json({ error: 'Email and password are required' }, { status: 400 })
     }
 
