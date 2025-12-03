@@ -1,5 +1,17 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
+## Supabase Database Setup
+
+1. [Create a Supabase project](https://supabase.com/dashboard/projects) and enable the built-in Postgres database.
+2. In the Database settings, copy both the **Connection Pooling** string and the **Direct connection** string.
+3. Duplicate `.env.example` to `.env` and paste the values:
+	- `DATABASE_URL` → use the pooler string (works well on Vercel serverless functions).
+	- `DIRECT_URL` → use the direct connection string for Prisma migrations/seeding.
+4. (Optional) Fill in `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, and `SUPABASE_SERVICE_ROLE_KEY` if you plan to call Supabase services directly from the client/server.
+5. Run `npm run prisma:generate` and `npm run db:push` (or `npm run prisma:seed`) to sync the schema with your Supabase database.
+
+After the variables are set you can deploy to Vercel safely—the pooled URL keeps the connection count serverless-friendly while migrations still use the direct URL locally.
+
 ## Getting Started
 
 First, run the development server:

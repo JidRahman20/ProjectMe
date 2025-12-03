@@ -1,7 +1,7 @@
 import 'dotenv/config'
 import { PrismaClient, TimePeriod } from '@prisma/client'
 import { PrismaPg } from '@prisma/adapter-pg'
-import { Pool } from 'pg'
+import { Pool, type PoolConfig } from 'pg'
 import bcrypt from 'bcryptjs'
 
 const databaseUrl = process.env.DATABASE_URL
@@ -10,10 +10,15 @@ if (!databaseUrl) {
   throw new Error('DATABASE_URL must be set before running the seed script')
 }
 
-const pool = new Pool({ connectionString: databaseUrl })
+const poolConfig: PoolConfig = { connectionString: databaseUrl }
+
+if (!databaseUrl.includes('localhost') && !databaseUrl.includes('127.0.0.1')) {
+  poolConfig.ssl = { rejectUnauthorized: false }
+}
+
+const pool = new Pool(poolConfig)
 const adapter = new PrismaPg(pool)
 
-// @ts-expect-error Prisma adapter option is available at runtime but not yet in types
 const prisma = new PrismaClient({ adapter })
 
 const menuKey = (name: string, timePeriod: TimePeriod, guestType: string) =>

@@ -1,6 +1,7 @@
 import 'dotenv/config'
 import { PrismaClient } from '@prisma/client'
 import { PrismaPg } from '@prisma/adapter-pg'
+import { Pool, type PoolConfig } from 'pg'
 
 const connectionString = process.env.DATABASE_URL
 
@@ -8,7 +9,13 @@ if (!connectionString) {
   throw new Error('DATABASE_URL must be set before running this script')
 }
 
-const adapter = new PrismaPg({ connectionString })
+const poolConfig: PoolConfig = { connectionString }
+
+if (!connectionString.includes('localhost') && !connectionString.includes('127.0.0.1')) {
+  poolConfig.ssl = { rejectUnauthorized: false }
+}
+
+const adapter = new PrismaPg(new Pool(poolConfig))
 const prisma = new PrismaClient({ adapter })
 
 async function main() {
