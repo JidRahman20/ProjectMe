@@ -20,7 +20,6 @@ if (!databaseUrl.includes('localhost') && !databaseUrl.includes('127.0.0.1')) {
 const pool = new Pool(poolConfig)
 const adapter = new PrismaPg(pool)
 
-// @ts-expect-error Prisma adapter option is available at runtime but not yet in types
 const prismaClient = globalForPrisma.prisma ?? new PrismaClient({ adapter })
 
 if (process.env.NODE_ENV !== 'production') {

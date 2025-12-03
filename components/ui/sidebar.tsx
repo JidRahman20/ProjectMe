@@ -67,16 +67,12 @@ type SidebarProps = {
   userName?: string
   userId?: string
   avatarSrc?: string
-  showMobile?: boolean
-  onClose?: () => void
 }
 
 export const Sidebar: React.FC<SidebarProps> = ({
   userName = "User Name",
   userId = "00000000",
-  avatarSrc = "/himmel.jpg",
-  showMobile = false,
-  onClose
+  avatarSrc = "/himmel.jpg"
 }) => {
   const pathname = usePathname()
   const { isCollapsed, setIsCollapsed, isMobileOpen, setIsMobileOpen } = useSidebar()

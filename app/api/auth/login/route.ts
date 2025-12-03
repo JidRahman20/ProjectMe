@@ -21,7 +21,8 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Invalid credentials' }, { status: 401 })
     }
 
-    const { password: _pw, ...safeUser } = user
+    const { password, ...safeUser } = user
+    void password // drop hashed password from response without lint noise
     // Keep id as string to match existing client type
     return NextResponse.json({ user: { ...safeUser, id: String(safeUser.id) } })
   } catch (err) {
