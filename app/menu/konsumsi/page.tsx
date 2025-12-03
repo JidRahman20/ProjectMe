@@ -680,7 +680,7 @@ export default function KonsumsiPage() {
         const payload = {
           kegiatan: form.kegiatan,
           tamu: form.tamu,
-          jumlahTamu: form.jumlahTamu,
+          jumlahTamu: Number(form.jumlahTamu),
           bagian: form.untukBagian,
           pengaju: form.yangMengajukan,
           tanggalPengajuan: form.tanggalPermintaan,

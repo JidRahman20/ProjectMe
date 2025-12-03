@@ -1,104 +1,165 @@
-import { PrismaClient } from '@prisma/client'
+import 'dotenv/config'
+import { PrismaClient, TimePeriod } from '@prisma/client'
+import { PrismaPg } from '@prisma/adapter-pg'
+import { Pool } from 'pg'
 import bcrypt from 'bcryptjs'
 
-const prisma = new PrismaClient()
+const databaseUrl = process.env.DATABASE_URL
+
+if (!databaseUrl) {
+  throw new Error('DATABASE_URL must be set before running the seed script')
+}
+
+const pool = new Pool({ connectionString: databaseUrl })
+const adapter = new PrismaPg(pool)
+
+// @ts-expect-error Prisma adapter option is available at runtime but not yet in types
+const prisma = new PrismaClient({ adapter })
+
+const menuKey = (name: string, timePeriod: TimePeriod, guestType: string) =>
+  `${name}-${timePeriod}-${guestType}`
 
 async function main() {
   const users = [
-    { name: 'Admin User', email: 'admin@demplon.com', password: 'admin123', role: 'admin' },
-    { name: 'John Doe', email: 'john@demplon.com', password: 'john123', role: 'user' },
-    { name: 'Jane Smith', email: 'jane@demplon.com', password: 'jane123', role: 'user' },
-  ]
-  // Seed minimal menu items (timePeriod + guestType variants)
-  const baseMenuItems: { name: string; timePeriod: string; guestType: string }[] = [
-    { name: 'Nasi Uduk', timePeriod: 'PAGI', guestType: 'REGULAR' },
-    { name: 'Nasi Uduk Premium', timePeriod: 'PAGI', guestType: 'VIP' },
-    { name: 'Nasi Box Ayam Goreng', timePeriod: 'SIANG', guestType: 'REGULAR' },
-    { name: 'Nasi Box Wagyu Teriyaki', timePeriod: 'SIANG', guestType: 'VVIP' },
-    { name: 'Kopi Hitam', timePeriod: 'PAGI', guestType: 'REGULAR' },
-    { name: 'Beef Wellington', timePeriod: 'MALAM', guestType: 'VVIP' },
+    { name: 'Ajid', email: 'ajid@gmail.com', password: 'ajid123', role: 'admin' },
+    { name: 'Dika', email: 'dika@gmail.com', password: 'dika123', role: 'user' },
+    { name: 'Nadia', email: 'nadia@gmail.com', password: 'nadia123', role: 'user' },
+    {name: 'Fauji', email: 'fauji@gmail.com', password: 'fauji123', role: 'user' },
+    { name: 'Gading', email: 'gading@gmail.com', password: 'gading123', role: 'user' }
   ]
 
+  const baseMenuItems = [
+    { name: 'Nasi Uduk', timePeriod: TimePeriod.PAGI, guestType: 'REGULAR' },
+    { name: 'Nasi Uduk Premium', timePeriod: TimePeriod.PAGI, guestType: 'VIP' },
+    { name: 'Nasi Box Ayam Goreng', timePeriod: TimePeriod.SIANG, guestType: 'REGULAR' },
+    { name: 'Nasi Box Wagyu Teriyaki', timePeriod: TimePeriod.SIANG, guestType: 'VVIP' },
+    { name: 'Kopi Hitam', timePeriod: TimePeriod.PAGI, guestType: 'REGULAR' },
+    { name: 'Beef Wellington', timePeriod: TimePeriod.MALAM, guestType: 'VVIP' }
+  ]
+
+  console.log('Seeding menu items...')
+
+  const menuMap = new Map<string, number>()
+
   for (const item of baseMenuItems) {
-    await prisma.menuItem.upsert({
-      where: { name_timePeriod_guestType: { name: item.name, timePeriod: item.timePeriod, guestType: item.guestType } },
+    const record = await prisma.menuItem.upsert({
+      where: {
+        name_timePeriod_guestType: {
+          name: item.name,
+          timePeriod: item.timePeriod,
+          guestType: item.guestType
+        }
+      },
       update: {},
       create: item
     })
+
+    menuMap.set(menuKey(item.name, item.timePeriod, item.guestType), record.id)
   }
 
   console.log('Menu items seeded')
 
-  for (const u of users) {
-    const exists = await prisma.user.findUnique({ where: { email: u.email } })
+  console.log('Seeding users...')
+
+  for (const user of users) {
+    const exists = await prisma.user.findUnique({ where: { email: user.email } })
     if (!exists) {
-      const hash = await bcrypt.hash(u.password, 10)
-      await prisma.user.create({ data: { name: u.name, email: u.email, password: hash, role: u.role } })
+      const hash = await bcrypt.hash(user.password, 10)
+      await prisma.user.create({
+        data: {
+          name: user.name,
+          email: user.email,
+          password: hash,
+          role: user.role
+        }
+      })
     }
   }
 
-  // Create two sample consumption orders if they don't exist yet
-  // Order 1: Cancelled
+  console.log('Users seeded')
+
+  console.log('Seeding sample consumption orders...')
+
   const today = new Date()
-  const formatDate = (d: Date) => d
-  const cancelledCode = 'ORD/SEED/0001'
-  const confirmedCode = 'ORD/SEED/0002'
+  const addDays = (base: Date, days: number) => new Date(base.getTime() + days * 24 * 60 * 60 * 1000)
 
-  const menuItemRegularPagi = await prisma.menuItem.findFirst({ where: { timePeriod: 'PAGI', guestType: 'REGULAR' } })
-  const menuItemVipSiang = await prisma.menuItem.findFirst({ where: { timePeriod: 'SIANG', guestType: 'VVIP' } })
+  const orderSeeds = [
+    {
+      code: 'ORD/SEED/0001',
+      kegiatan: 'Rapat Pembatalan Anggaran',
+      tamu: 'REGULAR',
+      jumlahTamu: 15,
+      bagian: 'Keuangan',
+      pengaju: 'John Doe',
+      status: 'Dibatalkan',
+      catatan: 'Agenda dibatalkan oleh manajemen',
+      tanggalPengajuan: today,
+      tanggalPengiriman: addDays(today, 2),
+      menu: [
+        { key: menuKey('Nasi Uduk', TimePeriod.PAGI, 'REGULAR'), qty: 15, satuan: 'Porsi' }
+      ]
+    },
+    {
+      code: 'ORD/SEED/0002',
+      kegiatan: 'Jamuan Makan Siang Direksi',
+      tamu: 'VVIP',
+      jumlahTamu: 8,
+      bagian: 'Direksi',
+      pengaju: 'Jane Smith',
+      status: 'Dikonfirmasi',
+      catatan: 'Disetujui oleh sekretaris direksi',
+      tanggalPengajuan: today,
+      tanggalPengiriman: addDays(today, 3),
+      menu: [
+        { key: menuKey('Nasi Box Wagyu Teriyaki', TimePeriod.SIANG, 'VVIP'), qty: 8, satuan: 'Box' }
+      ]
+    }
+  ]
 
-  if (menuItemRegularPagi && !(await prisma.consumptionOrder.findUnique({ where: { code: cancelledCode } }))) {
+  for (const order of orderSeeds) {
+    const existing = await prisma.consumptionOrder.findUnique({ where: { code: order.code } })
+    if (existing) continue
+
     await prisma.consumptionOrder.create({
       data: {
-        code: cancelledCode,
-        kegiatan: 'Rapat Pembatalan Anggaran',
-        tamu: 'REGULAR',
-        jumlahTamu: 15,
-        bagian: 'Keuangan',
-        pengaju: 'John Doe',
-        tanggalPengajuan: formatDate(today),
-        tanggalPengiriman: formatDate(new Date(today.getTime() + 2*24*60*60*1000)),
-        status: 'Dibatalkan',
-        catatan: 'Agenda dibatalkan oleh manajemen',
+        code: order.code,
+        kegiatan: order.kegiatan,
+        tamu: order.tamu,
+        jumlahTamu: order.jumlahTamu,
+        bagian: order.bagian,
+        pengaju: order.pengaju,
+        status: order.status,
+        catatan: order.catatan,
+        tanggalPengajuan: order.tanggalPengajuan,
+        tanggalPengiriman: order.tanggalPengiriman,
         menuItems: {
-          create: [
-            { qty: 15, satuan: 'Porsi', menuItem: { connect: { id: menuItemRegularPagi.id } } }
-          ]
+          create: order.menu.map((item) => {
+            const menuId = menuMap.get(item.key)
+            if (!menuId) {
+              throw new Error(`Menu item for key ${item.key} not found`)
+            }
+            return {
+              qty: item.qty,
+              satuan: item.satuan,
+              menuItem: {
+                connect: { id: menuId }
+              }
+            }
+          })
         }
       }
     })
   }
 
-  if (menuItemVipSiang && !(await prisma.consumptionOrder.findUnique({ where: { code: confirmedCode } }))) {
-    await prisma.consumptionOrder.create({
-      data: {
-        code: confirmedCode,
-        kegiatan: 'Jamuan Makan Siang Direksi',
-        tamu: 'VVIP',
-        jumlahTamu: 8,
-        bagian: 'Direksi',
-        pengaju: 'Jane Smith',
-        tanggalPengajuan: formatDate(today),
-        tanggalPengiriman: formatDate(new Date(today.getTime() + 3*24*60*60*1000)),
-        status: 'Dikonfirmasi',
-        catatan: 'Disetujui oleh sekretaris direksi',
-        menuItems: {
-          create: [
-            { qty: 8, satuan: 'Box', menuItem: { connect: { id: menuItemVipSiang.id } } }
-          ]
-        }
-      }
-    })
-  }
-
-  console.log('Seed completed (users, menu items, and sample orders)')
+  console.log('Seed completed (users, menu items, sample orders)')
 }
 
 main()
-  .catch((e) => {
-    console.error(e)
-    process.exit(1)
-  })
-  .finally(async () => {
+  .then(async () => {
     await prisma.$disconnect()
+  })
+  .catch(async (e) => {
+    console.error('Seeding failed:', e)
+    await prisma.$disconnect()
+    process.exit(1)
   })

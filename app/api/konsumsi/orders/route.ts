@@ -43,9 +43,12 @@ export async function POST(request: Request) {
     console.log('Received body:', JSON.stringify(body, null, 2))
     const { kegiatan, tamu, jumlahTamu, bagian, pengaju, tanggalPengajuan, tanggalPengiriman, status, menu } = body
 
-    if (!kegiatan || !tamu || !jumlahTamu || !bagian || !pengaju || !tanggalPengajuan || !tanggalPengiriman) {
-      console.error('Missing fields:', { kegiatan, tamu, jumlahTamu, bagian, pengaju, tanggalPengajuan, tanggalPengiriman })
-      return NextResponse.json({ error: 'Missing required fields', details: { kegiatan, tamu, jumlahTamu, bagian, pengaju, tanggalPengajuan, tanggalPengiriman } }, { status: 400 })
+    const parsedJumlahTamu = typeof jumlahTamu === 'string' ? parseInt(jumlahTamu, 10) : jumlahTamu
+    const jumlahTamuValue = Number.isFinite(parsedJumlahTamu) ? parsedJumlahTamu : 0
+
+    if (!kegiatan || !tamu || !jumlahTamuValue || jumlahTamuValue <= 0 || !bagian || !pengaju || !tanggalPengajuan || !tanggalPengiriman) {
+      console.error('Missing/invalid fields:', { kegiatan, tamu, jumlahTamu, bagian, pengaju, tanggalPengajuan, tanggalPengiriman })
+      return NextResponse.json({ error: 'Missing or invalid required fields', details: { kegiatan, tamu, jumlahTamu, bagian, pengaju, tanggalPengajuan, tanggalPengiriman } }, { status: 400 })
     }
 
     if (!menu || !Array.isArray(menu) || menu.length === 0) {
@@ -64,7 +67,7 @@ export async function POST(request: Request) {
         code,
         kegiatan,
         tamu,
-        jumlahTamu,
+        jumlahTamu: jumlahTamuValue,
         bagian,
         pengaju,
         tanggalPengajuan: new Date(tanggalPengajuan),
