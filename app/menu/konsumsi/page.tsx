@@ -363,7 +363,7 @@ export default function KonsumsiPage() {
               jumlahTamu: o.jumlah_tamu || o.jumlahTamu || 0,
               bagian: o.bagian || '',
               pengaju: o.pengaju || '',
-              status: normalizeStatus(o.status)
+              status: normalizeStatus(o.status as string)
             }
           }))
         }
