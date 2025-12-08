@@ -350,21 +350,21 @@ export default function KonsumsiPage() {
           setOrders(data.orders.map((o: Record<string, unknown>) => {
             // Transform items to menu format for frontend compatibility
             const menu = o.items ? (o.items as Array<Record<string, unknown>>).map((item) => ({
-              label: `${item.name} @ ${item.qty} ${item.satuan}`
+              label: `${item.name as string} @ ${item.qty as number} ${item.satuan as string}`
             })) : (o.menu || [])
             
             return {
               ...o,
               menu,
               items: o.items,
-              tanggalPengajuan: o.tanggal_pengajuan || o.tanggalPengajuan || '',
-              tanggalPengiriman: o.tanggal_pengiriman || o.tanggalPengiriman || '',
-              kegiatan: o.kegiatan || '',
-              tamu: o.tamu || '',
-              jumlahTamu: o.jumlah_tamu || o.jumlahTamu || 0,
-              bagian: o.bagian || '',
-              pengaju: o.pengaju || '',
-              status: normalizeStatus(o.status)
+              tanggalPengajuan: (o.tanggal_pengajuan || o.tanggalPengajuan || '') as string,
+              tanggalPengiriman: (o.tanggal_pengiriman || o.tanggalPengiriman || '') as string,
+              kegiatan: (o.kegiatan || '') as string,
+              tamu: (o.tamu || '') as string,
+              jumlahTamu: (o.jumlah_tamu || o.jumlahTamu || 0) as number,
+              bagian: (o.bagian || '') as string,
+              pengaju: (o.pengaju || '') as string,
+              status: normalizeStatus((o.status || 'pending') as string)
             }
           }))
         }
