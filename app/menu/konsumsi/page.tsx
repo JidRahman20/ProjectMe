@@ -347,9 +347,9 @@ export default function KonsumsiPage() {
         if (!res.ok) return
         const data = await res.json()
         if (Array.isArray(data.orders)) {
-          setOrders(data.orders.map((o: any) => {
+          setOrders(data.orders.map((o: Record<string, unknown>) => {
             // Transform items to menu format for frontend compatibility
-            const menu = o.items ? o.items.map((item: any) => ({
+            const menu = o.items ? (o.items as Array<Record<string, unknown>>).map((item) => ({
               label: `${item.name} @ ${item.qty} ${item.satuan}`
             })) : (o.menu || [])
             
@@ -742,7 +742,7 @@ export default function KonsumsiPage() {
           // Transform order from API to frontend format
           const transformedOrder = {
             ...data.order,
-            menu: data.order.items ? data.order.items.map((item: any) => ({
+            menu: data.order.items ? (data.order.items as Array<Record<string, unknown>>).map((item) => ({
               label: `${item.name} @ ${item.qty} ${item.satuan}`
             })) : [],
             tanggalPengajuan: data.order.tanggal_pengajuan || data.order.tanggalPengajuan || form.tanggalPermintaan,
