@@ -3,9 +3,11 @@ import React, { useState } from "react";
 import { Calendar, Plus, Eye } from "lucide-react";
 import SearchableCombobox from "@/components/ui/searchable-combobox";
 import Image from "next/image";
+import { useAuth } from "@/context/auth-context";
 
 interface Order {
   id: string;
+  code?: string;
   tanggalPengajuan: string;
   tanggalPengiriman: string;
   kegiatan: string;
@@ -14,6 +16,7 @@ interface Order {
   bagian: string;
   pengaju: string;
   menu: { label: string; price?: string }[];
+  items?: Array<{ name: string; qty: number; satuan: string; timePeriod?: string }>;
   status: string;
   approval?: string;
   lokasi?: string;
@@ -286,6 +289,9 @@ const tamuMultiplier = {
 };
 
 export default function KonsumsiPage() {
+  // Get user from auth context
+  const { user } = useAuth();
+  
   // Initialize with today's date in YYYY-MM-DD format
   const getTodayDate = () => {
     const today = new Date();
@@ -341,10 +347,26 @@ export default function KonsumsiPage() {
         if (!res.ok) return
         const data = await res.json()
         if (Array.isArray(data.orders)) {
-          setOrders(data.orders.map((o: Order) => ({
-            ...o,
-            status: normalizeStatus(o.status)
-          })))
+          setOrders(data.orders.map((o: any) => {
+            // Transform items to menu format for frontend compatibility
+            const menu = o.items ? o.items.map((item: any) => ({
+              label: `${item.name} @ ${item.qty} ${item.satuan}`
+            })) : (o.menu || [])
+            
+            return {
+              ...o,
+              menu,
+              items: o.items,
+              tanggalPengajuan: o.tanggal_pengajuan || o.tanggalPengajuan || '',
+              tanggalPengiriman: o.tanggal_pengiriman || o.tanggalPengiriman || '',
+              kegiatan: o.kegiatan || '',
+              tamu: o.tamu || '',
+              jumlahTamu: o.jumlah_tamu || o.jumlahTamu || 0,
+              bagian: o.bagian || '',
+              pengaju: o.pengaju || '',
+              status: normalizeStatus(o.status)
+            }
+          }))
         }
       } catch (e) {
         console.error('Failed to load orders', e)
@@ -676,22 +698,33 @@ export default function KonsumsiPage() {
       showToastNotification("Order berhasil diupdate!", "success");
     } else {
       try {
+        // Check if user is logged in
+        if (!user || !user.id) {
+          console.error('User not logged in:', user);
+          showToastNotification("Anda harus login terlebih dahulu!", "error");
+          return;
+        }
+
         const timePeriod = mapWaktuToTimePeriod(form.waktu);
         const payload = {
+          userId: user.id,
+          items: validMenu.map(m => ({
+            name: m.jenis,
+            qty: m.qty,
+            satuan: m.satuan,
+            timePeriod: timePeriod
+          })),
           kegiatan: form.kegiatan,
           tamu: form.tamu,
           jumlahTamu: Number(form.jumlahTamu),
           bagian: form.untukBagian,
           pengaju: form.yangMengajukan,
           tanggalPengajuan: form.tanggalPermintaan,
-          tanggalPengiriman: form.tanggalPengiriman,
-          menu: validMenu.map(m => ({
-            name: m.jenis,
-            qty: m.qty,
-            satuan: m.satuan,
-            timePeriod: timePeriod
-          }))
+          tanggalPengiriman: form.tanggalPengiriman
         };
+        
+        console.log('Sending order payload:', payload);
+        
         const res = await fetch('/api/konsumsi/orders', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -703,9 +736,29 @@ export default function KonsumsiPage() {
           throw new Error(errorData.error || 'Gagal menyimpan order');
         }
         const data = await res.json();
+        console.log('API Response:', data);
+        
         if (data.order) {
-          setOrders(prev => [data.order, ...prev]);
+          // Transform order from API to frontend format
+          const transformedOrder = {
+            ...data.order,
+            menu: data.order.items ? data.order.items.map((item: any) => ({
+              label: `${item.name} @ ${item.qty} ${item.satuan}`
+            })) : [],
+            tanggalPengajuan: data.order.tanggal_pengajuan || data.order.tanggalPengajuan || form.tanggalPermintaan,
+            tanggalPengiriman: data.order.tanggal_pengiriman || data.order.tanggalPengiriman || form.tanggalPengiriman,
+            kegiatan: data.order.kegiatan || form.kegiatan,
+            tamu: data.order.tamu || form.tamu,
+            jumlahTamu: data.order.jumlah_tamu || data.order.jumlahTamu || form.jumlahTamu,
+            bagian: data.order.bagian || form.untukBagian,
+            pengaju: data.order.pengaju || form.yangMengajukan
+          };
+          
+          setOrders(prev => [transformedOrder, ...prev]);
           showToastNotification("Order berhasil ditambahkan!", "success");
+        } else {
+          console.error('No order in response:', data);
+          showToastNotification("Order tersimpan tapi response tidak lengkap", "info");
         }
       } catch (err) {
         console.error('Error saving order:', err);
@@ -735,7 +788,7 @@ export default function KonsumsiPage() {
 
   const handleEditOrder = (order: Order) => {
     // Parse menu items from order
-    const parsedMenuItems = order.menu.map((m, idx) => {
+    const parsedMenuItems = (order.menu || []).map((m, idx) => {
       const parts = m.label.split(" @ ");
       if (parts.length === 2) {
         const jenis = parts[0];
@@ -856,16 +909,54 @@ export default function KonsumsiPage() {
     cancelled: orders.filter(o => normalizeStatus(o.status) === STATUS.CANCELLED).length,
   };
 
-  const handleCancelOrder = () => {
+  const handleCancelOrder = async () => {
     if (orderToCancel) {
-      setOrders(orders.map(o => 
-        o.id === orderToCancel 
-          ? { ...o, status: STATUS.CANCELLED } 
-          : o
-      ));
-      showToastNotification("Order berhasil dibatalkan", "info");
-      setShowCancelConfirm(false);
-      setOrderToCancel(null);
+      try {
+        // Find order to get code
+        const order = orders.find(o => o.id === orderToCancel);
+        if (!order) {
+          throw new Error('Order not found');
+        }
+
+        const orderIdentifier = order.code || order.id;
+        console.log('Canceling order:', orderIdentifier);
+        
+        // Update status di database menggunakan code
+        const res = await fetch(`/api/konsumsi/orders/${orderIdentifier}`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ status: 'cancelled' })
+        });
+
+        console.log('Response status:', res.status);
+
+        if (!res.ok) {
+          const errorData = await res.json();
+          console.error('Error updating order:', errorData);
+          throw new Error(errorData.error || 'Gagal membatalkan order');
+        }
+
+        const result = await res.json();
+        console.log('Order cancelled successfully:', result);
+
+        // Update state lokal
+        setOrders(orders.map(o => 
+          o.id === orderToCancel 
+            ? { ...o, status: STATUS.CANCELLED } 
+            : o
+        ));
+        
+        showToastNotification("Order berhasil dibatalkan", "info");
+      } catch (err) {
+        console.error('Error canceling order:', err);
+        showToastNotification(
+          err instanceof Error ? err.message : "Gagal membatalkan order", 
+          "error"
+        );
+      } finally {
+        setShowCancelConfirm(false);
+        setOrderToCancel(null);
+      }
     }
   };
 
@@ -1293,7 +1384,7 @@ export default function KonsumsiPage() {
                     Daftar Menu
                   </h4>
                   <div className="space-y-2">
-                    {selectedOrder.menu.map((m, i) => (
+                    {(selectedOrder.menu || []).map((m, i) => (
                       <div className="flex items-center gap-3 bg-white dark:bg-gray-700 rounded-lg p-3 shadow-sm" key={i}>
                         <span className="flex-shrink-0 w-8 h-8 rounded-full bg-gradient-to-r from-purple-600 to-violet-500 text-white text-sm font-bold flex items-center justify-center">
                           {i + 1}

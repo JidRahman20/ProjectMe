@@ -1,6 +1,27 @@
 import { NextResponse, type NextRequest } from 'next/server'
-import { prisma } from '@/lib/prisma'
-import type { ConsumptionOrder } from '@prisma/client'
+import { db } from '@/lib/db'
+
+// GET /api/konsumsi/orders/:code - get order by code
+export async function GET(
+  _request: NextRequest,
+  context: { params: Promise<{ code: string }> }
+) {
+  try {
+    const { code } = await context.params
+    const order = await db.orders.findByCode(code)
+
+    return NextResponse.json({
+      success: true,
+      order
+    })
+  } catch (error) {
+    const err = error as Error
+    return NextResponse.json(
+      { success: false, error: 'Order not found', message: err.message },
+      { status: 404 }
+    )
+  }
+}
 
 // PATCH /api/konsumsi/orders/:code - update status (confirm or cancel)
 export async function PATCH(
@@ -9,44 +30,32 @@ export async function PATCH(
 ) {
   try {
     const { code } = await context.params
-    if (!code) {
-      return NextResponse.json({ error: 'Missing order code' }, { status: 400 })
+    const body = await request.json()
+    const { status } = body
+
+    if (!status) {
+      return NextResponse.json(
+        { success: false, error: 'Status is required' },
+        { status: 400 }
+      )
     }
 
-    const body = await request.json().catch(() => ({})) as { action?: string; catatan?: string }
-    const action = body.action?.toLowerCase()
-
-    if (!action || !['konfirmasi','batalkan'].includes(action)) {
-      return NextResponse.json({ error: "Invalid or missing action. Use 'konfirmasi' or 'batalkan'" }, { status: 400 })
-    }
-
-    const targetStatus = action === 'konfirmasi' ? 'Dikonfirmasi' : 'Dibatalkan'
-
-    const existing = await prisma.consumptionOrder.findUnique({ where: { code } }) as ConsumptionOrder | null
-    if (!existing) {
-      return NextResponse.json({ error: 'Order not found' }, { status: 404 })
-    }
-
-    // Prevent duplicate transitions
-    if (existing.status === targetStatus) {
-      return NextResponse.json({ message: 'Status already set', status: existing.status })
-    }
-
-    const updated = await prisma.consumptionOrder.update({
-      where: { code },
-      data: { status: targetStatus, catatan: body.catatan }
-    })
+    // Find order first
+    const existingOrder = await db.orders.findByCode(code)
+    
+    // Update status
+    const updatedOrder = await db.orders.update(existingOrder.id, { status })
 
     return NextResponse.json({
-      order: {
-        code: updated.code,
-        status: updated.status,
-        catatan: updated.catatan
-      }
+      success: true,
+      order: updatedOrder
     })
-  } catch (e) {
-    console.error(e)
-    return NextResponse.json({ error: 'Failed to update order status' }, { status: 500 })
+  } catch (error) {
+    const err = error as Error
+    return NextResponse.json(
+      { success: false, error: 'Failed to update order', message: err.message },
+      { status: 500 }
+    )
   }
 }
 
@@ -57,23 +66,22 @@ export async function DELETE(
 ) {
   try {
     const { code } = await context.params
-    if (!code) {
-      return NextResponse.json({ error: 'Missing order code' }, { status: 400 })
-    }
+    
+    // Find order first
+    const existingOrder = await db.orders.findByCode(code)
+    
+    // Delete order
+    await db.orders.delete(existingOrder.id)
 
-    const existing = await prisma.consumptionOrder.findUnique({ where: { code }, select: { id: true } })
-    if (!existing) {
-      return NextResponse.json({ error: 'Order not found' }, { status: 404 })
-    }
-
-    await prisma.$transaction([
-      prisma.consumptionOrderMenuItem.deleteMany({ where: { orderId: existing.id } }),
-      prisma.consumptionOrder.delete({ where: { code } })
-    ])
-
-    return NextResponse.json({ success: true }, { status: 200 })
-  } catch (e) {
-    console.error(e)
-    return NextResponse.json({ error: 'Failed to delete order' }, { status: 500 })
+    return NextResponse.json({
+      success: true,
+      message: 'Order deleted successfully'
+    })
+  } catch (error) {
+    const err = error as Error
+    return NextResponse.json(
+      { success: false, error: 'Failed to delete order', message: err.message },
+      { status: 500 }
+    )
   }
 }

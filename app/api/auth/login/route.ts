@@ -1,32 +1,53 @@
 import { NextResponse } from 'next/server'
-import { prisma } from '@/lib/prisma'
-import bcrypt from 'bcryptjs'
+import { db } from '@/lib/db'
+import bcrypt from 'bcrypt'
 
 export async function POST(request: Request) {
   try {
-    const { email, password: rawPassword } = await request.json()
+    const body = await request.json()
+    const { email, password } = body
 
-    if (!email || !rawPassword) {
-      return NextResponse.json({ error: 'Email and password are required' }, { status: 400 })
+    if (!email || !password) {
+      return NextResponse.json(
+        { success: false, error: 'Email and password are required' },
+        { status: 400 }
+      )
     }
 
-    const user = await prisma.user.findUnique({ where: { email } })
+    // Find user by email
+    const user = await db.users.findByEmail(email)
 
     if (!user) {
-      return NextResponse.json({ error: 'Invalid credentials' }, { status: 401 })
+      return NextResponse.json(
+        { success: false, error: 'Invalid credentials' },
+        { status: 401 }
+      )
     }
 
-    const valid = await bcrypt.compare(rawPassword, user.password)
-    if (!valid) {
-      return NextResponse.json({ error: 'Invalid credentials' }, { status: 401 })
+    // Verify password
+    const isValidPassword = await bcrypt.compare(password, user.password)
+
+    if (!isValidPassword) {
+      return NextResponse.json(
+        { success: false, error: 'Invalid credentials' },
+        { status: 401 }
+      )
     }
 
-    const { password: hashedPassword, ...safeUser } = user
-    void hashedPassword // drop hashed password from response without lint noise
-    // Keep id as string to match existing client type
-    return NextResponse.json({ user: { ...safeUser, id: String(safeUser.id) } })
-  } catch (err) {
-    console.error('Login error', err)
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
+    // Don't send password back
+    const { password: _, ...userWithoutPassword } = user
+
+    return NextResponse.json({
+      success: true,
+      user: userWithoutPassword,
+      message: 'Login successful'
+    })
+  } catch (error) {
+    const err = error as Error
+    console.error('Login error:', err)
+    return NextResponse.json(
+      { success: false, error: 'Login failed', message: err.message },
+      { status: 500 }
+    )
   }
 }

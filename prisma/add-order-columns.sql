@@ -1,0 +1,9 @@
+-- Add additional columns to orders table
+ALTER TABLE orders 
+ADD COLUMN IF NOT EXISTS kegiatan TEXT,
+ADD COLUMN IF NOT EXISTS tamu TEXT,
+ADD COLUMN IF NOT EXISTS jumlah_tamu INTEGER,
+ADD COLUMN IF NOT EXISTS bagian TEXT,
+ADD COLUMN IF NOT EXISTS pengaju TEXT,
+ADD COLUMN IF NOT EXISTS tanggal_pengajuan TEXT,
+ADD COLUMN IF NOT EXISTS tanggal_pengiriman TEXT;

@@ -1,27 +1,59 @@
 import { NextResponse } from 'next/server'
-import { prisma } from '@/lib/prisma'
-import bcrypt from 'bcryptjs'
+import { db } from '@/lib/db'
+import bcrypt from 'bcrypt'
 
 export async function POST(request: Request) {
   try {
-    const { name, email, password: rawPassword } = await request.json()
+    const body = await request.json()
+    const { email, password, name } = body
 
-    if (!name || !email || !rawPassword) {
-      return NextResponse.json({ error: 'Name, email and password are required' }, { status: 400 })
+    if (!email || !password) {
+      return NextResponse.json(
+        { success: false, error: 'Email and password are required' },
+        { status: 400 }
+      )
     }
 
-    const existing = await prisma.user.findUnique({ where: { email } })
-    if (existing) {
-      return NextResponse.json({ error: 'Email already registered' }, { status: 409 })
+    // Check if user already exists
+    try {
+      const existingUser = await db.users.findByEmail(email)
+      if (existingUser) {
+        return NextResponse.json(
+          { success: false, error: 'Email already registered' },
+          { status: 409 }
+        )
+      }
+    } catch {
+      // User doesn't exist, continue with registration
     }
 
-    const hashed = await bcrypt.hash(rawPassword, 10)
-    const created = await prisma.user.create({ data: { name, email, password: hashed, role: 'user' } })
-    const { password: hashedPassword, ...safeUser } = created
-    void hashedPassword
-    return NextResponse.json({ user: { ...safeUser, id: String(safeUser.id) } }, { status: 201 })
-  } catch (err) {
-    console.error('Register error', err)
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
+    // Hash password
+    const hashedPassword = await bcrypt.hash(password, 10)
+
+    // Create user
+    const userId = `user-${Date.now()}`
+    const newUser = await db.users.create({
+      id: userId,
+      email,
+      password: hashedPassword,
+      name: name || null,
+      role: 'user'
+    })
+
+    // Don't send password back
+    const { password: _, ...userWithoutPassword } = newUser
+
+    return NextResponse.json({
+      success: true,
+      user: userWithoutPassword,
+      message: 'Registration successful'
+    }, { status: 201 })
+  } catch (error) {
+    const err = error as Error
+    console.error('Registration error:', err)
+    return NextResponse.json(
+      { success: false, error: 'Registration failed', message: err.message },
+      { status: 500 }
+    )
   }
 }

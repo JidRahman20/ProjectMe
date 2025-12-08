@@ -1,71 +1,46 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
 generator client {
-  provider        = "prisma-client-js"
-  previewFeatures = ["driverAdapters"]
+  provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
   directUrl = env("DIRECT_URL")
 }
 
-enum TimePeriod {
-  PAGI
-  SIANG
-  SORE
-  MALAM
-}
-
 model User {
-  id        Int      @id @default(autoincrement())
-  name      String
+  id        String   @id @default(cuid())
   email     String   @unique
+  name      String?
   password  String
   role      String   @default("user")
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  orders    Order[]
+
+  @@map("users")
 }
 
-model ConsumptionOrder {
-  id                Int                       @id @default(autoincrement())
-  code              String                    @unique
-  kegiatan          String
-  tamu              String
-  jumlahTamu        Int
-  bagian            String
-  pengaju           String
-  status            String                    @default("Menunggu konfirmasi")
-  catatan           String?
-  tanggalPengajuan  DateTime
-  tanggalPengiriman DateTime
-  createdAt         DateTime                  @default(now())
-  updatedAt         DateTime                  @updatedAt
-  menuItems         ConsumptionOrderMenuItem[]
-}
+model Order {
+  id                 String   @id @default(cuid())
+  code               String   @unique
+  userId             String
+  user               User     @relation(fields: [userId], references: [id])
+  items              Json
+  totalAmount        Float
+  status             String   @default("pending")
+  kegiatan           String?
+  tamu               String?
+  jumlahTamu         Int?
+  bagian             String?
+  pengaju            String?
+  tanggalPengajuan   String?
+  tanggalPengiriman  String?
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
 
-model ConsumptionOrderMenuItem {
-  id         Int                @id @default(autoincrement())
-  orderId    Int
-  menuItemId Int
-  qty        Int                @default(0)
-  satuan     String             @default("Unit")
-  createdAt  DateTime           @default(now())
-  updatedAt  DateTime           @updatedAt
-
-  order    ConsumptionOrder     @relation(fields: [orderId], references: [id], onDelete: Cascade)
-  menuItem MenuItem             @relation(fields: [menuItemId], references: [id])
-
-  @@unique([orderId, menuItemId], map: "order_menuItem_unique")
-}
-
-model MenuItem {
-  id          Int                       @id @default(autoincrement())
-  name        String
-  timePeriod  TimePeriod                @default(PAGI)
-  guestType   String
-  createdAt   DateTime                  @default(now())
-  updatedAt   DateTime                  @updatedAt
-  orderItems  ConsumptionOrderMenuItem[]
-
-  @@unique([name, timePeriod, guestType], map: "name_timePeriod_guestType")
+  @@map("orders")
 }

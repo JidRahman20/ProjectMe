@@ -1,170 +1,140 @@
-import 'dotenv/config'
-import { PrismaClient, TimePeriod } from '@prisma/client'
-import { PrismaPg } from '@prisma/adapter-pg'
-import { Pool, type PoolConfig } from 'pg'
-import bcrypt from 'bcryptjs'
-
-const databaseUrl = process.env.DATABASE_URL
-
-if (!databaseUrl) {
-  throw new Error('DATABASE_URL must be set before running the seed script')
-}
-
-const poolConfig: PoolConfig = { connectionString: databaseUrl }
-
-if (!databaseUrl.includes('localhost') && !databaseUrl.includes('127.0.0.1')) {
-  poolConfig.ssl = { rejectUnauthorized: false }
-}
-
-const pool = new Pool(poolConfig)
-const adapter = new PrismaPg(pool)
-
-const prisma = new PrismaClient({ adapter })
-
-const menuKey = (name: string, timePeriod: TimePeriod, guestType: string) =>
-  `${name}-${timePeriod}-${guestType}`
+import { supabase } from '../lib/supabase'
+import bcrypt from 'bcrypt'
 
 async function main() {
-  const users = [
-    { name: 'Ajid', email: 'ajid@gmail.com', password: 'ajid123', role: 'admin' },
-    { name: 'Dika', email: 'dika@gmail.com', password: 'dika123', role: 'user' },
-    { name: 'Nadia', email: 'nadia@gmail.com', password: 'nadia123', role: 'user' },
-    {name: 'Fauji', email: 'fauji@gmail.com', password: 'fauji123', role: 'user' },
-    { name: 'Gading', email: 'gading@gmail.com', password: 'gading123', role: 'user' }
-  ]
+  console.log(' Starting seed...')
 
-  const baseMenuItems = [
-    { name: 'Nasi Uduk', timePeriod: TimePeriod.PAGI, guestType: 'REGULAR' },
-    { name: 'Nasi Uduk Premium', timePeriod: TimePeriod.PAGI, guestType: 'VIP' },
-    { name: 'Nasi Box Ayam Goreng', timePeriod: TimePeriod.SIANG, guestType: 'REGULAR' },
-    { name: 'Nasi Box Wagyu Teriyaki', timePeriod: TimePeriod.SIANG, guestType: 'VVIP' },
-    { name: 'Kopi Hitam', timePeriod: TimePeriod.PAGI, guestType: 'REGULAR' },
-    { name: 'Beef Wellington', timePeriod: TimePeriod.MALAM, guestType: 'VVIP' }
-  ]
-
-  console.log('Seeding menu items...')
-
-  const menuMap = new Map<string, number>()
-
-  for (const item of baseMenuItems) {
-    const record = await prisma.menuItem.upsert({
-      where: {
-        name_timePeriod_guestType: {
-          name: item.name,
-          timePeriod: item.timePeriod,
-          guestType: item.guestType
-        }
-      },
-      update: {},
-      create: item
-    })
-
-    menuMap.set(menuKey(item.name, item.timePeriod, item.guestType), record.id)
-  }
-
-  console.log('Menu items seeded')
-
-  console.log('Seeding users...')
-
-  for (const user of users) {
-    const exists = await prisma.user.findUnique({ where: { email: user.email } })
-    if (!exists) {
-      const hash = await bcrypt.hash(user.password, 10)
-      await prisma.user.create({
-        data: {
-          name: user.name,
-          email: user.email,
-          password: hash,
-          role: user.role
-        }
-      })
-    }
-  }
-
-  console.log('Users seeded')
-
-  console.log('Seeding sample consumption orders...')
-
-  const today = new Date()
-  const addDays = (base: Date, days: number) => new Date(base.getTime() + days * 24 * 60 * 60 * 1000)
-
-  const orderSeeds = [
+  // Define users to create
+  const usersToCreate = [
     {
-      code: 'ORD/SEED/0001',
-      kegiatan: 'Rapat Pembatalan Anggaran',
-      tamu: 'REGULAR',
-      jumlahTamu: 15,
-      bagian: 'Keuangan',
-      pengaju: 'John Doe',
-      status: 'Dibatalkan',
-      catatan: 'Agenda dibatalkan oleh manajemen',
-      tanggalPengajuan: today,
-      tanggalPengiriman: addDays(today, 2),
-      menu: [
-        { key: menuKey('Nasi Uduk', TimePeriod.PAGI, 'REGULAR'), qty: 15, satuan: 'Porsi' }
-      ]
+      email: 'ajid@gmail.com',
+      name: 'Admin Ajid',
+      password: 'ajid123',
+      role: 'admin'
     },
     {
-      code: 'ORD/SEED/0002',
-      kegiatan: 'Jamuan Makan Siang Direksi',
-      tamu: 'VVIP',
-      jumlahTamu: 8,
-      bagian: 'Direksi',
-      pengaju: 'Jane Smith',
-      status: 'Dikonfirmasi',
-      catatan: 'Disetujui oleh sekretaris direksi',
-      tanggalPengajuan: today,
-      tanggalPengiriman: addDays(today, 3),
-      menu: [
-        { key: menuKey('Nasi Box Wagyu Teriyaki', TimePeriod.SIANG, 'VVIP'), qty: 8, satuan: 'Box' }
-      ]
-    }
+      email: 'dika@gmail.com',
+      name: 'User Dika',
+      password: 'dika123',
+      role: 'user'
+    },
+    {
+      email: 'fauji@gmail.com',
+      name: 'User Fauji',
+      password: 'fauji123',
+      role: 'user'
+    },
+    {
+      email: 'gading@gmail.com',
+      name: 'User Gading',
+      password: 'gading123',
+      role: 'user'
+    },
+    {
+      email: 'nadia@gmail.com',
+      name: 'User Nadia',
+      password: 'nadia123',
+      role: 'user'
+    },
   ]
 
-  for (const order of orderSeeds) {
-    const existing = await prisma.consumptionOrder.findUnique({ where: { code: order.code } })
-    if (existing) continue
+  const createdUsers: Array<{
+    id: string
+    email: string
+    name: string | null
+    role: string
+  }> = []
 
-    await prisma.consumptionOrder.create({
-      data: {
-        code: order.code,
-        kegiatan: order.kegiatan,
-        tamu: order.tamu,
-        jumlahTamu: order.jumlahTamu,
-        bagian: order.bagian,
-        pengaju: order.pengaju,
-        status: order.status,
-        catatan: order.catatan,
-        tanggalPengajuan: order.tanggalPengajuan,
-        tanggalPengiriman: order.tanggalPengiriman,
-        menuItems: {
-          create: order.menu.map((item) => {
-            const menuId = menuMap.get(item.key)
-            if (!menuId) {
-              throw new Error(`Menu item for key ${item.key} not found`)
-            }
-            return {
-              qty: item.qty,
-              satuan: item.satuan,
-              menuItem: {
-                connect: { id: menuId }
-              }
-            }
-          })
-        }
-      }
-    })
+  // Create users
+  for (const userData of usersToCreate) {
+    console.log(`\nCreating user: ${userData.email}`)
+    
+    // Check if user already exists
+    const { data: existingUser } = await supabase
+      .from('users')
+      .select('email')
+      .eq('email', userData.email)
+      .single()
+
+    if (existingUser) {
+      console.log(`User ${userData.email} already exists, skipping...`)
+      continue
+    }
+
+    // Hash password
+    const hashedPassword = await bcrypt.hash(userData.password, 10)
+
+    // Create user
+    const { data: user, error: userError } = await supabase
+      .from('users')
+      .insert({
+        id: `user-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+        email: userData.email,
+        name: userData.name,
+        password: hashedPassword,
+        role: userData.role,
+      })
+      .select()
+      .single()
+
+    if (userError) {
+      console.error(`Error creating user ${userData.email}:`, userError)
+      continue
+    }
+
+    console.log(`User created: ${user.email} (${user.role})`)
+    createdUsers.push(user)
   }
 
-  console.log('Seed completed (users, menu items, sample orders)')
+  if (createdUsers.length === 0) {
+    console.log('\n No new users created')
+    return
+  }
+
+  // Use first created user for test order
+  const user = createdUsers[0]
+
+  // Create sample order with complete data
+  console.log(`\n Creating sample order for ${user.email}...`)
+  const { data: order, error: orderError } = await supabase
+    .from('orders')
+    .insert({
+      id: 'order-' + Date.now(),
+      code: 'ORD-' + Date.now(),
+      user_id: user.id,
+      items: [
+        { name: 'Nasi Goreng', qty: 2, satuan: 'porsi', timePeriod: 'SIANG' },
+        { name: 'Es Teh', qty: 2, satuan: 'gelas', timePeriod: 'SIANG' },
+      ],
+      total_amount: 60000,
+      status: 'pending',
+      kegiatan: 'Rapat Koordinasi',
+      tamu: 'Tamu VIP',
+      jumlah_tamu: 10,
+      bagian: 'Divisi IT',
+      pengaju: user.name,
+      tanggal_pengajuan: new Date().toISOString().split('T')[0],
+      tanggal_pengiriman: new Date(Date.now() + 86400000).toISOString().split('T')[0] // Tomorrow
+    })
+    .select()
+    .single()
+
+  if (orderError) {
+    console.error('ERROR: Error creating order:', orderError)
+  } else {
+    console.log('SUCCESS: Order created:', order.code)
+  }
+  
+  console.log('\nSeed completed successfully!')
+  console.log('\nLogin credentials:')
+  usersToCreate.forEach(u => {
+    console.log(`   - ${u.email} / ${u.password} (${u.role})`)
+  })
 }
 
 main()
-  .then(async () => {
-    await prisma.$disconnect()
-  })
-  .catch(async (e) => {
-    console.error('Seeding failed:', e)
-    await prisma.$disconnect()
+  .catch((e) => {
+    console.error(e)
     process.exit(1)
   })
+
