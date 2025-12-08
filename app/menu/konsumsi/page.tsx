@@ -7,7 +7,6 @@ import { useAuth } from "@/context/auth-context";
 
 interface Order {
   id: string;
-  code?: string;
   tanggalPengajuan: string;
   tanggalPengiriman: string;
   kegiatan: string;
@@ -349,22 +348,22 @@ export default function KonsumsiPage() {
         if (Array.isArray(data.orders)) {
           setOrders(data.orders.map((o: Record<string, unknown>) => {
             // Transform items to menu format for frontend compatibility
-            const menu = o.items ? (o.items as Array<Record<string, unknown>>).map((item) => ({
-              label: `${item.name as string} @ ${item.qty as number} ${item.satuan as string}`
+            const menu = o.items ? (o.items as Array<Record<string, unknown>>).map((item: Record<string, unknown>) => ({
+              label: `${item.name} @ ${item.qty} ${item.satuan}`
             })) : (o.menu || [])
             
             return {
               ...o,
               menu,
               items: o.items,
-              tanggalPengajuan: (o.tanggal_pengajuan || o.tanggalPengajuan || '') as string,
-              tanggalPengiriman: (o.tanggal_pengiriman || o.tanggalPengiriman || '') as string,
-              kegiatan: (o.kegiatan || '') as string,
-              tamu: (o.tamu || '') as string,
-              jumlahTamu: (o.jumlah_tamu || o.jumlahTamu || 0) as number,
-              bagian: (o.bagian || '') as string,
-              pengaju: (o.pengaju || '') as string,
-              status: normalizeStatus((o.status || 'pending') as string)
+              tanggalPengajuan: o.tanggal_pengajuan || o.tanggalPengajuan || '',
+              tanggalPengiriman: o.tanggal_pengiriman || o.tanggalPengiriman || '',
+              kegiatan: o.kegiatan || '',
+              tamu: o.tamu || '',
+              jumlahTamu: o.jumlah_tamu || o.jumlahTamu || 0,
+              bagian: o.bagian || '',
+              pengaju: o.pengaju || '',
+              status: normalizeStatus(o.status)
             }
           }))
         }
@@ -742,7 +741,7 @@ export default function KonsumsiPage() {
           // Transform order from API to frontend format
           const transformedOrder = {
             ...data.order,
-            menu: data.order.items ? (data.order.items as Array<Record<string, unknown>>).map((item) => ({
+            menu: data.order.items ? data.order.items.map((item: Record<string, unknown>) => ({
               label: `${item.name} @ ${item.qty} ${item.satuan}`
             })) : [],
             tanggalPengajuan: data.order.tanggal_pengajuan || data.order.tanggalPengajuan || form.tanggalPermintaan,
@@ -909,54 +908,16 @@ export default function KonsumsiPage() {
     cancelled: orders.filter(o => normalizeStatus(o.status) === STATUS.CANCELLED).length,
   };
 
-  const handleCancelOrder = async () => {
+  const handleCancelOrder = () => {
     if (orderToCancel) {
-      try {
-        // Find order to get code
-        const order = orders.find(o => o.id === orderToCancel);
-        if (!order) {
-          throw new Error('Order not found');
-        }
-
-        const orderIdentifier = order.code || order.id;
-        console.log('Canceling order:', orderIdentifier);
-        
-        // Update status di database menggunakan code
-        const res = await fetch(`/api/konsumsi/orders/${orderIdentifier}`, {
-          method: 'PATCH',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ status: 'cancelled' })
-        });
-
-        console.log('Response status:', res.status);
-
-        if (!res.ok) {
-          const errorData = await res.json();
-          console.error('Error updating order:', errorData);
-          throw new Error(errorData.error || 'Gagal membatalkan order');
-        }
-
-        const result = await res.json();
-        console.log('Order cancelled successfully:', result);
-
-        // Update state lokal
-        setOrders(orders.map(o => 
-          o.id === orderToCancel 
-            ? { ...o, status: STATUS.CANCELLED } 
-            : o
-        ));
-        
-        showToastNotification("Order berhasil dibatalkan", "info");
-      } catch (err) {
-        console.error('Error canceling order:', err);
-        showToastNotification(
-          err instanceof Error ? err.message : "Gagal membatalkan order", 
-          "error"
-        );
-      } finally {
-        setShowCancelConfirm(false);
-        setOrderToCancel(null);
-      }
+      setOrders(orders.map(o => 
+        o.id === orderToCancel 
+          ? { ...o, status: STATUS.CANCELLED } 
+          : o
+      ));
+      showToastNotification("Order berhasil dibatalkan", "info");
+      setShowCancelConfirm(false);
+      setOrderToCancel(null);
     }
   };
 
