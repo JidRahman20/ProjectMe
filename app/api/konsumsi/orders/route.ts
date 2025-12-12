@@ -65,9 +65,13 @@ export async function POST(request: Request) {
       totalAmount += qty * price
     })
 
-    // Generate order code
-    const orderCode = `ORD-${Date.now()}`
-    const orderId = `order-${Date.now()}`
+    // Generate order code with more unique identifier
+    const timestamp = Date.now()
+    const randomSuffix = Math.random().toString(36).substring(2, 9)
+    const orderCode = `ORD-${timestamp}-${randomSuffix}`
+    const orderId = `order-${timestamp}-${randomSuffix}`
+
+    console.log('📝 Creating order with code:', orderCode);
 
     // Create order with all data
     const order = await db.orders.create({

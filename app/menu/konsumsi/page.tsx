@@ -388,6 +388,9 @@ export default function KonsumsiPage() {
   const [toastMessage, setToastMessage] = useState("");
   const [toastType, setToastType] = useState<"success" | "error" | "info">("success");
   
+  // State untuk loading saat submit
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  
   // State untuk Pagination
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(5);
@@ -666,6 +669,12 @@ export default function KonsumsiPage() {
   const handleAddOrder = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    // Prevent double submission
+    if (isSubmitting) {
+      console.log('⚠️ Submission already in progress, ignoring...');
+      return;
+    }
+
     if (!validateForm()) return;
 
     const validMenu = menuItems.filter(item => item.jenis && item.satuan && item.qty > 0);
@@ -673,6 +682,10 @@ export default function KonsumsiPage() {
       alert("Harap tambahkan minimal 1 menu konsumsi!");
       return;
     }
+
+    // Set loading state
+    console.log('🚀 Starting order submission...');
+    setIsSubmitting(true);
 
     if (isEditMode && editOrderId) {
       try {
@@ -742,6 +755,7 @@ export default function KonsumsiPage() {
       } catch (err) {
         console.error('Error updating order:', err);
         showToastNotification(err instanceof Error ? err.message : "Gagal mengupdate order", "error");
+        setIsSubmitting(false);
         return;
       }
     } else {
@@ -750,6 +764,7 @@ export default function KonsumsiPage() {
         if (!user || !user.id) {
           console.error('User not logged in:', user);
           showToastNotification("Anda harus login terlebih dahulu!", "error");
+          setIsSubmitting(false);
           return;
         }
 
@@ -820,10 +835,15 @@ export default function KonsumsiPage() {
       } catch (err) {
         console.error('Error saving order:', err);
         showToastNotification(err instanceof Error ? err.message : "Terjadi kesalahan menyimpan order", "error");
+        setIsSubmitting(false);
         return;
       }
     }
 
+    // Reset loading state
+    console.log('✅ Order submission completed successfully');
+    setIsSubmitting(false);
+    
     // Close form and reset after successful submission
     handleCloseForm();
   };
@@ -2046,14 +2066,24 @@ export default function KonsumsiPage() {
                   </button>
                   <button
                     type="submit"
-                    disabled={!isFormValid()}
+                    disabled={!isFormValid() || isSubmitting}
                     className={`flex-1 px-4 py-2.5 rounded-lg text-sm font-semibold transition-all shadow-md ${
-                      isFormValid()
+                      isFormValid() && !isSubmitting
                         ? "text-white bg-gradient-to-r from-purple-600 to-violet-500 hover:from-purple-700 hover:to-violet-600 hover:shadow-lg cursor-pointer"
                         : "text-gray-400 bg-gray-300 dark:bg-gray-600 dark:text-gray-500 cursor-not-allowed opacity-60"
-                    }`}
+                    } ${isSubmitting ? 'pointer-events-none' : ''}`}
                   >
-                    {isEditMode ? "Update Order" : "Simpan Order"}
+                    {isSubmitting ? (
+                      <span className="flex items-center justify-center gap-2">
+                        <svg className="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                        Menyimpan...
+                      </span>
+                    ) : (
+                      isEditMode ? "Update Order" : "Simpan Order"
+                    )}
                   </button>
                 </div>
               </form>
