@@ -31,9 +31,9 @@ async function main() {
       role: 'user'
     },
     {
-      email: 'nadia@gmail.com',
-      name: 'User Nadia',
-      password: 'nadia123',
+      email: 'riza@gmail.com',
+      name: 'User Riza',
+      password: 'riza123',
       role: 'user'
     },
   ]

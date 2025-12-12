@@ -7,6 +7,7 @@ import { useAuth } from "@/context/auth-context";
 
 interface Order {
   id: string;
+  code?: string;
   tanggalPengajuan: string;
   tanggalPengiriman: string;
   kegiatan: string;
@@ -345,6 +346,7 @@ export default function KonsumsiPage() {
         const res = await fetch('/api/konsumsi/orders', { cache: 'no-store' })
         if (!res.ok) return
         const data = await res.json()
+        console.log('Loaded orders from API:', data.orders)
         if (Array.isArray(data.orders)) {
           setOrders(data.orders.map((o: Record<string, unknown>) => {
             // Transform items to menu format for frontend compatibility
@@ -354,6 +356,8 @@ export default function KonsumsiPage() {
             
             return {
               ...o,
+              id: o.id,
+              code: o.code,
               menu,
               items: o.items,
               tanggalPengajuan: o.tanggal_pengajuan || o.tanggalPengajuan || '',
@@ -363,7 +367,12 @@ export default function KonsumsiPage() {
               jumlahTamu: o.jumlah_tamu || o.jumlahTamu || 0,
               bagian: o.bagian || '',
               pengaju: o.pengaju || '',
-              status: normalizeStatus(o.status as string)
+              status: normalizeStatus(o.status as string),
+              // Include optional fields
+              approval: o.approval || '',
+              lokasi: o.lokasi || '',
+              waktu: o.waktu || '',
+              keterangan: o.keterangan || ''
             }
           }))
         }
@@ -555,11 +564,10 @@ export default function KonsumsiPage() {
 
   // Check if form is valid and complete
   const isFormValid = (): boolean => {
-    // Check all required fields
+    // Check all required fields (approval, lokasi, waktu are optional)
     if (!form.kegiatan || !form.tanggalPermintaan || !form.tanggalPengiriman || 
-        !form.untukBagian.trim() || !form.yangMengajukan.trim() || !form.approval.trim() || 
-        !form.tamu || !form.jumlahTamu || form.jumlahTamu <= 0 || 
-        !form.lokasi || !form.waktu) {
+        !form.untukBagian.trim() || !form.yangMengajukan.trim() || 
+        !form.tamu || !form.jumlahTamu || form.jumlahTamu <= 0) {
       return false;
     }
     
@@ -573,6 +581,7 @@ export default function KonsumsiPage() {
   };
 
   const getAvailableMenu = (): string[] => {
+    // If waktu or tamu is not selected, return empty array
     if (!form.waktu || !form.tamu) return [];
     
     // Parse waktu format sederhana: "Sahur", "Pagi", "Siang", "Sore", "Buka puasa", "Malam", "Snack malam", "Tengah Malam"
@@ -640,24 +649,13 @@ export default function KonsumsiPage() {
       newErrors.yangMengajukan = "Yang Mengajukan wajib diisi";
       isValid = false;
     }
-    if (!form.approval.trim()) {
-      newErrors.approval = "Approval wajib dipilih";
-      isValid = false;
-    }
+    // approval, lokasi, waktu are optional - no validation needed
     if (!form.tamu) {
       newErrors.tamu = "Tamu wajib diisi";
       isValid = false;
     }
     if (!form.jumlahTamu || form.jumlahTamu <= 0) {
       newErrors.jumlahTamu = "Jumlah tamu wajib diisi dan lebih dari 0";
-      isValid = false;
-    }
-    if (!form.lokasi) {
-      newErrors.lokasi = "Lokasi pengiriman wajib diisi";
-      isValid = false;
-    }
-    if (!form.waktu) {
-      newErrors.waktu = "Waktu wajib diisi";
       isValid = false;
     }
 
@@ -677,24 +675,75 @@ export default function KonsumsiPage() {
     }
 
     if (isEditMode && editOrderId) {
-      // For now local edit only (could implement PATCH later)
-      setOrders(orders.map(order => order.id === editOrderId ? {
-        ...order,
-        tanggalPengajuan: form.tanggalPermintaan.split("-").reverse().join("-"),
-        tanggalPengiriman: form.tanggalPengiriman.split("-").reverse().join("-"),
-        kegiatan: form.kegiatan,
-        tamu: form.tamu,
-        jumlahTamu: form.jumlahTamu,
-        bagian: form.untukBagian,
-        pengaju: form.yangMengajukan,
-        menu: validMenu.map(m => ({ label: `${m.jenis} @ ${m.qty} ${m.satuan}` })),
-        status: "Menunggu konfirmasi",
-        approval: form.approval,
-        lokasi: form.lokasi,
-        waktu: form.waktu,
-        keterangan: form.keterangan,
-      } : order));
-      showToastNotification("Order berhasil diupdate!", "success");
+      try {
+        const timePeriod = mapWaktuToTimePeriod(form.waktu);
+        const payload = {
+          items: validMenu.map(m => ({
+            name: m.jenis,
+            qty: m.qty,
+            satuan: m.satuan,
+            timePeriod: timePeriod
+          })),
+          kegiatan: form.kegiatan,
+          tamu: form.tamu,
+          jumlahTamu: Number(form.jumlahTamu),
+          bagian: form.untukBagian,
+          pengaju: form.yangMengajukan,
+          tanggalPengajuan: form.tanggalPermintaan,
+          tanggalPengiriman: form.tanggalPengiriman,
+          // Optional fields
+          approval: form.approval || null,
+          lokasi: form.lokasi || null,
+          waktu: form.waktu || null,
+          keterangan: form.keterangan || null
+        };
+
+        const res = await fetch(`/api/konsumsi/orders/${editOrderId}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        if (!res.ok) {
+          const errorData = await res.json();
+          console.error('API Error:', errorData);
+          throw new Error(errorData.error || 'Gagal mengupdate order');
+        }
+
+        const data = await res.json();
+        console.log('Update response:', data);
+        
+        if (data.order) {
+          // Transform order from API to frontend format
+          const transformedOrder = {
+            ...data.order,
+            menu: data.order.items ? data.order.items.map((item: Record<string, unknown>) => ({
+              label: `${item.name} @ ${item.qty} ${item.satuan}`
+            })) : [],
+            tanggalPengajuan: data.order.tanggal_pengajuan || form.tanggalPermintaan,
+            tanggalPengiriman: data.order.tanggal_pengiriman || form.tanggalPengiriman,
+            kegiatan: data.order.kegiatan || form.kegiatan,
+            tamu: data.order.tamu || form.tamu,
+            jumlahTamu: data.order.jumlah_tamu || form.jumlahTamu,
+            bagian: data.order.bagian || form.untukBagian,
+            pengaju: data.order.pengaju || form.yangMengajukan,
+            approval: data.order.approval || form.approval || "",
+            lokasi: data.order.lokasi || form.lokasi || "",
+            waktu: data.order.waktu || form.waktu || "",
+            keterangan: data.order.keterangan || form.keterangan || ""
+          };
+
+          // Update order in list - match by code or id
+          setOrders(orders.map(order => 
+            (order.code === editOrderId || order.id === editOrderId) ? transformedOrder : order
+          ));
+          showToastNotification("Order berhasil diupdate!", "success");
+        }
+      } catch (err) {
+        console.error('Error updating order:', err);
+        showToastNotification(err instanceof Error ? err.message : "Gagal mengupdate order", "error");
+        return;
+      }
     } else {
       try {
         // Check if user is logged in
@@ -719,7 +768,12 @@ export default function KonsumsiPage() {
           bagian: form.untukBagian,
           pengaju: form.yangMengajukan,
           tanggalPengajuan: form.tanggalPermintaan,
-          tanggalPengiriman: form.tanggalPengiriman
+          tanggalPengiriman: form.tanggalPengiriman,
+          // Optional fields
+          approval: form.approval || null,
+          lokasi: form.lokasi || null,
+          waktu: form.waktu || null,
+          keterangan: form.keterangan || null
         };
         
         console.log('Sending order payload:', payload);
@@ -750,7 +804,11 @@ export default function KonsumsiPage() {
             tamu: data.order.tamu || form.tamu,
             jumlahTamu: data.order.jumlah_tamu || data.order.jumlahTamu || form.jumlahTamu,
             bagian: data.order.bagian || form.untukBagian,
-            pengaju: data.order.pengaju || form.yangMengajukan
+            pengaju: data.order.pengaju || form.yangMengajukan,
+            approval: data.order.approval || form.approval || "",
+            lokasi: data.order.lokasi || form.lokasi || "",
+            waktu: data.order.waktu || form.waktu || "",
+            keterangan: data.order.keterangan || form.keterangan || ""
           };
           
           setOrders(prev => [transformedOrder, ...prev]);
@@ -766,9 +824,104 @@ export default function KonsumsiPage() {
       }
     }
 
+    // Close form and reset after successful submission
+    handleCloseForm();
+  };
+
+  const handleEditOrder = (order: Order) => {
+    console.log('Editing order:', order);
+    
+    // Parse menu items from order - handle both menu and items format
+    let parsedMenuItems: Array<{ id: number; jenis: string; satuan: string; qty: number }> = [];
+    
+    // If order has items array (from database), use it directly
+    if (order.items && Array.isArray(order.items) && order.items.length > 0) {
+      parsedMenuItems = order.items.map((item, idx) => ({
+        id: idx + 1,
+        jenis: item.name || "",
+        satuan: item.satuan || "",
+        qty: item.qty || 0
+      }));
+    } 
+    // Otherwise, parse from menu format
+    else if (order.menu && Array.isArray(order.menu) && order.menu.length > 0) {
+      parsedMenuItems = order.menu.map((m, idx) => {
+        const parts = m.label.split(" @ ");
+        if (parts.length === 2) {
+          const jenis = parts[0].trim();
+          const qtyAndSatuan = parts[1].trim().split(" ");
+          const qty = parseInt(qtyAndSatuan[0]) || 0;
+          const satuan = qtyAndSatuan.slice(1).join(" ");
+          return { id: idx + 1, jenis, satuan, qty };
+        }
+        return { id: idx + 1, jenis: m.label || "", satuan: "", qty: 0 };
+      });
+    }
+
+    // Convert date format from DD-MM-YYYY to YYYY-MM-DD or keep YYYY-MM-DD
+    const convertDate = (dateStr: string) => {
+      if (!dateStr) return getTodayDate();
+      
+      // Check if already in YYYY-MM-DD format
+      if (/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) {
+        return dateStr;
+      }
+      
+      // Convert from DD-MM-YYYY to YYYY-MM-DD
+      const parts = dateStr.split("-");
+      if (parts.length === 3) {
+        // Check if it's DD-MM-YYYY format
+        if (parts[2].length === 4) {
+          return `${parts[2]}-${parts[1]}-${parts[0]}`;
+        }
+      }
+      return dateStr;
+    };
+
+    const formData = {
+      kegiatan: order.kegiatan || "",
+      tanggalPermintaan: convertDate(order.tanggalPengajuan),
+      tanggalPengiriman: convertDate(order.tanggalPengiriman),
+      untukBagian: order.bagian || "",
+      yangMengajukan: order.pengaju || "",
+      approval: order.approval || "",
+      tamu: order.tamu || "",
+      jumlahTamu: order.jumlahTamu || 0,
+      lokasi: order.lokasi || "",
+      waktu: order.waktu || "",
+      keterangan: order.keterangan || "",
+    };
+    
+    console.log('Setting form data:', formData);
+    console.log('Setting menu items:', parsedMenuItems);
+    
+    setForm(formData);
+    setMenuItems(parsedMenuItems.length > 0 ? parsedMenuItems : [{ id: 1, jenis: "", satuan: "", qty: 0 }]);
+    setIsEditMode(true);
+    setEditOrderId(order.code || order.id);
+    setShowForm(true);
+    
+    // Clear any existing errors
+    setErrors({
+      kegiatan: "",
+      tanggalPermintaan: "",
+      tanggalPengiriman: "",
+      untukBagian: "",
+      yangMengajukan: "",
+      approval: "",
+      tamu: "",
+      jumlahTamu: "",
+      lokasi: "",
+      waktu: "",
+    });
+  };
+
+  // Function to close form and reset state
+  const handleCloseForm = () => {
     setShowForm(false);
     setIsEditMode(false);
     setEditOrderId(null);
+    // Reset form to initial state
     setForm({
       kegiatan: "",
       tanggalPermintaan: selectedDate,
@@ -783,48 +936,19 @@ export default function KonsumsiPage() {
       keterangan: "",
     });
     setMenuItems([{ id: 1, jenis: "", satuan: "", qty: 0 }]);
-  };
-
-  const handleEditOrder = (order: Order) => {
-    // Parse menu items from order
-    const parsedMenuItems = (order.menu || []).map((m, idx) => {
-      const parts = m.label.split(" @ ");
-      if (parts.length === 2) {
-        const jenis = parts[0];
-        const qtyAndSatuan = parts[1].split(" ");
-        const qty = parseInt(qtyAndSatuan[0]) || 0;
-        const satuan = qtyAndSatuan.slice(1).join(" ");
-        return { id: idx + 1, jenis, satuan, qty };
-      }
-      return { id: idx + 1, jenis: "", satuan: "", qty: 0 };
+    // Clear errors
+    setErrors({
+      kegiatan: "",
+      tanggalPermintaan: "",
+      tanggalPengiriman: "",
+      untukBagian: "",
+      yangMengajukan: "",
+      approval: "",
+      tamu: "",
+      jumlahTamu: "",
+      lokasi: "",
+      waktu: "",
     });
-
-    // Convert date format from DD-MM-YYYY to YYYY-MM-DD
-    const convertDate = (dateStr: string) => {
-      const parts = dateStr.split("-");
-      if (parts.length === 3) {
-        return `${parts[2]}-${parts[1]}-${parts[0]}`;
-      }
-      return dateStr;
-    };
-
-    setForm({
-      kegiatan: order.kegiatan,
-      tanggalPermintaan: convertDate(order.tanggalPengajuan),
-      tanggalPengiriman: convertDate(order.tanggalPengiriman),
-      untukBagian: order.bagian,
-      yangMengajukan: order.pengaju,
-      approval: order.approval || "",
-      tamu: order.tamu,
-      jumlahTamu: order.jumlahTamu || 0,
-      lokasi: order.lokasi || "",
-      waktu: order.waktu || "",
-      keterangan: order.keterangan || "",
-    });
-    setMenuItems(parsedMenuItems.length > 0 ? parsedMenuItems : [{ id: 1, jenis: "", satuan: "", qty: 0 }]);
-    setIsEditMode(true);
-    setEditOrderId(order.id);
-    setShowForm(true);
   };
 
   // Function untuk menampilkan toast notification
@@ -908,48 +1032,67 @@ export default function KonsumsiPage() {
     cancelled: orders.filter(o => normalizeStatus(o.status) === STATUS.CANCELLED).length,
   };
 
-  const handleCancelOrder = () => {
+  const handleCancelOrder = async () => {
     if (orderToCancel) {
-      setOrders(orders.map(o => 
-        o.id === orderToCancel 
-          ? { ...o, status: STATUS.CANCELLED } 
-          : o
-      ));
-      showToastNotification("Order berhasil dibatalkan", "info");
-      setShowCancelConfirm(false);
-      setOrderToCancel(null);
+      try {
+        // Call API to update status in database
+        const res = await fetch(`/api/konsumsi/orders/${orderToCancel}`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ status: STATUS.CANCELLED })
+        });
+
+        if (!res.ok) {
+          const errorData = await res.json();
+          throw new Error(errorData.error || 'Gagal membatalkan order');
+        }
+
+        // Update local state after successful API call - match by code or id
+        setOrders(orders.map(o => 
+          (o.code === orderToCancel || o.id === orderToCancel)
+            ? { ...o, status: STATUS.CANCELLED } 
+            : o
+        ));
+        showToastNotification("Order berhasil dibatalkan", "success");
+      } catch (err) {
+        console.error('Error cancelling order:', err);
+        showToastNotification(err instanceof Error ? err.message : "Gagal membatalkan order", "error");
+      } finally {
+        setShowCancelConfirm(false);
+        setOrderToCancel(null);
+      }
     }
   };
 
   return (
     <div className="flex-1 overflow-auto bg-gradient-to-br from-purple-50 via-violet-50 to-purple-100 dark:from-gray-900 dark:via-purple-950 dark:to-gray-900 min-h-screen transition-colors duration-300">
-      <div className="p-6">
+      <div className="p-3 md:p-6">
         {/* Header with gradient background */}
-        <div className="relative mb-6 bg-gradient-to-r from-purple-600 via-violet-600 to-purple-700 rounded-2xl p-6 shadow-2xl overflow-hidden">
+        <div className="relative mb-4 md:mb-6 bg-gradient-to-r from-purple-600 via-violet-600 to-purple-700 rounded-xl md:rounded-2xl p-4 md:p-6 shadow-2xl overflow-hidden">
           {/* Decorative elements */}
           <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full -mr-32 -mt-32 blur-3xl"></div>
           <div className="absolute bottom-0 left-0 w-48 h-48 bg-violet-500/10 rounded-full -ml-24 -mb-24 blur-2xl"></div>
           
-          <div className="relative flex justify-between items-center">
-            <div className="flex items-center gap-4">
-              <div className="bg-white/20 backdrop-blur-sm p-4 rounded-xl">
+          <div className="relative flex flex-col md:flex-row justify-between md:items-center gap-3 md:gap-0">
+            <div className="flex items-center gap-3 md:gap-4">
+              <div className="bg-white/20 backdrop-blur-sm p-2 md:p-4 rounded-lg md:rounded-xl">
                 <Image
                   src="/logo.png"
                   alt="Ikon Konsumsi"
-                  className="w-12 h-12 object-contain"
+                  className="w-8 h-8 md:w-12 md:h-12 object-contain"
                   width={48}
                   height={48}
                   priority
                 />
               </div>
               <div>
-                <h1 className="text-4xl font-extrabold text-white tracking-tight">Konsumsi</h1>
-                <p className="text-purple-100 text-base mt-1 font-medium">Kelola permintaan konsumsi dengan mudah</p>
+                <h1 className="text-2xl md:text-4xl font-extrabold text-white tracking-tight">Konsumsi</h1>
+                <p className="text-purple-100 text-xs md:text-base mt-0.5 md:mt-1 font-medium">Kelola permintaan konsumsi dengan mudah</p>
               </div>
             </div>
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2 md:gap-3">
               <button
-                className="group relative flex items-center gap-2 bg-white/20 backdrop-blur-md border border-white/30 px-5 py-3 rounded-xl font-semibold text-white hover:bg-white/30 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 overflow-hidden"
+                className="group relative flex items-center gap-1.5 md:gap-2 bg-white/20 backdrop-blur-md border border-white/30 px-3 md:px-5 py-2 md:py-3 rounded-lg md:rounded-xl font-semibold text-white hover:bg-white/30 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 overflow-hidden text-sm md:text-base"
                 onClick={() => setShowCalendar(true)}
                 suppressHydrationWarning
               >
@@ -957,11 +1100,11 @@ export default function KonsumsiPage() {
                 <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
                   <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-700 bg-gradient-to-r from-transparent via-white/40 to-transparent"></div>
                 </div>
-                <Calendar className="w-5 h-5 relative z-10" />
-                <span className="relative z-10">{selectedDate.split("-").reverse().join("-")}</span>
+                <Calendar className="w-4 h-4 md:w-5 md:h-5 relative z-10" />
+                <span className="relative z-10 hidden sm:inline">{selectedDate.split("-").reverse().join("-")}</span>
               </button>
               <button
-                className="group relative flex items-center gap-2 bg-white text-purple-700 px-6 py-3 rounded-xl font-bold hover:bg-purple-50 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 overflow-hidden"
+                className="group relative flex items-center gap-1.5 md:gap-2 bg-white text-purple-700 px-3 md:px-6 py-2 md:py-3 rounded-lg md:rounded-xl font-bold hover:bg-purple-50 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 overflow-hidden text-sm md:text-base"
                 onClick={() => setShowForm(true)}
                 suppressHydrationWarning
               >
@@ -969,35 +1112,35 @@ export default function KonsumsiPage() {
                 <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
                   <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-700 bg-gradient-to-r from-transparent via-purple-200/50 to-transparent"></div>
                 </div>
-                <Plus className="w-5 h-5 relative z-10" />
+                <Plus className="w-4 h-4 md:w-5 md:h-5 relative z-10" />
                 <span className="relative z-10">Tambah Order</span>
               </button>
             </div>
           </div>
         </div>
 
-        {/* Dashboard Statistics - Enhanced Purple Theme */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+        {/* Dashboard Statistics - Enhanced Purple Theme with Better Mobile Layout */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 mb-6">
           {/* Total Order Card */}
-          <div className="group relative bg-gradient-to-br from-purple-600 via-purple-600 to-violet-600 rounded-xl p-4 text-white shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 hover:-translate-y-1 overflow-hidden">
+          <div className="group relative bg-gradient-to-br from-purple-600 via-purple-600 to-violet-600 rounded-xl p-3 md:p-4 text-white shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 hover:-translate-y-1 overflow-hidden">
             <div className="absolute inset-0 bg-white/0 group-hover:bg-white/10 transition-all duration-300"></div>
             {/* Shimmer effect */}
             <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
               <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 bg-gradient-to-r from-transparent via-white/30 to-transparent skew-x-12"></div>
             </div>
             <div className="relative flex items-center justify-between">
-              <div className="space-y-1">
-                <p className="text-purple-100 text-xs font-bold uppercase tracking-wider">Total Order</p>
-                <h3 className="text-3xl font-extrabold">{statistics.total}</h3>
-                <div className="flex items-center gap-1 text-xs text-purple-200">
+              <div className="space-y-0.5 md:space-y-1">
+                <p className="text-purple-100 text-[10px] md:text-xs font-bold uppercase tracking-wider">Total Order</p>
+                <h3 className="text-2xl md:text-3xl font-extrabold">{statistics.total}</h3>
+                <div className="hidden md:flex items-center gap-1 text-xs text-purple-200">
                   <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
                     <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z" clipRule="evenodd" />
                   </svg>
                   <span>Semua pesanan</span>
                 </div>
               </div>
-              <div className="bg-white/20 backdrop-blur-sm p-3 rounded-xl group-hover:bg-white/30 transition-all duration-300">
-                <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div className="bg-white/20 backdrop-blur-sm p-2 md:p-3 rounded-xl group-hover:bg-white/30 transition-all duration-300">
+                <svg className="w-5 h-5 md:w-8 md:h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                 </svg>
               </div>
@@ -1006,25 +1149,25 @@ export default function KonsumsiPage() {
           </div>
 
           {/* Dipesan Card */}
-          <div className="group relative bg-gradient-to-br from-violet-500 via-violet-600 to-purple-600 rounded-xl p-4 text-white shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 hover:-translate-y-1 overflow-hidden">
+          <div className="group relative bg-gradient-to-br from-violet-500 via-violet-600 to-purple-600 rounded-xl p-3 md:p-4 text-white shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 hover:-translate-y-1 overflow-hidden">
             <div className="absolute inset-0 bg-white/0 group-hover:bg-white/10 transition-all duration-300"></div>
             {/* Shimmer effect */}
             <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
               <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 bg-gradient-to-r from-transparent via-white/30 to-transparent skew-x-12"></div>
             </div>
             <div className="relative flex items-center justify-between">
-              <div className="space-y-1">
-                <p className="text-violet-100 text-xs font-bold uppercase tracking-wider">Dipesan</p>
-                <h3 className="text-3xl font-extrabold">{statistics.pending}</h3>
-                <div className="flex items-center gap-1 text-xs text-violet-200">
+              <div className="space-y-0.5 md:space-y-1">
+                <p className="text-violet-100 text-[10px] md:text-xs font-bold uppercase tracking-wider">Dipesan</p>
+                <h3 className="text-2xl md:text-3xl font-extrabold">{statistics.pending}</h3>
+                <div className="hidden md:flex items-center gap-1 text-xs text-violet-200">
                   <svg className="w-3 h-3 animate-pulse" fill="currentColor" viewBox="0 0 20 20">
                     <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clipRule="evenodd" />
                   </svg>
                   <span>Menunggu konfirmasi</span>
                 </div>
               </div>
-              <div className="bg-white/20 backdrop-blur-sm p-3 rounded-xl group-hover:bg-white/30 transition-all duration-300">
-                <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div className="bg-white/20 backdrop-blur-sm p-2 md:p-3 rounded-xl group-hover:bg-white/30 transition-all duration-300">
+                <svg className="w-5 h-5 md:w-8 md:h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
               </div>
@@ -1033,25 +1176,25 @@ export default function KonsumsiPage() {
           </div>
 
           {/* Pesanan Disetujui Card */}
-          <div className="group relative bg-gradient-to-br from-purple-600 via-purple-700 to-violet-700 rounded-xl p-4 text-white shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 hover:-translate-y-1 overflow-hidden">
+          <div className="group relative bg-gradient-to-br from-purple-600 via-purple-700 to-violet-700 rounded-xl p-3 md:p-4 text-white shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 hover:-translate-y-1 overflow-hidden">
             <div className="absolute inset-0 bg-white/0 group-hover:bg-white/10 transition-all duration-300"></div>
             {/* Shimmer effect */}
             <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
               <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 bg-gradient-to-r from-transparent via-white/30 to-transparent skew-x-12"></div>
             </div>
             <div className="relative flex items-center justify-between">
-              <div className="space-y-1">
-                <p className="text-purple-100 text-xs font-bold uppercase tracking-wider">Disetujui</p>
-                <h3 className="text-3xl font-extrabold">{statistics.approved}</h3>
-                <div className="flex items-center gap-1 text-xs text-purple-200">
+              <div className="space-y-0.5 md:space-y-1">
+                <p className="text-purple-100 text-[10px] md:text-xs font-bold uppercase tracking-wider">Disetujui</p>
+                <h3 className="text-2xl md:text-3xl font-extrabold">{statistics.approved}</h3>
+                <div className="hidden md:flex items-center gap-1 text-xs text-purple-200">
                   <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
                     <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                   </svg>
                   <span>Siap diproses</span>
                 </div>
               </div>
-              <div className="bg-white/20 backdrop-blur-sm p-3 rounded-xl group-hover:bg-white/30 transition-all duration-300">
-                <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div className="bg-white/20 backdrop-blur-sm p-2 md:p-3 rounded-xl group-hover:bg-white/30 transition-all duration-300">
+                <svg className="w-5 h-5 md:w-8 md:h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
               </div>
@@ -1060,25 +1203,25 @@ export default function KonsumsiPage() {
           </div>
 
           {/* Pesanan Dibatalkan Card */}
-          <div className="group relative bg-gradient-to-br from-violet-600 via-violet-700 to-purple-700 rounded-xl p-4 text-white shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 hover:-translate-y-1 overflow-hidden">
+          <div className="group relative bg-gradient-to-br from-violet-600 via-violet-700 to-purple-700 rounded-xl p-3 md:p-4 text-white shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 hover:-translate-y-1 overflow-hidden">
             <div className="absolute inset-0 bg-white/0 group-hover:bg-white/10 transition-all duration-300"></div>
             {/* Shimmer effect */}
             <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
               <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 bg-gradient-to-r from-transparent via-white/30 to-transparent skew-x-12"></div>
             </div>
             <div className="relative flex items-center justify-between">
-              <div className="space-y-1">
-                <p className="text-violet-100 text-xs font-bold uppercase tracking-wider">Dibatalkan</p>
-                <h3 className="text-3xl font-extrabold">{statistics.cancelled}</h3>
-                <div className="flex items-center gap-1 text-xs text-violet-200">
+              <div className="space-y-0.5 md:space-y-1">
+                <p className="text-violet-100 text-[10px] md:text-xs font-bold uppercase tracking-wider">Dibatalkan</p>
+                <h3 className="text-2xl md:text-3xl font-extrabold">{statistics.cancelled}</h3>
+                <div className="hidden md:flex items-center gap-1 text-xs text-violet-200">
                   <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
                     <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
                   </svg>
                   <span>Order dibatalkan</span>
                 </div>
               </div>
-              <div className="bg-white/20 backdrop-blur-sm p-3 rounded-xl group-hover:bg-white/30 transition-all duration-300">
-                <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div className="bg-white/20 backdrop-blur-sm p-2 md:p-3 rounded-xl group-hover:bg-white/30 transition-all duration-300">
+                <svg className="w-5 h-5 md:w-8 md:h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
               </div>
@@ -1379,7 +1522,7 @@ export default function KonsumsiPage() {
           <div 
             className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4"
             onClick={(e) => {
-              if (e.target === e.currentTarget) setShowForm(false)
+              if (e.target === e.currentTarget) handleCloseForm()
             }}
           >
             <div className="animate-in zoom-in-50 duration-200 w-full max-w-3xl">
@@ -1392,7 +1535,7 @@ export default function KonsumsiPage() {
                   </div>
                   <button 
                     type="button"
-                    onClick={() => setShowForm(false)}
+                    onClick={handleCloseForm}
                     className="text-white hover:bg-white/20 p-2 rounded-full transition-all"
                   >
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -1634,7 +1777,7 @@ export default function KonsumsiPage() {
 
                       <div>
                         <label className="block text-xs font-semibold text-purple-700 dark:text-purple-400 mb-1.5">
-                          Approval: <span className="text-violet-600">*</span>
+                          Approval:
                         </label>
                         <input 
                           name="approval" 
@@ -1658,7 +1801,7 @@ export default function KonsumsiPage() {
 
                       <div>
                         <label className="block text-xs font-semibold text-purple-700 dark:text-purple-400 mb-1.5">
-                          Lokasi Pengiriman: <span className="text-violet-600">*</span>
+                          Lokasi Pengiriman:
                         </label>
                         <SearchableCombobox
                           name="lokasi"
@@ -1679,7 +1822,7 @@ export default function KonsumsiPage() {
 
                       <div>
                         <label className="block text-xs font-semibold text-purple-700 dark:text-purple-400 mb-1.5">
-                          Waktu: <span className="text-violet-600">*</span>
+                          Waktu:
                         </label>
                         <SearchableCombobox
                           name="waktu"
@@ -1896,7 +2039,7 @@ export default function KonsumsiPage() {
                 <div className="sticky bottom-0 bg-gray-50 dark:bg-gray-800 px-6 py-4 rounded-b-xl border-t border-gray-200 dark:border-gray-700 flex gap-3">
                   <button
                     type="button"
-                    onClick={() => setShowForm(false)}
+                    onClick={handleCloseForm}
                     className="flex-1 px-4 py-2.5 rounded-lg text-sm font-semibold text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 border-2 border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-600 transition-all"
                   >
                     Batal
@@ -1956,7 +2099,8 @@ export default function KonsumsiPage() {
             </div>
           ) : (
             <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
-              <div className="overflow-hidden">
+              {/* Desktop Table View */}
+              <div className="hidden md:block overflow-x-auto">
                 <table className="w-full table-fixed">
                   <thead className="bg-gradient-to-r from-purple-600 to-violet-500 dark:from-purple-700 dark:to-violet-600">
                     <tr>
@@ -2096,7 +2240,7 @@ export default function KonsumsiPage() {
                                     <button
                                       className="w-full px-4 py-2.5 text-left text-sm text-gray-700 dark:text-gray-300 hover:bg-red-50 dark:hover:bg-red-900/20 hover:text-red-700 dark:hover:text-red-400 transition-all duration-300 flex items-center gap-3 border-t border-gray-100 dark:border-gray-700"
                                       onClick={() => {
-                                        setOrderToCancel(order.id);
+                                        setOrderToCancel(order.code || order.id);
                                         setShowCancelConfirm(true);
                                         setOpenDropdownId(null);
                                       }}
@@ -2118,6 +2262,132 @@ export default function KonsumsiPage() {
                     })}
                   </tbody>
                 </table>
+              </div>
+
+              {/* Mobile Card View */}
+              <div className="md:hidden divide-y divide-gray-200 dark:divide-gray-700">
+                {getPaginatedOrders().map((order) => {
+                  const s = normalizeStatus(order.status);
+                  return (
+                    <div 
+                      key={order.id}
+                      className="p-4 hover:bg-purple-50/50 dark:hover:bg-purple-900/20 transition-all duration-300"
+                    >
+                      {/* Order Header */}
+                      <div className="flex items-start justify-between mb-3">
+                        <div className="flex-1 min-w-0">
+                          <div className="font-bold text-sm text-gray-900 dark:text-white truncate" title={order.id}>
+                            {order.id}
+                          </div>
+                          <div className="flex items-center gap-1.5 text-xs text-gray-500 dark:text-gray-400 mt-1">
+                            <Calendar className="w-3 h-3 flex-shrink-0" />
+                            <span>{order.tanggalPengiriman}</span>
+                          </div>
+                        </div>
+                        <button 
+                          className="p-2 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 transition-all ml-2"
+                          onClick={(e) => {
+                            const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
+                            const MENU_WIDTH = 208;
+                            const PADDING = 8;
+                            const left = Math.min(rect.left, window.innerWidth - MENU_WIDTH - PADDING);
+                            const top = rect.bottom + PADDING;
+                            setMenuPos({ top, left });
+                            setOpenDropdownId(openDropdownId === order.id ? null : order.id);
+                          }}
+                        >
+                          <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/>
+                          </svg>
+                        </button>
+                      </div>
+
+                      {/* Order Content */}
+                      <div className="space-y-2">
+                        <div>
+                          <div className="text-sm font-semibold text-gray-900 dark:text-white truncate" title={order.kegiatan}>
+                            {order.kegiatan}
+                          </div>
+                          <div className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
+                            oleh <span className="font-medium text-purple-600 dark:text-purple-400">{order.pengaju}</span>
+                          </div>
+                        </div>
+                        
+                        <div className="flex items-center justify-between pt-2">
+                          <span className="inline-flex items-center text-xs font-semibold text-purple-700 dark:text-purple-300 bg-purple-50 dark:bg-purple-900/30 px-2.5 py-1 rounded-full">
+                            {order.tamu}
+                          </span>
+                          <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold shadow-sm ${
+                            s === STATUS.CANCELLED
+                              ? "bg-red-600 text-white"
+                              : s === STATUS.ORDERED
+                              ? "bg-amber-500 text-white"
+                              : s === STATUS.APPROVED
+                              ? "bg-emerald-600 text-white"
+                              : "bg-gray-500 text-white"
+                          }`}>
+                            {s}
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* Dropdown Menu for Mobile */}
+                      {openDropdownId === order.id && menuPos && (
+                        <>
+                          <div 
+                            className="fixed inset-0 z-[100]" 
+                            onClick={() => { setOpenDropdownId(null); setMenuPos(null); }}
+                          />
+                          <div 
+                            className="fixed w-52 bg-white dark:bg-gray-800 rounded-lg shadow-xl border border-gray-200 dark:border-gray-700 py-1.5 z-[110] animate-in fade-in slide-in-from-top-2 duration-200"
+                            style={{ top: menuPos.top, left: menuPos.left }}
+                          >
+                            <button
+                              className="w-full px-4 py-2.5 text-left text-sm text-gray-700 dark:text-gray-300 hover:bg-purple-50 dark:hover:bg-purple-900/50 hover:text-purple-700 dark:hover:text-purple-300 transition-all duration-300 flex items-center gap-3"
+                              onClick={() => {
+                                setSelectedOrder(order);
+                                setShowDetailModal(true);
+                                setOpenDropdownId(null);
+                              }}
+                            >
+                              <Eye className="w-4 h-4" />
+                              <span className="font-medium">Detail Order</span>
+                            </button>
+                            {(s === STATUS.ORDERED) && (
+                              <>
+                                <button
+                                  className="w-full px-4 py-2.5 text-left text-sm text-gray-700 dark:text-gray-300 hover:bg-violet-50 dark:hover:bg-violet-900/50 hover:text-violet-700 dark:hover:text-violet-300 transition-all duration-300 flex items-center gap-3"
+                                  onClick={() => {
+                                    handleEditOrder(order);
+                                    setOpenDropdownId(null);
+                                  }}
+                                >
+                                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                  </svg>
+                                  <span className="font-medium">Edit Order</span>
+                                </button>
+                                <button
+                                  className="w-full px-4 py-2.5 text-left text-sm text-gray-700 dark:text-gray-300 hover:bg-red-50 dark:hover:bg-red-900/20 hover:text-red-700 dark:hover:text-red-400 transition-all duration-300 flex items-center gap-3 border-t border-gray-100 dark:border-gray-700"
+                                  onClick={() => {
+                                    setOrderToCancel(order.code || order.id);
+                                    setShowCancelConfirm(true);
+                                    setOpenDropdownId(null);
+                                  }}
+                                >
+                                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                                  </svg>
+                                  <span className="font-medium">Batalkan Order</span>
+                                </button>
+                              </>
+                            )}
+                          </div>
+                        </>
+                      )}
+                    </div>
+                  );
+                })}
               </div>
               
               {/* Pagination */}

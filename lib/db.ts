@@ -158,6 +158,10 @@ export const db = {
       pengaju?: string | null
       tanggal_pengajuan?: string | null
       tanggal_pengiriman?: string | null
+      approval?: string | null
+      lokasi?: string | null
+      waktu?: string | null
+      keterangan?: string | null
     }) {
       const { data, error } = await supabase
         .from('orders')
@@ -175,6 +179,17 @@ export const db = {
       items: unknown
       total_amount: number
       status: string
+      kegiatan: string | null
+      tamu: string | null
+      jumlah_tamu: number | null
+      bagian: string | null
+      pengaju: string | null
+      tanggal_pengajuan: string | null
+      tanggal_pengiriman: string | null
+      approval: string | null
+      lokasi: string | null
+      waktu: string | null
+      keterangan: string | null
     }>) {
       const { data, error } = await supabase
         .from('orders')

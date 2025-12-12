@@ -39,6 +39,10 @@ model Order {
   pengaju            String?
   tanggalPengajuan   String?
   tanggalPengiriman  String?
+  approval           String?
+  lokasi             String?
+  waktu              String?
+  keterangan         String?
   createdAt          DateTime @default(now())
   updatedAt          DateTime @updatedAt
 

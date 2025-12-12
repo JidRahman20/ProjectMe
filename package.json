@@ -7,11 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "postinstall": "",
-    "db:setup": "tsx scripts/create-tables.ts",
-    "db:create": "tsx scripts/create-tables-pg.ts",
     "db:seed": "tsx prisma/seed.ts",
-    "db:test": "tsx scripts/test-connection.ts",
     "db:users": "tsx scripts/list-users.ts",
     "db:orders": "tsx scripts/list-orders.ts"
   },

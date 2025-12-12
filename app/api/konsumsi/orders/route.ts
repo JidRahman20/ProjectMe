@@ -41,7 +41,12 @@ export async function POST(request: Request) {
       bagian,
       pengaju,
       tanggalPengajuan,
-      tanggalPengiriman
+      tanggalPengiriman,
+      // Optional fields
+      approval,
+      lokasi,
+      waktu,
+      keterangan
     } = body
 
     if (!userId || !items || !Array.isArray(items)) {
@@ -78,7 +83,12 @@ export async function POST(request: Request) {
       bagian: bagian || null,
       pengaju: pengaju || null,
       tanggal_pengajuan: tanggalPengajuan || null,
-      tanggal_pengiriman: tanggalPengiriman || null
+      tanggal_pengiriman: tanggalPengiriman || null,
+      // Optional fields
+      approval: approval || null,
+      lokasi: lokasi || null,
+      waktu: waktu || null,
+      keterangan: keterangan || null
     })
 
     return NextResponse.json({
