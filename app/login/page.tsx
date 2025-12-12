@@ -36,7 +36,7 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen flex">
       {/* Left Side - Background with Overlay Content */}
-  <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-green-900 via-yellow-600 to-green-700 relative overflow-hidden">
+  <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-purple-900 via-violet-600 to-purple-700 relative overflow-hidden">
         {/* Geometric Pattern Overlay */}
         <div className="absolute inset-0 opacity-10">
           <div className="absolute inset-0" style={{
@@ -75,7 +75,7 @@ export default function LoginPage() {
 
           {/* Error Message */}
           {error && (
-            <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 text-yellow-900 dark:text-yellow-300 px-4 py-3 rounded-lg text-sm">
+            <div className="bg-purple-50 dark:bg-purple-900/20 border border-purple-200 dark:border-purple-800 text-purple-900 dark:text-purple-300 px-4 py-3 rounded-lg text-sm">
               {error}
             </div>
           )}
@@ -93,7 +93,7 @@ export default function LoginPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all"
+                className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
                 placeholder="Masukkan email Anda"
                 suppressHydrationWarning
               />
@@ -111,7 +111,7 @@ export default function LoginPage() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
-                  className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all pr-12"
+                  className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all pr-12"
                   placeholder="Masukkan kata sandi Anda"
                   suppressHydrationWarning
                 />
@@ -133,11 +133,11 @@ export default function LoginPage() {
                   type="checkbox"
                   checked={rememberMe}
                   onChange={(e) => setRememberMe(e.target.checked)}
-                  className="w-4 h-4 rounded border-gray-300 text-green-600 focus:ring-green-500"
+                  className="w-4 h-4 rounded border-gray-300 text-purple-600 focus:ring-purple-500"
                 />
                 <span className="text-sm text-gray-600 dark:text-gray-400">Ingat Saya</span>
               </label>
-              <Link href="/forgot-password" className="text-sm text-gray-600 dark:text-gray-400 hover:text-green-600 dark:hover:text-green-400">
+              <Link href="/forgot-password" className="text-sm text-gray-600 dark:text-gray-400 hover:text-purple-600 dark:hover:text-purple-400">
                 Lupa Kata Sandi?
               </Link>
             </div>
@@ -146,7 +146,7 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full bg-gradient-to-r from-green-600 to-yellow-500 hover:from-green-700 hover:to-yellow-600 dark:from-green-500 dark:to-yellow-400 dark:hover:from-green-400 dark:hover:to-yellow-300 text-white font-semibold py-3.5 px-4 rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-md"
+              className="w-full bg-gradient-to-r from-purple-600 to-violet-500 hover:from-purple-700 hover:to-violet-600 dark:from-purple-500 dark:to-violet-400 dark:hover:from-purple-600 dark:hover:to-violet-500 text-white font-semibold py-3.5 px-4 rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-md hover:shadow-lg"
               suppressHydrationWarning
             >
               {isLoading ? "Memuat..." : "Masuk"}

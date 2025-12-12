@@ -165,7 +165,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                     href={item.href}
                     onClick={() => setIsMobileOpen(false)}
                     className={`flex items-center text-gray-900 dark:text-gray-300 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 group ${
-                      isActive ? "bg-green-600 text-white hover:bg-green-700 dark:bg-green-600 dark:hover:bg-green-700" : ""
+                      isActive ? "bg-purple-600 text-white hover:bg-purple-700 dark:bg-purple-600 dark:hover:bg-purple-700" : ""
                     } ${isCollapsed ? "justify-center p-2" : "p-3"}`}
                     title={isCollapsed ? item.title : ""}
                   >
@@ -194,7 +194,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                     href={item.href}
                     onClick={() => setIsMobileOpen(false)}
                     className={`flex items-center text-gray-900 dark:text-gray-300 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 group transition-all duration-300 ease-in-out transform hover:translate-x-1 ${
-                      isActive ? "bg-green-600 text-white hover:bg-green-700 dark:bg-green-600 dark:hover:bg-green-700" : ""
+                      isActive ? "bg-purple-600 text-white hover:bg-purple-700 dark:bg-purple-600 dark:hover:bg-purple-700" : ""
                     } ${isCollapsed ? "justify-center p-2" : "p-3"}`}
                     title={isCollapsed ? item.title : ""}
                   >
@@ -223,7 +223,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                     href={item.href}
                     onClick={() => setIsMobileOpen(false)}
                     className={`flex items-center text-gray-900 dark:text-gray-300 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 group transition-all duration-300 ease-in-out transform hover:translate-x-1 ${
-                      isActive ? "bg-green-600 text-white hover:bg-green-700 dark:bg-green-600 dark:hover:bg-green-700" : ""
+                      isActive ? "bg-purple-600 text-white hover:bg-purple-700 dark:bg-purple-600 dark:hover:bg-purple-700" : ""
                     } ${isCollapsed ? "justify-center p-2" : "p-3"}`}
                     title={isCollapsed ? item.title : ""}
                   >

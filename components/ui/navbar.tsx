@@ -40,7 +40,7 @@ export function Navbar() {
               <input
                 type="text"
                 placeholder="Search command..."
-                className="w-full pl-10 pr-14 py-2 text-sm text-gray-900 dark:text-white border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none"
+                className="w-full pl-10 pr-14 py-2 text-sm text-gray-900 dark:text-white border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 outline-none"
                 suppressHydrationWarning
               />
               <div className="absolute inset-y-0 right-0 flex items-center pr-3">
@@ -57,7 +57,7 @@ export function Navbar() {
               suppressHydrationWarning
             >
               <Bell className="w-5 h-5" />
-              <span className="absolute top-1 right-1 w-2 h-2 bg-yellow-500 rounded-full"></span>
+              <span className="absolute top-1 right-1 w-2 h-2 bg-purple-500 rounded-full"></span>
             </button>
 
             {/* Profile Picture with Dropdown */}
@@ -93,7 +93,7 @@ export function Navbar() {
                       <div className="px-4 py-3 border-b border-gray-100 dark:border-gray-700">
                         <p className="text-sm font-semibold text-gray-900 dark:text-white">{user.name}</p>
                         <p className="text-xs text-gray-500 dark:text-gray-400 truncate">{user.email}</p>
-                        <span className="inline-block mt-1 px-2 py-0.5 text-xs font-medium bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-200 rounded">
+                        <span className="inline-block mt-1 px-2 py-0.5 text-xs font-medium bg-purple-100 dark:bg-purple-900 text-purple-800 dark:text-purple-200 rounded">
                           {user.role}
                         </span>
                       </div>
@@ -101,7 +101,7 @@ export function Navbar() {
                     
                     {/* Profile */}
                     <button
-                      className="w-full px-4 py-2.5 text-left text-sm text-gray-700 dark:text-gray-300 hover:bg-green-50 dark:hover:bg-green-900/50 hover:text-green-700 dark:hover:text-green-300 transition-all duration-300 flex items-center gap-3"
+                      className="w-full px-4 py-2.5 text-left text-sm text-gray-700 dark:text-gray-300 hover:bg-purple-50 dark:hover:bg-purple-900/50 hover:text-purple-700 dark:hover:text-purple-300 transition-all duration-300 flex items-center gap-3"
                       onClick={() => {
                         router.push('/menu/profile')
                         setShowProfileMenu(false)
@@ -113,7 +113,7 @@ export function Navbar() {
 
                     {/* Settings */}
                     <button
-                      className="w-full px-4 py-2.5 text-left text-sm text-gray-700 dark:text-gray-300 hover:bg-yellow-50 dark:hover:bg-yellow-900/50 hover:text-yellow-700 dark:hover:text-yellow-300 transition-all duration-300 flex items-center gap-3"
+                      className="w-full px-4 py-2.5 text-left text-sm text-gray-700 dark:text-gray-300 hover:bg-violet-50 dark:hover:bg-violet-900/50 hover:text-violet-700 dark:hover:text-violet-300 transition-all duration-300 flex items-center gap-3"
                       onClick={() => {
                         // Navigate to settings page (you can change this route)
                         router.push('/settings')
@@ -132,7 +132,7 @@ export function Navbar() {
 
                     {/* Logout */}
                     <button
-                      className="w-full px-4 py-2.5 text-left text-sm text-gray-700 dark:text-gray-300 hover:bg-yellow-50 dark:hover:bg-yellow-900/50 hover:text-yellow-700 dark:hover:text-yellow-300 transition-all duration-300 flex items-center gap-3"
+                      className="w-full px-4 py-2.5 text-left text-sm text-gray-700 dark:text-gray-300 hover:bg-violet-50 dark:hover:bg-violet-900/50 hover:text-violet-700 dark:hover:text-violet-300 transition-all duration-300 flex items-center gap-3"
                       onClick={() => {
                         logout()
                         setShowProfileMenu(false)
