@@ -1,7 +1,6 @@
 "use client";
 
 import React, { createContext, useContext, useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
 
 interface User {
   id: string; // kept as string for compatibility (Prisma uses Int internally)
@@ -14,7 +13,7 @@ interface User {
 
 interface AuthContextType {
   user: User | null;
-  login: (email: string, password: string) => Promise<boolean>;
+  login: (email: string, password: string) => Promise<{ success: boolean; redirectTo?: string }>;
   register: (name: string, email: string, password: string) => Promise<boolean>;
   logout: () => void;
   isLoading: boolean;
@@ -22,12 +21,21 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-// Removed dummy users. Data now sourced from Prisma via API routes.
+// Helper function to get home page based on role
+function getHomeByRole(role: string): string {
+  const roleMap: Record<string, string> = {
+    'approval': '/approval',
+    'admin': '/admin', // admin langsung ke admin dashboard
+    'pendor': '/pendor',
+    'user': '/user',
+    'ADMIN': '/admin', // uppercase variant
+  }
+  return roleMap[role.toLowerCase()] || '/user'
+}
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const router = useRouter();
 
   // Check if user is logged in on mount
   useEffect(() => {
@@ -38,24 +46,25 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setIsLoading(false);
   }, []);
 
-  const login = async (email: string, password: string): Promise<boolean> => {
+  const login = async (email: string, password: string): Promise<{ success: boolean; redirectTo?: string }> => {
     try {
       const res = await fetch('/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password })
       })
-      if (!res.ok) return false
+      if (!res.ok) return { success: false }
       const data = await res.json()
       if (data.user) {
         setUser(data.user)
         localStorage.setItem('user', JSON.stringify(data.user))
-        return true
+        const redirectTo = getHomeByRole(data.user.role)
+        return { success: true, redirectTo }
       }
-      return false
+      return { success: false }
     } catch (e) {
       console.error('Login failed', e)
-      return false
+      return { success: false }
     }
   }
 
@@ -83,7 +92,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const logout = () => {
     setUser(null);
     localStorage.removeItem("user");
-    router.push("/login");
+    if (typeof window !== 'undefined') {
+      window.location.href = '/login';
+    }
   };
 
   return (

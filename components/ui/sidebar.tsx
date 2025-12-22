@@ -22,7 +22,12 @@ import {
   FileBox,
   FileSpreadsheet,
   Briefcase,
-  ScrollText
+  ScrollText,
+  UserPlus,
+  ShoppingCart,
+  Settings,
+  BarChart3,
+  TrendingUp
 } from "lucide-react"
 import Image from "next/image"
 import DemplonLogo from "./demplon-logo"
@@ -38,29 +43,40 @@ type MenuItem = {
 
 const menuItems: MenuItem[] = [
   { title: "Home", icon: Home, href: "/", section: "generals" },
-  { title: "Profile", icon: UserCircle2, href: "/menu/profile", section: "generals" },
-  { title: "Employment", icon: Building2, href: "/menu/employment", section: "generals" },
+  { title: "Profile", icon: UserCircle2, href: "/user/menu/profile", section: "generals" },
+  { title: "Employment", icon: Building2, href: "/user/menu/employment", section: "generals" },
   {
     title: "Kehadiran, Koreksi, Cuti, dan Dinas",
     icon: Clock,
-    href: "/menu/absen",
+    href: "/user/menu/absen",
     section: "generals"
   },
-  { title: "Portal Aplikasi", icon: Package, href: "/menu/portal", section: "main" },
-  { title: "Kujang AI", icon: Sparkles, href: "/menu/kujangai", section: "main" },
-  { title: "Library", icon: Library, href: "/menu/library", section: "main" },
-  { title: "Shortlink", icon: Link2, href: "/menu/shortlink", section: "main" },
+  { title: "Portal Aplikasi", icon: Package, href: "/user/menu/portal", section: "main" },
+  { title: "Kujang AI", icon: Sparkles, href: "/user/menu/kujangai", section: "main" },
+  { title: "Library", icon: Library, href: "/user/menu/library", section: "main" },
+  { title: "Shortlink", icon: Link2, href: "/user/menu/shortlink", section: "main" },
 
   // Apps & Features
-  { title: "E-Prosedur", icon: Scissors, href: "/menu/e-prosedur", section: "apps" },
-  { title: "Employee Directory", icon: Users, href: "/menu/employee", section: "apps" },
-  { title: "SIADIL", icon: FileText, href: "/menu/siadil", section: "apps" },
-  { title: "SYSTIK", icon: Circle, href: "/menu/systik", section: "apps" },
-  { title: "Konsumsi", icon: Layers, href: "/menu/konsumsi", section: "apps" },
-  { title: "Dokumenku", icon: FileBox, href: "/menu/dokumenku", section: "apps" },
-  { title: "MyStatement", icon: FileSpreadsheet, href: "/menu/statement", section: "apps" },
-  { title: "Work Area", icon: Briefcase, href: "/menu/work-area", section: "apps" },
-  { title: "Peraturan Perundangan", icon: ScrollText, href: "/menu/peraturan", section: "apps" }
+  { title: "E-Prosedur", icon: Scissors, href: "/user/menu/e-prosedur", section: "apps" },
+  { title: "Employee Directory", icon: Users, href: "/user/menu/employee", section: "apps" },
+  { title: "SIADIL", icon: FileText, href: "/user/menu/siadil", section: "apps" },
+  { title: "SYSTIK", icon: Circle, href: "/user/menu/systik", section: "apps" },
+  { title: "Konsumsi", icon: Layers, href: "/user/menu/konsumsi", section: "apps" },
+  { title: "Dokumenku", icon: FileBox, href: "/user/menu/dokumenku", section: "apps" },
+  { title: "MyStatement", icon: FileSpreadsheet, href: "/user/menu/statement", section: "apps" },
+  { title: "Work Area", icon: Briefcase, href: "/user/menu/work-area", section: "apps" },
+  { title: "Peraturan Perundangan", icon: ScrollText, href: "/user/menu/peraturan", section: "apps" }
+]
+
+// Admin-specific menu items
+const adminMenuItems: MenuItem[] = [
+  { title: "Dashboard", icon: BarChart3, href: "/admin", section: "main" },
+  { title: "Tambah Akun", icon: UserPlus, href: "/admin/users", section: "main" },
+  { title: "Data Orderan", icon: ShoppingCart, href: "/admin/orders", section: "main" },
+  { title: "Master Divisi", icon: Building2, href: "/admin/divisions", section: "main" },
+  { title: "Laporan Rekapitulasi", icon: TrendingUp, href: "/admin/reports", section: "main" },
+  { title: "Kelola Konsumsi", icon: Layers, href: "/user/menu/konsumsi", section: "main" },
+  { title: "Pengaturan", icon: Settings, href: "/admin/settings", section: "main" },
 ]
 
 type SidebarProps = {
@@ -78,8 +94,13 @@ export const Sidebar: React.FC<SidebarProps> = ({
   const { isCollapsed, setIsCollapsed, isMobileOpen, setIsMobileOpen } = useSidebar()
   const { user } = useAuth()
   
-  const generalsMenu = menuItems.filter(item => item.section === "generals")
-  const mainMenu = menuItems.filter(item => item.section === "main")
+  // Determine which menu to use based on user role
+  const isAdmin = user?.role?.toLowerCase() === 'admin'
+  const activeMenuItems = isAdmin ? adminMenuItems : menuItems
+  
+  const generalsMenu = activeMenuItems.filter(item => item.section === "generals")
+  const mainMenu = activeMenuItems.filter(item => item.section === "main")
+  const appsMenu = activeMenuItems.filter(item => item.section === "apps")
   
   // Use logged in user data if available
   const displayName = user?.name || userName
@@ -128,7 +149,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
   <div className={`h-[calc(100%-4rem)] pb-4 overflow-y-auto bg-white dark:bg-gray-900 ${isCollapsed ? "px-1" : "px-3"}`}>
         {/* Profile Section */}
         <Link 
-          href="/menu/profile"
+          href="/user/menu/profile"
           className={`flex items-center gap-4 p-4 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors ${isCollapsed ? "justify-center px-0" : ""}`}
         >
           <div className={`${isCollapsed ? "flex justify-center w-full" : ""}`}>
@@ -150,6 +171,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
         </Link>
 
         {/* Generals Navigation */}
+        {generalsMenu.length > 0 && (
         <div className="mt-2">
           {!isCollapsed && (
             <h3 className="px-4 py-2 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase">
@@ -165,7 +187,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                     href={item.href}
                     onClick={() => setIsMobileOpen(false)}
                     className={`flex items-center text-gray-900 dark:text-gray-300 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 group ${
-                      isActive ? "bg-purple-600 text-white hover:bg-purple-700 dark:bg-purple-600 dark:hover:bg-purple-700" : ""
+                      isActive ? "bg-purple-700 text-white hover:bg-purple-800 dark:bg-purple-700 dark:hover:bg-purple-800" : ""
                     } ${isCollapsed ? "justify-center p-2" : "p-3"}`}
                     title={isCollapsed ? item.title : ""}
                   >
@@ -177,12 +199,14 @@ export const Sidebar: React.FC<SidebarProps> = ({
             })}
           </ul>
         </div>
+        )}
 
         {/* Main Menu Navigation */}
+        {mainMenu.length > 0 && (
         <div className="mt-6">
           {!isCollapsed && (
             <h3 className="px-4 py-2 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase">
-              MAIN MENU
+              {isAdmin ? "ADMIN MENU" : "MAIN MENU"}
             </h3>
           )}
           <ul className="space-y-2 font-medium">
@@ -194,7 +218,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                     href={item.href}
                     onClick={() => setIsMobileOpen(false)}
                     className={`flex items-center text-gray-900 dark:text-gray-300 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 group transition-all duration-300 ease-in-out transform hover:translate-x-1 ${
-                      isActive ? "bg-purple-600 text-white hover:bg-purple-700 dark:bg-purple-600 dark:hover:bg-purple-700" : ""
+                      isActive ? "bg-purple-700 text-white hover:bg-purple-800 dark:bg-purple-700 dark:hover:bg-purple-800" : ""
                     } ${isCollapsed ? "justify-center p-2" : "p-3"}`}
                     title={isCollapsed ? item.title : ""}
                   >
@@ -206,8 +230,10 @@ export const Sidebar: React.FC<SidebarProps> = ({
             })}
           </ul>
         </div>
+        )}
 
         {/* Apps & Features Navigation */}
+        {appsMenu.length > 0 && (
         <div className="mt-6">
           {!isCollapsed && (
             <h3 className="px-4 py-2 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase">
@@ -215,7 +241,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
             </h3>
           )}
           <ul className="space-y-2 font-medium">
-            {menuItems.filter(item => item.section === "apps").map((item) => {
+            {appsMenu.map((item) => {
               const isActive = pathname === item.href
               return (
                 <li key={item.title}>
@@ -223,7 +249,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                     href={item.href}
                     onClick={() => setIsMobileOpen(false)}
                     className={`flex items-center text-gray-900 dark:text-gray-300 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 group transition-all duration-300 ease-in-out transform hover:translate-x-1 ${
-                      isActive ? "bg-purple-600 text-white hover:bg-purple-700 dark:bg-purple-600 dark:hover:bg-purple-700" : ""
+                      isActive ? "bg-purple-700 text-white hover:bg-purple-800 dark:bg-purple-700 dark:hover:bg-purple-800" : ""
                     } ${isCollapsed ? "justify-center p-2" : "p-3"}`}
                     title={isCollapsed ? item.title : ""}
                   >
@@ -235,6 +261,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
             })}
           </ul>
         </div>
+        )}
       </div>
     </aside>
     </>

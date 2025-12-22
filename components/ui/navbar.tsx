@@ -40,7 +40,7 @@ export function Navbar() {
               <input
                 type="text"
                 placeholder="Search command..."
-                className="w-full pl-10 pr-14 py-2 text-sm text-gray-900 dark:text-white border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 outline-none"
+                className="w-full pl-10 pr-14 py-2 text-sm text-gray-900 dark:text-white border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 focus:ring-2 focus:ring-purple-600 focus:border-purple-600 outline-none"
                 suppressHydrationWarning
               />
               <div className="absolute inset-y-0 right-0 flex items-center pr-3">
@@ -60,14 +60,13 @@ export function Navbar() {
               <span className="absolute top-1 right-1 w-2 h-2 bg-purple-500 rounded-full"></span>
             </button>
 
-            {/* Profile Picture with Dropdown */}
             <div className="relative">
               <button
                 type="button"
                 className="flex items-center rounded-full focus:ring-2 focus:ring-gray-300 dark:focus:ring-gray-600 transition-all duration-300 transform hover:scale-105"
                 onClick={() => setShowProfileMenu(!showProfileMenu)}
                 suppressHydrationWarning
-              >
+              >          
                 <Image
                   src="/himmel.jpg"
                   alt="Profile"
@@ -77,10 +76,8 @@ export function Navbar() {
                 />
               </button>
 
-              {/* Dropdown Menu */}
               {showProfileMenu && (
                 <>
-                  {/* Backdrop */}
                   <div 
                     className="fixed inset-0 z-40" 
                     onClick={() => setShowProfileMenu(false)}
@@ -103,7 +100,7 @@ export function Navbar() {
                     <button
                       className="w-full px-4 py-2.5 text-left text-sm text-gray-700 dark:text-gray-300 hover:bg-purple-50 dark:hover:bg-purple-900/50 hover:text-purple-700 dark:hover:text-purple-300 transition-all duration-300 flex items-center gap-3"
                       onClick={() => {
-                        router.push('/menu/profile')
+                        router.push('/user/menu/profile')
                         setShowProfileMenu(false)
                       }}
                     >

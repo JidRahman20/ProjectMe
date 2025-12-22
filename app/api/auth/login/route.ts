@@ -7,6 +7,8 @@ export async function POST(request: Request) {
     const body = await request.json()
     const { email, password } = body
 
+    console.log('Login attempt:', email)
+
     if (!email || !password) {
       return NextResponse.json(
         { success: false, error: 'Email and password are required' },
@@ -16,6 +18,7 @@ export async function POST(request: Request) {
 
     // Find user by email
     const user = await db.users.findByEmail(email)
+    console.log('User found:', user ? 'Yes' : 'No')
 
     if (!user) {
       return NextResponse.json(
@@ -26,6 +29,7 @@ export async function POST(request: Request) {
 
     // Verify password
     const isValidPassword = await bcrypt.compare(password, user.password)
+    console.log('Password valid:', isValidPassword)
 
     if (!isValidPassword) {
       return NextResponse.json(

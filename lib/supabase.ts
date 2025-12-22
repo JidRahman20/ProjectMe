@@ -3,8 +3,20 @@ import 'dotenv/config'
 
 const supabaseUrl = process.env.SUPABASE_URL!
 const supabaseKey = process.env.SUPABASE_ANON_KEY!
+const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
 
+// Regular client for app usage
 export const supabase = createClient(supabaseUrl, supabaseKey)
+
+// Admin client for bypassing RLS (use only in server-side scripts)
+export const supabaseAdmin = supabaseServiceKey 
+  ? createClient(supabaseUrl, supabaseServiceKey, {
+      auth: {
+        autoRefreshToken: false,
+        persistSession: false
+      }
+    })
+  : supabase // fallback to regular client if no service key
 
 // Database types
 export interface User {

@@ -22,10 +22,10 @@ export default function LoginPage() {
     setError("");
     setIsLoading(true);
 
-    const success = await login(email, password);
+    const result = await login(email, password);
 
-    if (success) {
-      router.push("/");
+    if (result.success && result.redirectTo) {
+      router.push(result.redirectTo);
     } else {
       setError("Email atau password salah");
     }
@@ -93,7 +93,7 @@ export default function LoginPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+                className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 focus:ring-2 focus:ring-purple-600 focus:border-transparent transition-all"
                 placeholder="Masukkan email Anda"
                 suppressHydrationWarning
               />
@@ -111,7 +111,7 @@ export default function LoginPage() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
-                  className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all pr-12"
+                  className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 focus:ring-2 focus:ring-purple-600 focus:border-transparent transition-all pr-12"
                   placeholder="Masukkan kata sandi Anda"
                   suppressHydrationWarning
                 />
@@ -133,11 +133,11 @@ export default function LoginPage() {
                   type="checkbox"
                   checked={rememberMe}
                   onChange={(e) => setRememberMe(e.target.checked)}
-                  className="w-4 h-4 rounded border-gray-300 text-purple-600 focus:ring-purple-500"
+                  className="w-4 h-4 rounded border-gray-300 text-purple-700 focus:ring-purple-600"
                 />
                 <span className="text-sm text-gray-600 dark:text-gray-400">Ingat Saya</span>
               </label>
-              <Link href="/forgot-password" className="text-sm text-gray-600 dark:text-gray-400 hover:text-purple-600 dark:hover:text-purple-400">
+              <Link href="/forgot-password" className="text-sm text-gray-600 dark:text-gray-400 hover:text-purple-700 dark:hover:text-purple-400">
                 Lupa Kata Sandi?
               </Link>
             </div>
@@ -146,7 +146,7 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full bg-gradient-to-r from-purple-600 to-violet-500 hover:from-purple-700 hover:to-violet-600 dark:from-purple-500 dark:to-violet-400 dark:hover:from-purple-600 dark:hover:to-violet-500 text-white font-semibold py-3.5 px-4 rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-md hover:shadow-lg"
+              className="w-full bg-gradient-to-r from-purple-700 to-purple-600 hover:from-purple-800 hover:to-purple-700 dark:from-purple-500 dark:to-violet-400 dark:hover:from-purple-600 dark:hover:to-violet-500 text-white font-semibold py-3.5 px-4 rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-md hover:shadow-lg"
               suppressHydrationWarning
             >
               {isLoading ? "Memuat..." : "Masuk"}

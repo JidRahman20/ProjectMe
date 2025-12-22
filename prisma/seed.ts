@@ -1,8 +1,11 @@
-import { supabase } from '../lib/supabase'
+import { supabase, supabaseAdmin } from '../lib/supabase'
 import bcrypt from 'bcrypt'
 
 async function main() {
-  console.log(' Starting seed...')
+  console.log('🌱 Starting seed...')
+  
+  // Use admin client to bypass RLS
+  const client = supabaseAdmin
 
   // Define users to create
   const usersToCreate = [
@@ -47,17 +50,17 @@ async function main() {
 
   // Create users
   for (const userData of usersToCreate) {
-    console.log(`\nCreating user: ${userData.email}`)
+    console.log(`\n📝 Creating user: ${userData.email}`)
     
     // Check if user already exists
-    const { data: existingUser } = await supabase
+    const { data: existingUser } = await client
       .from('users')
       .select('email')
       .eq('email', userData.email)
       .single()
 
     if (existingUser) {
-      console.log(`User ${userData.email} already exists, skipping...`)
+      console.log(`⚠️  User ${userData.email} already exists, skipping...`)
       continue
     }
 
@@ -65,7 +68,7 @@ async function main() {
     const hashedPassword = await bcrypt.hash(userData.password, 10)
 
     // Create user
-    const { data: user, error: userError } = await supabase
+    const { data: user, error: userError } = await client
       .from('users')
       .insert({
         id: `user-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
@@ -78,16 +81,16 @@ async function main() {
       .single()
 
     if (userError) {
-      console.error(`Error creating user ${userData.email}:`, userError)
+      console.error(`❌ Error creating user ${userData.email}:`, userError)
       continue
     }
 
-    console.log(`User created: ${user.email} (${user.role})`)
+    console.log(`✅ User created: ${user.email} (${user.role})`)
     createdUsers.push(user)
   }
 
   if (createdUsers.length === 0) {
-    console.log('\n No new users created')
+    console.log('\n⚠️  No new users created')
     return
   }
 
@@ -95,8 +98,8 @@ async function main() {
   const user = createdUsers[0]
 
   // Create sample order with complete data
-  console.log(`\n Creating sample order for ${user.email}...`)
-  const { data: order, error: orderError } = await supabase
+  console.log(`\n📦 Creating sample order for ${user.email}...`)
+  const { data: order, error: orderError } = await client
     .from('orders')
     .insert({
       id: 'order-' + Date.now(),
@@ -120,13 +123,13 @@ async function main() {
     .single()
 
   if (orderError) {
-    console.error('ERROR: Error creating order:', orderError)
+    console.error('❌ ERROR: Error creating order:', orderError)
   } else {
-    console.log('SUCCESS: Order created:', order.code)
+    console.log('✅ SUCCESS: Order created:', order.code)
   }
   
-  console.log('\nSeed completed successfully!')
-  console.log('\nLogin credentials:')
+  console.log('\n✨ Seed completed successfully!')
+  console.log('\n🔑 Login credentials:')
   usersToCreate.forEach(u => {
     console.log(`   - ${u.email} / ${u.password} (${u.role})`)
   })

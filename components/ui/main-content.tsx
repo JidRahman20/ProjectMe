@@ -6,7 +6,7 @@ import { usePathname } from "next/navigation"
 export function MainContent({ children }: { children: React.ReactNode }) {
   const { isCollapsed } = useSidebar()
   const pathname = usePathname()
-  const isKonsumsiRoute = pathname?.startsWith("/menu/konsumsi")
+  const isKonsumsiRoute = pathname?.startsWith("/user/menu/konsumsi")
 
   const backgroundClass = isKonsumsiRoute
     ? "bg-gray-50 dark:bg-gray-900"

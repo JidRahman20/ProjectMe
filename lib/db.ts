@@ -39,7 +39,7 @@ export const db = {
         .from('users')
         .select('*')
         .eq('email', email)
-        .single()
+        .maybeSingle()
       if (error) throw error
       return data
     },
