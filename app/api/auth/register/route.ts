@@ -5,7 +5,7 @@ import bcrypt from 'bcrypt'
 export async function POST(request: Request) {
   try {
     const body = await request.json()
-    const { email, password, name } = body
+    const { email, password, name, role } = body
 
     if (!email || !password) {
       return NextResponse.json(
@@ -37,7 +37,7 @@ export async function POST(request: Request) {
       email,
       password: hashedPassword,
       name: name || null,
-      role: 'user'
+      role: role || 'user'
     })
 
     // Don't send password back
