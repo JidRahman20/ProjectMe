@@ -148,12 +148,11 @@ export default function AdminDivisionsPage() {
           </div>
         ) : (
           <>
-
-        {/* Add Form */}
-        {isAdding && (
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6 mb-6">
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Tambah Divisi Baru</h3>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+            {/* Add Form */}
+            {isAdding && (
+              <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6 mb-6">
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Tambah Divisi Baru</h3>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
               <input
                 type="text"
                 placeholder="Nama Divisi"
@@ -296,6 +295,7 @@ export default function AdminDivisionsPage() {
             </tbody>
           </table>
         </div>
+          </>
         )}
       </div>
     </ProtectedRoute>

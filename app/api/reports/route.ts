@@ -9,7 +9,7 @@ export async function GET(request: NextRequest) {
     const type = searchParams.get('type') // monthly, vendor, division
 
     // Get all orders (filter by month if provided)
-    let query = supabase
+    const query = supabase
       .from('orders')
       .select(`
         *,
@@ -20,20 +20,40 @@ export async function GET(request: NextRequest) {
         )
       `)
 
+    let orders: any[] = []
+
     if (month) {
       const [year, monthNum] = month.split('-')
       const startDate = `${year}-${monthNum}-01`
-      const endDate = new Date(parseInt(year), parseInt(monthNum), 0).toISOString().split('T')[0]
-      query = query
-        .gte('tanggal_kegiatan', startDate)
-        .lte('tanggal_kegiatan', endDate)
-    }
+      const lastDay = new Date(parseInt(year), parseInt(monthNum), 0).getDate()
+      const endDate = `${year}-${monthNum}-${lastDay}T23:59:59`
+      
+      // Fetch all orders and filter in memory since OR query is complex
+      const { data: allOrders, error: fetchError } = await query
+      
+      if (fetchError) {
+        console.error('Error fetching orders for report:', fetchError)
+        return NextResponse.json({ error: fetchError.message }, { status: 500 })
+      }
 
-    const { data: orders, error } = await query
+      // Filter by month in memory
+      const filteredOrders = allOrders?.filter(order => {
+        const dateToCheck = order.tanggal_kegiatan || order.created_at
+        if (!dateToCheck) return false
+        
+        const orderDate = new Date(dateToCheck)
+        const orderMonth = `${orderDate.getFullYear()}-${String(orderDate.getMonth() + 1).padStart(2, '0')}`
+        return orderMonth === month
+      })
 
-    if (error) {
-      console.error('Error fetching orders for report:', error)
-      return NextResponse.json({ error: error.message }, { status: 500 })
+      orders = filteredOrders
+    } else {
+      const { data: allOrders, error: fetchError } = await query
+      if (fetchError) {
+        console.error('Error fetching orders for report:', fetchError)
+        return NextResponse.json({ error: fetchError.message }, { status: 500 })
+      }
+      orders = allOrders
     }
 
     // Calculate statistics

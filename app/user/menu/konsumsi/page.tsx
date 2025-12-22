@@ -335,7 +335,7 @@ export default function KonsumsiPage() {
     const t = (s || "").trim().toLowerCase();
     if (["menunggu konfirmasi", "menunggu persetujuan", "pending", "menunggu", "dipesan"].includes(t)) return STATUS.ORDERED;
     if (["disetujui", "dikonfirmasi", "confirmed", "approved", "pesanan disetujui"].includes(t)) return STATUS.APPROVED;
-    if (["dibatalkan", "pesanan dibatalkan", "cancelled", "batal"].includes(t)) return STATUS.CANCELLED;
+    if (["dibatalkan", "pesanan dibatalkan", "cancelled", "batal", "rejected"].includes(t)) return STATUS.CANCELLED;
     return s as CanonicalStatus;
   }, [STATUS]);
 
@@ -360,8 +360,8 @@ export default function KonsumsiPage() {
               code: o.code,
               menu,
               items: o.items,
-              tanggalPengajuan: o.tanggal_pengajuan || o.tanggalPengajuan || '',
-              tanggalPengiriman: o.tanggal_pengiriman || o.tanggalPengiriman || '',
+              tanggalPengajuan: o.tanggal_pengajuan || o.tanggalPengajuan || o.created_at || '',
+              tanggalPengiriman: o.tanggal_kegiatan || o.tanggal_pengiriman || o.tanggalPengiriman || o.tanggal_pengajuan || '',
               kegiatan: o.kegiatan || '',
               tamu: o.tamu || '',
               jumlahTamu: o.jumlah_tamu || o.jumlahTamu || 0,
@@ -371,7 +371,7 @@ export default function KonsumsiPage() {
               // Include optional fields
               approval: o.approval || '',
               lokasi: o.lokasi || '',
-              waktu: o.waktu || '',
+              waktu: o.waktu || o.waktu_kegiatan || '',
               keterangan: o.keterangan || ''
             }
           }))

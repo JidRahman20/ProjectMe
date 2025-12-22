@@ -2,6 +2,32 @@ import { NextRequest, NextResponse } from "next/server"
 import { supabase } from "@/lib/supabase"
 import bcrypt from 'bcrypt'
 
+// GET - Get user by ID
+export async function GET(
+  request: NextRequest,
+  { params }: { params: { id: string } }
+) {
+  try {
+    const userId = params.id
+
+    const { data: user, error } = await supabase
+      .from('users')
+      .select('id, name, email, role, created_at')
+      .eq('id', userId)
+      .single()
+
+    if (error) {
+      console.error('Error fetching user:', error)
+      return NextResponse.json({ error: error.message }, { status: 404 })
+    }
+
+    return NextResponse.json(user)
+  } catch (error) {
+    console.error('Error in GET /api/users/[id]:', error)
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
+  }
+}
+
 // PUT - Update user
 export async function PUT(
   request: NextRequest,
