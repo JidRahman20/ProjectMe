@@ -2,13 +2,13 @@
 
 import { useEffect, useState } from "react"
 import { ProtectedRoute } from "@/components/ui/protected-route"
-import { ShoppingCart, Calendar, User, Package, DollarSign, CheckCircle, XCircle, Clock, Search, Filter, Download, Eye } from "lucide-react"
+import { ShoppingCart, Calendar, User, Package, CheckCircle, XCircle, Clock, Search, Eye } from "lucide-react"
 
 type Order = {
   id: string
   code: string
   user_id: string
-  items: any
+  items: Record<string, unknown>
   total_amount: number
   status: string
   kegiatan: string
@@ -16,6 +16,13 @@ type Order = {
   tanggal_kegiatan: string
   waktu_kegiatan: string
   created_at: string
+}
+
+type OrderItem = {
+  name: string
+  qty: number
+  satuan: string
+  timePeriod: string
 }
 
 type User = {
@@ -33,6 +40,14 @@ export default function AdminOrdersPage() {
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null)
   const [updatingStatus, setUpdatingStatus] = useState<string | null>(null)
   const [notification, setNotification] = useState<{ type: 'success' | 'error', message: string } | null>(null)
+  const [confirmDialog, setConfirmDialog] = useState<{
+    show: boolean
+    title: string
+    message: string
+    orderCode: string
+    newStatus: string
+    type: 'approve' | 'reject'
+  } | null>(null)
 
   useEffect(() => {
     fetchOrders()
@@ -57,8 +72,8 @@ export default function AdminOrdersPage() {
         }, {} as Record<string, User>)
         setUsers(userMap)
       }
-    } catch (error) {
-      console.error('Error fetching orders:', error)
+    } catch (err) {
+      console.error('Error fetching orders:', err)
     } finally {
       setIsLoading(false)
     }
@@ -76,9 +91,10 @@ export default function AdminOrdersPage() {
       })
 
       if (response.ok) {
+        const statusText = newStatus === 'approved' ? 'disetujui' : 'dibatalkan'
         setNotification({ 
           type: 'success', 
-          message: `Status order berhasil diubah menjadi ${newStatus}` 
+          message: `Pesanan berhasil ${statusText}!` 
         })
         fetchOrders() // Refresh data
         setTimeout(() => setNotification(null), 3000)
@@ -89,7 +105,8 @@ export default function AdminOrdersPage() {
         })
         setTimeout(() => setNotification(null), 3000)
       }
-    } catch (error) {
+    } catch (err) {
+      console.error('Error updating status:', err)
       setNotification({ 
         type: 'error', 
         message: 'Terjadi kesalahan saat mengubah status' 
@@ -98,6 +115,33 @@ export default function AdminOrdersPage() {
     } finally {
       setUpdatingStatus(null)
     }
+  }
+
+  const showConfirmDialog = (orderCode: string, newStatus: string, orderInfo: string, type: 'approve' | 'reject') => {
+    const titles = {
+      approve: 'Setujui Pesanan',
+      reject: 'Batalkan Pesanan'
+    }
+    setConfirmDialog({
+      show: true,
+      title: titles[type],
+      message: orderInfo,
+      orderCode,
+      newStatus,
+      type
+    })
+  }
+
+  const handleConfirm = async () => {
+    if (confirmDialog) {
+      await handleStatusChange(confirmDialog.orderCode, confirmDialog.newStatus)
+      setConfirmDialog(null)
+      setSelectedOrder(null)
+    }
+  }
+
+  const handleCancel = () => {
+    setConfirmDialog(null)
   }
 
   const getStatusBadge = (status: string) => {
@@ -117,7 +161,7 @@ export default function AdminOrdersPage() {
       rejected: 'Pesanan Dibatalkan',
     }
     return (
-      <span className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium ${styles[status as keyof typeof styles] || styles.pending}`}>
+      <span className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium ${styles[status as keyof typeof styles] || styles.pending} w-[160px] justify-center`}>
         {icons[status as keyof typeof icons]}
         {labels[status as keyof typeof labels] || status}
       </span>
@@ -140,6 +184,9 @@ export default function AdminOrdersPage() {
       order.kegiatan?.toLowerCase().includes(searchQuery.toLowerCase()) ||
       users[order.user_id]?.name.toLowerCase().includes(searchQuery.toLowerCase())
     )
+  }).sort((a, b) => {
+    // Sort by created_at descending (newest first)
+    return new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
   })
 
   const stats = {
@@ -197,17 +244,10 @@ export default function AdminOrdersPage() {
                 <p className="text-gray-600 dark:text-gray-400">Kelola semua orderan konsumsi</p>
               </div>
             </div>
-            <button
-              onClick={() => alert('Export feature coming soon')}
-              className="flex items-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors"
-            >
-              <Download className="w-4 h-4" />
-              Export
-            </button>
           </div>
 
           {/* Stats Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
             <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-4">
               <p className="text-sm text-gray-600 dark:text-gray-400">Total Orders</p>
               <p className="text-2xl font-bold text-gray-900 dark:text-white">{stats.total}</p>
@@ -233,7 +273,7 @@ export default function AdminOrdersPage() {
           </div>
 
           {/* Search & Filter */}
-          <div className="flex flex-col sm:flex-row gap-4 mb-4">
+          <div className="flex flex-col lg:flex-row gap-4 mb-4">
             <div className="flex-1 relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
               <input
@@ -244,7 +284,7 @@ export default function AdminOrdersPage() {
                 className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
               />
             </div>
-            <div className="flex gap-2">
+            <div className="flex gap-2 flex-wrap">
               {[
                 { key: 'all', label: 'Semua', count: stats.total },
                 { key: 'pending', label: 'Menunggu', count: stats.pending },
@@ -253,7 +293,7 @@ export default function AdminOrdersPage() {
               ].map(({ key, label, count }) => (
                 <button
                   key={key}
-                  onClick={() => setFilter(key as any)}
+                  onClick={() => setFilter(key as typeof filter)}
                   className={`px-4 py-2 rounded-lg font-medium transition-colors whitespace-nowrap ${
                     filter === key
                       ? 'bg-purple-600 text-white'
@@ -280,103 +320,82 @@ export default function AdminOrdersPage() {
           </div>
         ) : (
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm overflow-hidden">
-            <table className="w-full">
-              <thead className="bg-gray-50 dark:bg-gray-700">
-                <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                    Order Code
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                    User
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                    Kegiatan
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                    Tanggal
-                  </th>
-                  <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                    Total
-                  </th>
-                  <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider" style={{minWidth: '220px'}}>
-                    Status & Aksi
-                  </th>
-                </tr>
-              </thead>
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead className="bg-gray-50 dark:bg-gray-700">
+                  <tr>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider whitespace-nowrap">
+                      Order Code
+                    </th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider whitespace-nowrap">
+                      User
+                    </th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider whitespace-nowrap">
+                      Kegiatan
+                    </th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider whitespace-nowrap">
+                      Tanggal
+                    </th>
+                    <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider whitespace-nowrap">
+                      Total
+                    </th>
+                    <th className="px-4 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider whitespace-nowrap">
+                      Status & Aksi
+                    </th>
+                  </tr>
+                </thead>
               <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
                 {filteredOrders.map((order) => (
                   <tr key={order.id} className="hover:bg-gray-50 dark:hover:bg-gray-700/50">
-                    <td className="px-6 py-4">
-                      <div className="flex items-center gap-2">
-                        <Package className="w-4 h-4 text-purple-600 dark:text-purple-400" />
-                        <span className="font-medium text-gray-900 dark:text-white">
+                    <td className="px-3 py-2">
+                      <div className="flex items-center gap-1">
+                        <Package className="w-3 h-3 text-purple-600 dark:text-purple-400 flex-shrink-0" />
+                        <span className="font-medium text-gray-900 dark:text-white text-xs truncate max-w-[120px]" title={`#${order.code}`}>
                           #{order.code}
                         </span>
                       </div>
                     </td>
-                    <td className="px-6 py-4">
-                      <div className="flex items-center gap-2">
-                        <User className="w-4 h-4 text-gray-400" />
-                        <span className="text-gray-900 dark:text-white">
-                          {users[order.user_id]?.name || 'Unknown'}
-                        </span>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 text-gray-600 dark:text-gray-400 max-w-xs truncate">
-                      {order.kegiatan || '-'}
-                    </td>
-                    <td className="px-6 py-4">
-                      <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400">
-                        <Calendar className="w-4 h-4" />
-                        <span className="text-sm">
-                          {(order.tanggal_kegiatan || order.created_at) ? (
-                            new Date(order.tanggal_kegiatan || order.created_at).toLocaleDateString('id-ID', {
-                              year: 'numeric',
-                              month: 'short',
-                              day: 'numeric'
-                            })
-                          ) : '-'}
-                        </span>
-                      </div>
-                      {order.waktu_kegiatan && (
-                        <div className="text-xs text-gray-500 dark:text-gray-500 ml-6">
-                          {order.waktu_kegiatan}
-                        </div>
-                      )}
-                    </td>
-                    <td className="px-6 py-4 text-right">
-                      <span className="font-semibold text-gray-900 dark:text-white">
-                        Rp {order.total_amount?.toLocaleString('id-ID') || '0'}
+                    <td className="px-3 py-2">
+                      <span className="text-xs text-gray-900 dark:text-white truncate max-w-[100px] inline-block" title={users[order.user_id]?.name}>
+                        {users[order.user_id]?.name || 'Unknown'}
                       </span>
                     </td>
-                    <td className="px-6 py-4">
-                      <div className="flex flex-col gap-2 items-center">
-                        <div className="flex items-center gap-2 w-full justify-center">
-                          {getStatusBadge(order.status)}
-                          <button
-                            onClick={() => setSelectedOrder(order)}
-                            className="inline-flex items-center gap-1 px-2 py-1 text-xs text-purple-600 hover:text-purple-700 dark:text-purple-400 dark:hover:text-purple-300"
-                            title="Lihat Detail"
-                          >
-                            <Eye className="w-4 h-4" />
-                          </button>
-                        </div>
-                        <select
-                          value={order.status}
-                          onChange={(e) => handleStatusChange(order.code, e.target.value)}
-                          disabled={updatingStatus === order.code}
-                          className="w-full text-xs px-2 py-1.5 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-purple-500 disabled:opacity-50 cursor-pointer"
+                    <td className="px-3 py-2">
+                      <div className="text-xs text-gray-600 dark:text-gray-400 truncate max-w-[150px]" title={order.kegiatan || '-'}>
+                        {order.kegiatan || '-'}
+                      </div>
+                    </td>
+                    <td className="px-3 py-2 text-xs text-gray-600 dark:text-gray-400 whitespace-nowrap">
+                      {(order.tanggal_kegiatan || order.created_at) ? (
+                        new Date(order.tanggal_kegiatan || order.created_at).toLocaleDateString('id-ID', {
+                          day: '2-digit',
+                          month: 'short',
+                          year: '2-digit'
+                        })
+                      ) : '-'}
+                    </td>
+                    <td className="px-3 py-2 text-right whitespace-nowrap">
+                      <span className="font-semibold text-xs text-gray-900 dark:text-white">
+                        {(order.total_amount / 1000).toFixed(0)}k
+                      </span>
+                    </td>
+                    <td className="px-3 py-3">
+                      <div className="flex items-center gap-2 justify-center">
+                        {getStatusBadge(order.status)}
+                        <button
+                          onClick={() => setSelectedOrder(order)}
+                          className="flex-shrink-0 p-1.5 text-purple-600 hover:text-purple-700 hover:bg-purple-50 dark:text-purple-400 dark:hover:bg-purple-900/20 rounded transition-colors"
+                          title="Lihat Detail"
                         >
-                          <option value="pending">🕐 Menunggu Persetujuan</option>
-                          <option value="approved">✅ Pesanan Disetujui</option>
-                          <option value="rejected">❌ Pesanan Dibatalkan</option>
-                        </select>
+                          <Eye className="w-4 h-4" />
+                        </button>
                       </div>
                     </td>
                   </tr>
                 ))}
               </tbody>
             </table>
+          </div>
           </div>
         )}
 
@@ -423,21 +442,6 @@ export default function AdminOrdersPage() {
                     </p>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">Tanggal Kegiatan</p>
-                      <p className="font-medium text-gray-900 dark:text-white">
-                        {selectedOrder.tanggal_kegiatan || '-'}
-                      </p>
-                    </div>
-                    <div>
-                      <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">Waktu Kegiatan</p>
-                      <p className="font-medium text-gray-900 dark:text-white">
-                        {selectedOrder.waktu_kegiatan || '-'}
-                      </p>
-                    </div>
-                  </div>
-
                   {selectedOrder.tamu && (
                     <div>
                       <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">Tamu</p>
@@ -454,45 +458,64 @@ export default function AdminOrdersPage() {
                     </p>
                   </div>
 
-                  {selectedOrder.items && (
+                  {selectedOrder.items && Array.isArray(selectedOrder.items) && selectedOrder.items.length > 0 && (
                     <div>
-                      <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">Items</p>
-                      <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
-                        <pre className="text-xs text-gray-900 dark:text-white overflow-x-auto">
-                          {JSON.stringify(selectedOrder.items, null, 2)}
-                        </pre>
+                      <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">Daftar Pesanan</p>
+                      <div className="space-y-3">
+                        {(selectedOrder.items as OrderItem[]).map((item, idx) => (
+                          <div key={idx} className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 border border-gray-200 dark:border-gray-600">
+                            <div className="flex justify-between items-start mb-2">
+                              <div className="flex-1">
+                                <h4 className="font-semibold text-gray-900 dark:text-white">{item.name}</h4>
+                                <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                                  Satuan: <span className="font-medium">{item.satuan}</span>
+                                </p>
+                                <p className="text-sm text-gray-600 dark:text-gray-400">
+                                  Waktu: <span className="font-medium capitalize">{item.timePeriod}</span>
+                                </p>
+                              </div>
+                              <div className="text-right">
+                                <p className="text-lg font-bold text-purple-600 dark:text-purple-400">
+                                  {item.qty} {item.satuan}
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+                        ))}
                       </div>
                     </div>
                   )}
                 </div>
 
-                <div className="mt-6">
-                  <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">Ubah Status</p>
-                  <div className="flex gap-2 mb-4">
-                    <button
-                      onClick={() => {
-                        handleStatusChange(selectedOrder.code, 'approved')
-                        setSelectedOrder(null)
-                      }}
-                      disabled={selectedOrder.status === 'approved' || updatingStatus === selectedOrder.code}
-                      className="flex-1 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                    >
-                      <CheckCircle className="w-4 h-4 inline mr-2" />
-                      Setujui Pesanan
-                    </button>
-                    <button
-                      onClick={() => {
-                        handleStatusChange(selectedOrder.code, 'rejected')
-                        setSelectedOrder(null)
-                      }}
-                      disabled={selectedOrder.status === 'rejected' || updatingStatus === selectedOrder.code}
-                      className="flex-1 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                    >
-                      <XCircle className="w-4 h-4 inline mr-2" />
-                      Batalkan Pesanan
-                    </button>
+                {selectedOrder.status === 'pending' && (
+                  <div className="mt-6">
+                    <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">Ubah Status</p>
+                    <div className="flex gap-2 mb-4">
+                      <button
+                        onClick={() => {
+                          const orderInfo = `Order: #${selectedOrder.code}\nKegiatan: ${selectedOrder.kegiatan || '-'}\nTotal: Rp ${selectedOrder.total_amount?.toLocaleString('id-ID') || '0'}`
+                          showConfirmDialog(selectedOrder.code, 'approved', orderInfo, 'approve')
+                        }}
+                        disabled={updatingStatus === selectedOrder.code}
+                        className="flex-1 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                      >
+                        <CheckCircle className="w-4 h-4 inline mr-2" />
+                        Setujui Pesanan
+                      </button>
+                      <button
+                        onClick={() => {
+                          const orderInfo = `Order: #${selectedOrder.code}\nKegiatan: ${selectedOrder.kegiatan || '-'}\nTotal: Rp ${selectedOrder.total_amount?.toLocaleString('id-ID') || '0'}`
+                          showConfirmDialog(selectedOrder.code, 'rejected', orderInfo, 'reject')
+                        }}
+                        disabled={updatingStatus === selectedOrder.code}
+                        className="flex-1 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                      >
+                        <XCircle className="w-4 h-4 inline mr-2" />
+                        Batalkan Pesanan
+                      </button>
+                    </div>
                   </div>
-                </div>
+                )}
 
                 <div className="flex justify-end gap-2">
                   <button
@@ -502,6 +525,91 @@ export default function AdminOrdersPage() {
                     Tutup
                   </button>
                 </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Custom Confirmation Dialog */}
+        {confirmDialog && (
+          <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-[60] p-4 backdrop-blur-sm" onClick={handleCancel}>
+            <div 
+              className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl max-w-md w-full transform transition-all"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {/* Header */}
+              <div className={`p-6 rounded-t-2xl ${
+                confirmDialog.type === 'approve' 
+                  ? 'bg-gradient-to-r from-green-500 to-emerald-600' 
+                  : 'bg-gradient-to-r from-red-500 to-rose-600'
+              }`}>
+                <div className="flex items-center gap-3">
+                  {confirmDialog.type === 'approve' ? (
+                    <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center">
+                      <CheckCircle className="w-7 h-7 text-white" />
+                    </div>
+                  ) : (
+                    <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center">
+                      <XCircle className="w-7 h-7 text-white" />
+                    </div>
+                  )}
+                  <div>
+                    <h3 className="text-xl font-bold text-white">{confirmDialog.title}</h3>
+                    <p className="text-white/90 text-sm">Konfirmasi tindakan Anda</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Body */}
+              <div className="p-6 space-y-4">
+                <p className="text-gray-700 dark:text-gray-300 text-center font-medium">
+                  Apakah Anda yakin ingin {confirmDialog.type === 'approve' ? 'menyetujui' : 'membatalkan'} pesanan ini?
+                </p>
+                
+                <div className="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-4 space-y-2">
+                  {confirmDialog.message.split('\n').map((line, idx) => (
+                    <p key={idx} className="text-sm text-gray-600 dark:text-gray-400">
+                      <span className="font-semibold">{line}</span>
+                    </p>
+                  ))}
+                </div>
+
+                <div className={`p-3 rounded-lg ${
+                  confirmDialog.type === 'approve'
+                    ? 'bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800'
+                    : 'bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800'
+                }`}>
+                  <p className={`text-xs ${
+                    confirmDialog.type === 'approve'
+                      ? 'text-green-800 dark:text-green-300'
+                      : 'text-red-800 dark:text-red-300'
+                  }`}>
+                    ⚠️ {confirmDialog.type === 'approve' 
+                      ? 'Pesanan yang sudah disetujui tidak dapat dibatalkan.'
+                      : 'Pesanan yang sudah dibatalkan tidak dapat diubah kembali.'}
+                  </p>
+                </div>
+              </div>
+
+              {/* Footer */}
+              <div className="p-6 bg-gray-50 dark:bg-gray-900/50 rounded-b-2xl flex gap-3">
+                <button
+                  onClick={handleCancel}
+                  className="flex-1 px-4 py-3 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-white rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 font-medium transition-colors"
+                >
+                  Batal
+                </button>
+                <button
+                  onClick={handleConfirm}
+                  disabled={updatingStatus !== null}
+                  className={`flex-1 px-4 py-3 text-white rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${
+                    confirmDialog.type === 'approve'
+                      ? 'bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700'
+                      : 'bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-700 hover:to-rose-700'
+                  }`}
+                >
+                  {updatingStatus ? 'Memproses...' : 'Ya, Lanjutkan'}
+                </button>
               </div>
             </div>
           </div>

@@ -43,6 +43,7 @@ model Order {
   lokasi             String?
   waktu              String?
   keterangan         String?
+  rejectionReason    String?
   createdAt          DateTime @default(now())
   updatedAt          DateTime @updatedAt
 

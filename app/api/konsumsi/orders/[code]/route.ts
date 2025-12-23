@@ -31,7 +31,7 @@ export async function PATCH(
   try {
     const { code } = await context.params
     const body = await request.json()
-    const { status } = body
+    const { status, rejectionReason } = body
 
     if (!status) {
       return NextResponse.json(
@@ -40,11 +40,25 @@ export async function PATCH(
       )
     }
 
+    // Validate rejection reason if status is rejected
+    if (status === 'rejected' && !rejectionReason) {
+      return NextResponse.json(
+        { success: false, error: 'Rejection reason is required when rejecting an order' },
+        { status: 400 }
+      )
+    }
+
     // Find order first
     const existingOrder = await db.orders.findByCode(code)
     
+    // Prepare update data
+    const updateData: any = { status }
+    if (rejectionReason) {
+      updateData.rejection_reason = rejectionReason
+    }
+    
     // Update status
-    const updatedOrder = await db.orders.update(existingOrder.id, { status })
+    const updatedOrder = await db.orders.update(existingOrder.id, updateData)
 
     return NextResponse.json({
       success: true,

@@ -2,92 +2,137 @@
 
 import { ProtectedRoute } from "@/components/ui/protected-route";
 import { useAuth } from "@/context/auth-context";
-import { DemplonLogo } from "@/components/ui/demplon-logo";
-import { CheckCircle2, XCircle, Clock, FileText } from "lucide-react";
+import { CheckCircle2, XCircle, Clock, FileText, History } from "lucide-react";
 import Link from "next/link";
+import { useEffect, useState } from "react";
 
 export default function ApprovalHomePage() {
   const { user } = useAuth();
+  const [stats, setStats] = useState({
+    pending: 0,
+    approved: 0,
+    rejected: 0,
+    total: 0
+  });
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchStats();
+  }, []);
+
+  const fetchStats = async () => {
+    try {
+      const response = await fetch('/api/konsumsi/orders');
+      const data = await response.json();
+      
+      if (data.success) {
+        const orders = data.orders;
+        setStats({
+          pending: orders.filter((o: any) => o.status === 'pending').length,
+          approved: orders.filter((o: any) => o.status === 'approved').length,
+          rejected: orders.filter((o: any) => o.status === 'rejected').length,
+          total: orders.length
+        });
+      }
+    } catch (error) {
+      console.error('Error fetching stats:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <ProtectedRoute>
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-indigo-950">
+      <div className="min-h-screen">
         <div className="container mx-auto px-4 py-8">
           {/* Header */}
-          <div className="mb-8 text-center">
-            <DemplonLogo className="w-40 h-40 mx-auto mb-4" />
-            <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-2">
+          <div className="mb-8">
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
               Dashboard Approval
             </h1>
-            <p className="text-lg text-gray-600 dark:text-gray-400">
+            <p className="text-gray-600 dark:text-gray-400">
               Selamat datang, {user?.name}
             </p>
           </div>
 
           {/* Stats Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 border-l-4 border-yellow-500">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-gray-600 dark:text-gray-400">Menunggu Approval</p>
-                  <p className="text-3xl font-bold text-yellow-600 dark:text-yellow-400">12</p>
+                  <p className="text-3xl font-bold text-yellow-600 dark:text-yellow-400">
+                    {loading ? '...' : stats.pending}
+                  </p>
                 </div>
                 <Clock className="w-12 h-12 text-yellow-500" />
               </div>
             </div>
 
-            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
+            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 border-l-4 border-green-500">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-gray-600 dark:text-gray-400">Disetujui</p>
-                  <p className="text-3xl font-bold text-green-600 dark:text-green-400">45</p>
+                  <p className="text-3xl font-bold text-green-600 dark:text-green-400">
+                    {loading ? '...' : stats.approved}
+                  </p>
                 </div>
                 <CheckCircle2 className="w-12 h-12 text-green-500" />
               </div>
             </div>
 
-            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
+            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 border-l-4 border-red-500">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-gray-600 dark:text-gray-400">Ditolak</p>
-                  <p className="text-3xl font-bold text-red-600 dark:text-red-400">3</p>
+                  <p className="text-3xl font-bold text-red-600 dark:text-red-400">
+                    {loading ? '...' : stats.rejected}
+                  </p>
                 </div>
                 <XCircle className="w-12 h-12 text-red-500" />
+              </div>
+            </div>
+
+            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 border-l-4 border-blue-500">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">Total Pengajuan</p>
+                  <p className="text-3xl font-bold text-blue-600 dark:text-blue-400">
+                    {loading ? '...' : stats.total}
+                  </p>
+                </div>
+                <FileText className="w-12 h-12 text-blue-500" />
               </div>
             </div>
           </div>
 
           {/* Quick Actions */}
-          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
-              <FileText className="w-6 h-6" />
-              Menu Approval
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <Link
-                href="/menu/konsumsi"
-                className="p-4 border-2 border-blue-200 dark:border-blue-800 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors"
-              >
-                <h3 className="font-semibold text-lg text-gray-900 dark:text-white mb-2">
-                  Approval Konsumsi
-                </h3>
-                <p className="text-sm text-gray-600 dark:text-gray-400">
-                  Setujui atau tolak pengajuan konsumsi
-                </p>
-              </Link>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <Link
+              href="/approval/detail-pengajuan"
+              className="bg-gradient-to-br from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 dark:from-blue-600 dark:to-blue-700 dark:hover:from-blue-700 dark:hover:to-blue-800 rounded-xl shadow-lg p-8 hover:shadow-xl transition-all transform hover:scale-105"
+            >
+              <FileText className="w-12 h-12 text-white mb-4" />
+              <h2 className="text-2xl font-bold text-white mb-2">
+                Detail Pengajuan
+              </h2>
+              <p className="text-blue-100">
+                Review dan proses pengajuan dengan tombol Approve & Reject
+              </p>
+            </Link>
 
-              <Link
-                href="/admin"
-                className="p-4 border-2 border-blue-200 dark:border-blue-800 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors"
-              >
-                <h3 className="font-semibold text-lg text-gray-900 dark:text-white mb-2">
-                  Admin Dashboard
-                </h3>
-                <p className="text-sm text-gray-600 dark:text-gray-400">
-                  Lihat statistik dan laporan lengkap
-                </p>
-              </Link>
-            </div>
+            <Link
+              href="/approval/riwayat"
+              className="bg-gradient-to-br from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 dark:from-purple-600 dark:to-purple-700 dark:hover:from-purple-700 dark:hover:to-purple-800 rounded-xl shadow-lg p-8 hover:shadow-xl transition-all transform hover:scale-105"
+            >
+              <History className="w-12 h-12 text-white mb-4" />
+              <h2 className="text-2xl font-bold text-white mb-2">
+                Riwayat Approval
+              </h2>
+              <p className="text-purple-100">
+                Lihat riwayat semua pengajuan yang telah diproses
+              </p>
+            </Link>
           </div>
         </div>
       </div>

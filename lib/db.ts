@@ -190,6 +190,7 @@ export const db = {
       lokasi: string | null
       waktu: string | null
       keterangan: string | null
+      rejection_reason: string | null
     }>) {
       const { data, error } = await supabase
         .from('orders')

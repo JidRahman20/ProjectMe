@@ -22,6 +22,7 @@ interface Order {
   lokasi?: string;
   waktu?: string;
   keterangan?: string;
+  rejectionReason?: string;
 }
 
 // Data menu berdasarkan waktu DAN tipe tamu
@@ -38,6 +39,7 @@ const menuByTimeAndGuest = {
       "Teh Manis",
       "Teh Tawar",
       "Air Mineral",
+      "Galon Air Mineral",
     ],
     "Regular": [
       "Nasi Uduk",
@@ -50,6 +52,7 @@ const menuByTimeAndGuest = {
       "Teh Manis",
       "Teh Tawar",
       "Air Mineral",
+      "Galon Air Mineral",
     ],
     "Standar": [
       "Nasi Uduk",
@@ -62,6 +65,7 @@ const menuByTimeAndGuest = {
       "Teh Manis",
       "Teh Tawar",
       "Air Mineral",
+      "Galon Air Mineral",
     ],
     "VIP": [
       "Nasi Uduk Premium",
@@ -76,6 +80,7 @@ const menuByTimeAndGuest = {
       "Susu Segar",
       "Jus Jeruk Fresh",
       "Yogurt Buah",
+      "Galon Air Mineral",
     ],
     "VVIP": [
       "Nasi Liwet Komplit Premium",
@@ -91,6 +96,7 @@ const menuByTimeAndGuest = {
       "Fresh Orange Juice",
       "Smoothie Bowl",
       "Champagne Breakfast",
+      "Galon Air Mineral",
     ],
   },
   "Siang": {
@@ -105,6 +111,7 @@ const menuByTimeAndGuest = {
       "Air Mineral",
       "Teh Botol",
       "Es Teh",
+      "Galon Air Mineral",
     ],
     "Regular": [
       "Nasi Box Ayam Goreng",
@@ -117,6 +124,7 @@ const menuByTimeAndGuest = {
       "Air Mineral",
       "Teh Botol",
       "Es Teh",
+      "Galon Air Mineral",
     ],
     "Standar": [
       "Nasi Box Ayam Goreng",
@@ -129,6 +137,7 @@ const menuByTimeAndGuest = {
       "Air Mineral",
       "Teh Botol",
       "Es Teh",
+      "Galon Air Mineral",
     ],
     "VIP": [
       "Nasi Box Ayam Goreng Bumbu Rujak",
@@ -141,6 +150,7 @@ const menuByTimeAndGuest = {
       "Jus Buah Segar",
       "Es Kelapa Muda",
       "Soft Drink",
+      "Galon Air Mineral",
     ],
     "VVIP": [
       "Nasi Box Wagyu Teriyaki",
@@ -155,6 +165,7 @@ const menuByTimeAndGuest = {
       "Fresh Fruit Juice",
       "Iced Lemon Tea",
       "Dessert (Tiramisu/Panna Cotta)",
+      "Galon Air Mineral",
     ],
   },
   "Sore": {
@@ -168,6 +179,7 @@ const menuByTimeAndGuest = {
       "Kopi",
       "Teh",
       "Air Mineral",
+      "Galon Air Mineral",
     ],
     "Regular": [
       "Kue Lapis",
@@ -179,6 +191,7 @@ const menuByTimeAndGuest = {
       "Kopi",
       "Teh",
       "Air Mineral",
+      "Galon Air Mineral",
     ],
     "Standar": [
       "Kue Lapis",
@@ -190,6 +203,7 @@ const menuByTimeAndGuest = {
       "Kopi",
       "Teh",
       "Air Mineral",
+      "Galon Air Mineral",
     ],
     "VIP": [
       "Kue Lapis Legit",
@@ -202,6 +216,7 @@ const menuByTimeAndGuest = {
       "Kopi Latte",
       "Thai Tea",
       "Jus Buah",
+      "Galon Air Mineral",
     ],
     "VVIP": [
       "Petit Fours Assorted",
@@ -215,6 +230,7 @@ const menuByTimeAndGuest = {
       "Cappuccino",
       "Smoothie",
       "Sparkling Water",
+      "Galon Air Mineral",
     ],
   },
   "Malam": {
@@ -228,6 +244,7 @@ const menuByTimeAndGuest = {
       "Air Mineral",
       "Teh Panas",
       "Kopi",
+      "Galon Air Mineral",
     ],
     "Regular": [
       "Nasi Box Ayam",
@@ -239,6 +256,7 @@ const menuByTimeAndGuest = {
       "Air Mineral",
       "Teh Panas",
       "Kopi",
+      "Galon Air Mineral",
     ],
     "Standar": [
       "Nasi Box Ayam",
@@ -250,6 +268,7 @@ const menuByTimeAndGuest = {
       "Air Mineral",
       "Teh Panas",
       "Kopi",
+      "Galon Air Mineral",
     ],
     "VIP": [
       "Nasi Box Premium Ayam Bakar",
@@ -262,6 +281,7 @@ const menuByTimeAndGuest = {
       "Soft Drink",
       "Jus Alpukat",
       "Es Kelapa Muda",
+      "Galon Air Mineral",
     ],
     "VVIP": [
       "Nasi Box Wagyu Premium",
@@ -275,6 +295,7 @@ const menuByTimeAndGuest = {
       "Wine Selection",
       "Mineral Water Premium",
       "Fresh Juice Bar",
+      "Galon Air Mineral",
     ],
   },
 };
@@ -372,7 +393,8 @@ export default function KonsumsiPage() {
               approval: o.approval || '',
               lokasi: o.lokasi || '',
               waktu: o.waktu || o.waktu_kegiatan || '',
-              keterangan: o.keterangan || ''
+              keterangan: o.keterangan || '',
+              rejectionReason: o.rejection_reason || o.rejectionReason || ''
             }
           }))
         }
@@ -684,7 +706,7 @@ export default function KonsumsiPage() {
     }
 
     // Set loading state
-    console.log('🚀 Starting order submission...');
+    console.log('Starting order submission...');
     setIsSubmitting(true);
 
     if (isEditMode && editOrderId) {
@@ -841,7 +863,7 @@ export default function KonsumsiPage() {
     }
 
     // Reset loading state
-    console.log('✅ Order submission completed successfully');
+    console.log('Order submission completed successfully');
     setIsSubmitting(false);
     
     // Close form and reset after successful submission
@@ -1459,6 +1481,25 @@ export default function KonsumsiPage() {
                   </span>
                 </div>
 
+                {/* Alasan Penolakan - Tampilkan jika pesanan ditolak */}
+                {normalizeStatus(selectedOrder.status) === STATUS.CANCELLED && selectedOrder.rejectionReason && (
+                  <div className="bg-red-50 dark:bg-red-900/20 border-l-4 border-red-500 rounded-lg p-4">
+                    <div className="flex items-start gap-3">
+                      <svg className="w-6 h-6 text-red-500 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                      </svg>
+                      <div className="flex-1">
+                        <h4 className="text-sm font-bold text-red-900 dark:text-red-300 uppercase mb-2">
+                          Alasan Penolakan dari Vendor
+                        </h4>
+                        <p className="text-sm text-red-800 dark:text-red-200 leading-relaxed">
+                          {selectedOrder.rejectionReason}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
                 {/* Tanggal */}
                 <div className="grid grid-cols-2 gap-4">
                   <div className="bg-purple-50 dark:bg-purple-900/20 rounded-lg p-4 border-l-4 border-purple-500 dark:border-purple-400">
@@ -1698,9 +1739,9 @@ export default function KonsumsiPage() {
                         )}
                         {form.tamu && (
                           <p className="text-xs text-purple-700 dark:text-purple-400 mt-1.5 font-medium">
-                            {(form.tamu === "PERTA" || form.tamu === "Regular" || form.tamu === "Standar") && "💼 Menu: Standard berkualitas untuk acara internal"}
-                            {form.tamu === "VIP" && "⭐ Menu: Premium dengan bahan pilihan (Porsi 1.5x)"}
-                            {form.tamu === "VVIP" && "👑 Menu: Exclusive dengan bahan premium & mahal (Porsi 2x)"}
+                            {(form.tamu === "PERTA" || form.tamu === "Regular" || form.tamu === "Standar") && "Menu: Standard berkualitas untuk acara internal"}
+                            {form.tamu === "VIP" && "Menu: Premium dengan bahan pilihan (Porsi 1.5x)"}
+                            {form.tamu === "VVIP" && "Menu: Exclusive dengan bahan premium & mahal (Porsi 2x)"}
                           </p>
                         )}
                       </div>
@@ -2185,20 +2226,30 @@ export default function KonsumsiPage() {
 
                           {/* Status */}
                           <td className="px-4 py-4">
-                            {(() => {
-                              const s = normalizeStatus(order.status);
-                              const baseClasses = "inline-flex items-center px-3 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap shadow-sm";
-                              const colorClasses = s === STATUS.CANCELLED
-                                ? "bg-red-600 text-white"
-                                : s === STATUS.ORDERED
-                                ? "bg-amber-500 text-white"
-                                : s === STATUS.APPROVED
-                                ? "bg-emerald-600 text-white"
-                                : "bg-gray-500 text-white";
-                              return (
-                                <span className={`${baseClasses} ${colorClasses}`}>{s}</span>
-                              );
-                            })()}
+                            <div className="flex flex-col items-start gap-1">
+                              {(() => {
+                                const s = normalizeStatus(order.status);
+                                const baseClasses = "inline-flex items-center px-3 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap shadow-sm";
+                                const colorClasses = s === STATUS.CANCELLED
+                                  ? "bg-red-600 text-white"
+                                  : s === STATUS.ORDERED
+                                  ? "bg-amber-500 text-white"
+                                  : s === STATUS.APPROVED
+                                  ? "bg-emerald-600 text-white"
+                                  : "bg-gray-500 text-white";
+                                return (
+                                  <span className={`${baseClasses} ${colorClasses}`}>{s}</span>
+                                );
+                              })()}
+                              {normalizeStatus(order.status) === STATUS.CANCELLED && order.rejectionReason && (
+                                <span className="text-xs text-red-600 dark:text-red-400 italic flex items-center gap-1" title={order.rejectionReason}>
+                                  <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                  </svg>
+                                  Lihat alasan
+                                </span>
+                              )}
+                            </div>
                           </td>
 
                           {/* Actions */}

@@ -2,7 +2,19 @@
 
 import { useState, useEffect } from "react"
 import { ProtectedRoute } from "@/components/ui/protected-route"
-import { FileText, Download, Calendar, Filter, TrendingUp } from "lucide-react"
+import { FileText, Download, Calendar, TrendingUp } from "lucide-react"
+import jsPDF from 'jspdf'
+import autoTable from 'jspdf-autotable'
+import * as XLSX from 'xlsx'
+
+// Type declaration for jspdf-autotable
+declare module 'jspdf' {
+  interface jsPDF {
+    lastAutoTable: {
+      finalY: number
+    }
+  }
+}
 
 type ReportData = {
   month: string
@@ -31,8 +43,8 @@ export default function AdminReportsPage() {
         const data = await response.json()
         setReportData(data.report)
       }
-    } catch (error) {
-      console.error('Error fetching report:', error)
+    } catch (err) {
+      console.error('Error fetching report:', err)
     } finally {
       setIsLoading(false)
     }
@@ -46,12 +58,208 @@ export default function AdminReportsPage() {
     }).format(amount)
   }
 
+  const getMonthYearText = () => {
+    const date = new Date(selectedMonth + '-01')
+    return date.toLocaleDateString('id-ID', { year: 'numeric', month: 'long' })
+  }
+
+  const getReportTypeText = () => {
+    const types = {
+      monthly: 'Ringkasan Bulanan',
+      vendor: 'Per Vendor',
+      division: 'Per Divisi'
+    }
+    return types[reportType]
+  }
+
   const handleExportPDF = () => {
-    alert("Fitur export PDF akan segera tersedia")
+    if (!reportData) {
+      alert('Tidak ada data untuk di-export')
+      return
+    }
+
+    const doc = new jsPDF()
+    
+    // Add title
+    doc.setFontSize(20)
+    doc.text('Laporan Rekapitulasi Konsumsi', 14, 15)
+    
+    // Add metadata
+    doc.setFontSize(11)
+    doc.text(`Periode: ${getMonthYearText()}`, 14, 25)
+    doc.text(`Jenis Laporan: ${getReportTypeText()}`, 14, 31)
+    doc.text(`Tanggal Export: ${new Date().toLocaleDateString('id-ID')}`, 14, 37)
+    
+    let currentY = 45
+
+    // Summary section
+    doc.setFontSize(14)
+    doc.setFont(undefined, 'bold')
+    doc.text('Ringkasan', 14, currentY)
+    currentY += 8
+    
+    doc.setFontSize(10)
+    doc.setFont(undefined, 'normal')
+    doc.text(`Total Pesanan: ${reportData.totalOrders}`, 14, currentY)
+    currentY += 6
+    doc.text(`Total Biaya: ${formatCurrency(reportData.totalCost)}`, 14, currentY)
+    currentY += 6
+    doc.text(`Rata-rata per Order: ${formatCurrency(reportData.totalCost / reportData.totalOrders)}`, 14, currentY)
+    currentY += 12
+
+    // Vendor table
+    if (reportType === 'monthly' || reportType === 'vendor') {
+      doc.setFontSize(12)
+      doc.setFont(undefined, 'bold')
+      doc.text('Rekapitulasi per Vendor', 14, currentY)
+      currentY += 6
+      
+      const vendorData = reportData.byVendor.map(vendor => [
+        vendor.name,
+        vendor.orders.toString(),
+        formatCurrency(vendor.cost),
+        `${((vendor.cost / reportData.totalCost) * 100).toFixed(1)}%`
+      ])
+      
+      // Add total row
+      vendorData.push([
+        'Total',
+        reportData.totalOrders.toString(),
+        formatCurrency(reportData.totalCost),
+        '100%'
+      ])
+      
+      autoTable(doc, {
+        head: [['Nama Vendor', 'Jumlah Order', 'Total Biaya', 'Persentase']],
+        body: vendorData,
+        startY: currentY,
+        styles: { fontSize: 9 },
+        headStyles: { fillColor: [220, 38, 38] }, // Red color
+        foot: [],
+        showFoot: false
+      })
+      
+      currentY = doc.lastAutoTable?.finalY + 10 || currentY + 10
+    }
+
+    // Division table
+    if (reportType === 'monthly' || reportType === 'division') {
+      // Add new page if needed
+      if (currentY > 240) {
+        doc.addPage()
+        currentY = 20
+      }
+      
+      doc.setFontSize(12)
+      doc.setFont(undefined, 'bold')
+      doc.text('Rekapitulasi per Divisi', 14, currentY)
+      currentY += 6
+      
+      const divisionData = reportData.byDivision.map(division => [
+        division.name,
+        division.orders.toString(),
+        formatCurrency(division.cost),
+        `${((division.cost / reportData.totalCost) * 100).toFixed(1)}%`
+      ])
+      
+      // Add total row
+      divisionData.push([
+        'Total',
+        reportData.totalOrders.toString(),
+        formatCurrency(reportData.totalCost),
+        '100%'
+      ])
+      
+      autoTable(doc, {
+        head: [['Divisi', 'Jumlah Order', 'Total Biaya', 'Persentase']],
+        body: divisionData,
+        startY: currentY,
+        styles: { fontSize: 9 },
+        headStyles: { fillColor: [22, 163, 74] }, // Green color
+        foot: [],
+        showFoot: false
+      })
+    }
+    
+    // Save the PDF
+    const fileName = `laporan-konsumsi-${selectedMonth}-${reportType}.pdf`
+    doc.save(fileName)
   }
 
   const handleExportExcel = () => {
-    alert("Fitur export Excel akan segera tersedia")
+    if (!reportData) {
+      alert('Tidak ada data untuk di-export')
+      return
+    }
+
+    const workbook = XLSX.utils.book_new()
+    
+    // Summary sheet
+    const summaryData = [
+      ['Laporan Rekapitulasi Konsumsi'],
+      [],
+      ['Periode', getMonthYearText()],
+      ['Jenis Laporan', getReportTypeText()],
+      ['Tanggal Export', new Date().toLocaleDateString('id-ID')],
+      [],
+      ['RINGKASAN'],
+      ['Total Pesanan', reportData.totalOrders],
+      ['Total Biaya', reportData.totalCost],
+      ['Rata-rata per Order', reportData.totalCost / reportData.totalOrders]
+    ]
+    
+    const summaryWs = XLSX.utils.aoa_to_sheet(summaryData)
+    XLSX.utils.book_append_sheet(workbook, summaryWs, 'Ringkasan')
+    
+    // Vendor sheet
+    if (reportType === 'monthly' || reportType === 'vendor') {
+      const vendorData = [
+        ['Nama Vendor', 'Jumlah Order', 'Total Biaya', 'Persentase'],
+        ...reportData.byVendor.map(vendor => [
+          vendor.name,
+          vendor.orders,
+          vendor.cost,
+          `${((vendor.cost / reportData.totalCost) * 100).toFixed(1)}%`
+        ]),
+        ['Total', reportData.totalOrders, reportData.totalCost, '100%']
+      ]
+      
+      const vendorWs = XLSX.utils.aoa_to_sheet(vendorData)
+      vendorWs['!cols'] = [
+        { wch: 30 }, // Nama Vendor
+        { wch: 15 }, // Jumlah Order
+        { wch: 20 }, // Total Biaya
+        { wch: 12 }  // Persentase
+      ]
+      XLSX.utils.book_append_sheet(workbook, vendorWs, 'Per Vendor')
+    }
+    
+    // Division sheet
+    if (reportType === 'monthly' || reportType === 'division') {
+      const divisionData = [
+        ['Divisi', 'Jumlah Order', 'Total Biaya', 'Persentase'],
+        ...reportData.byDivision.map(division => [
+          division.name,
+          division.orders,
+          division.cost,
+          `${((division.cost / reportData.totalCost) * 100).toFixed(1)}%`
+        ]),
+        ['Total', reportData.totalOrders, reportData.totalCost, '100%']
+      ]
+      
+      const divisionWs = XLSX.utils.aoa_to_sheet(divisionData)
+      divisionWs['!cols'] = [
+        { wch: 30 }, // Divisi
+        { wch: 15 }, // Jumlah Order
+        { wch: 20 }, // Total Biaya
+        { wch: 12 }  // Persentase
+      ]
+      XLSX.utils.book_append_sheet(workbook, divisionWs, 'Per Divisi')
+    }
+    
+    // Save the Excel file
+    const fileName = `laporan-konsumsi-${selectedMonth}-${reportType}.xlsx`
+    XLSX.writeFile(workbook, fileName)
   }
 
   return (
@@ -88,7 +296,7 @@ export default function AdminReportsPage() {
               </label>
               <select
                 value={reportType}
-                onChange={(e) => setReportType(e.target.value as any)}
+                onChange={(e) => setReportType(e.target.value as typeof reportType)}
                 className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
               >
                 <option value="monthly">Ringkasan Bulanan</option>

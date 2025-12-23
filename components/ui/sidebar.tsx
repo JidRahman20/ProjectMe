@@ -79,6 +79,20 @@ const adminMenuItems: MenuItem[] = [
   { title: "Pengaturan", icon: Settings, href: "/admin/settings", section: "main" },
 ]
 
+// Approval-specific menu items
+const approvalMenuItems: MenuItem[] = [
+  { title: "Dashboard", icon: BarChart3, href: "/approval", section: "main" },
+  { title: "Detail Pengajuan", icon: FileText, href: "/approval/detail-pengajuan", section: "main" },
+  { title: "Riwayat Approval", icon: ScrollText, href: "/approval/riwayat", section: "main" },
+]
+
+// Pendor/Vendor-specific menu items
+const pendorMenuItems: MenuItem[] = [
+  { title: "Dashboard", icon: BarChart3, href: "/pendor", section: "main" },
+  { title: "Manajemen Menu", icon: Layers, href: "/pendor/menu", section: "main" },
+  { title: "Daftar Pesanan", icon: ShoppingCart, href: "/pendor/pesanan", section: "main" },
+]
+
 type SidebarProps = {
   userName?: string
   userId?: string
@@ -91,12 +105,14 @@ export const Sidebar: React.FC<SidebarProps> = ({
   avatarSrc = "/himmel.jpg"
 }) => {
   const pathname = usePathname()
-  const { isCollapsed, setIsCollapsed, isMobileOpen, setIsMobileOpen } = useSidebar()
+  const { isCollapsed, setIsCollapsed, isMobileOpen, setIsMobileOpen} = useSidebar()
   const { user } = useAuth()
   
   // Determine which menu to use based on user role
   const isAdmin = user?.role?.toLowerCase() === 'admin'
-  const activeMenuItems = isAdmin ? adminMenuItems : menuItems
+  const isApproval = user?.role?.toLowerCase() === 'approval'
+  const isPendor = user?.role?.toLowerCase() === 'pendor'
+  const activeMenuItems = isAdmin ? adminMenuItems : isApproval ? approvalMenuItems : isPendor ? pendorMenuItems : menuItems
   
   const generalsMenu = activeMenuItems.filter(item => item.section === "generals")
   const mainMenu = activeMenuItems.filter(item => item.section === "main")
@@ -206,7 +222,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
         <div className="mt-6">
           {!isCollapsed && (
             <h3 className="px-4 py-2 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase">
-              {isAdmin ? "ADMIN MENU" : "MAIN MENU"}
+              {isAdmin ? "ADMIN MENU" : isApproval ? "APPROVAL MENU" : isPendor ? "VENDOR MENU" : "MAIN MENU"}
             </h3>
           )}
           <ul className="space-y-2 font-medium">
