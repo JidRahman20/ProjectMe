@@ -11,6 +11,12 @@ type Order = {
   items: Record<string, unknown>
   total_amount: number
   status: string
+  approval_status?: string
+  admin_status?: string
+  approved_by_approval?: string
+  approved_by_admin?: string
+  approval_rejection_reason?: string
+  admin_rejection_reason?: string
   kegiatan: string
   tamu: string
   tanggal_kegiatan: string
@@ -79,7 +85,7 @@ export default function AdminOrdersPage() {
     }
   }
 
-  const handleStatusChange = async (orderCode: string, newStatus: string) => {
+  const handleStatusChange = async (orderCode: string, newStatus: string, rejectionReason?: string) => {
     setUpdatingStatus(orderCode)
     try {
       const response = await fetch(`/api/konsumsi/orders/${orderCode}`, {
@@ -87,21 +93,28 @@ export default function AdminOrdersPage() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ status: newStatus }),
+        body: JSON.stringify({ 
+          status: newStatus,
+          role: 'admin', // Admin approval (second tier)
+          approverName: 'Admin',
+          rejectionReason: rejectionReason || undefined
+        }),
       })
 
-      if (response.ok) {
+      const data = await response.json()
+
+      if (response.ok && data.success) {
         const statusText = newStatus === 'approved' ? 'disetujui' : 'dibatalkan'
         setNotification({ 
           type: 'success', 
-          message: `Pesanan berhasil ${statusText}!` 
+          message: `Pesanan berhasil ${statusText} oleh Admin!` 
         })
         fetchOrders() // Refresh data
         setTimeout(() => setNotification(null), 3000)
       } else {
         setNotification({ 
           type: 'error', 
-          message: 'Gagal mengubah status order' 
+          message: data.error || 'Gagal mengubah status order' 
         })
         setTimeout(() => setNotification(null), 3000)
       }
@@ -487,9 +500,52 @@ export default function AdminOrdersPage() {
                   )}
                 </div>
 
-                {selectedOrder.status === 'pending' && (
+                {/* Status Approval Info */}
+                <div className="mt-6 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
+                  <p className="text-sm font-semibold text-blue-900 dark:text-blue-300 mb-3">Status Persetujuan:</p>
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-blue-800 dark:text-blue-300">1. Approval Team:</span>
+                      <span className={`px-3 py-1 rounded-full text-xs font-medium ${
+                        selectedOrder.approval_status === 'approved' 
+                          ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400'
+                          : selectedOrder.approval_status === 'rejected'
+                          ? 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400'
+                          : 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400'
+                      }`}>
+                        {selectedOrder.approval_status === 'approved' ? '✓ Disetujui' : 
+                         selectedOrder.approval_status === 'rejected' ? '✗ Ditolak' : '⏳ Menunggu'}
+                      </span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-blue-800 dark:text-blue-300">2. Admin:</span>
+                      <span className={`px-3 py-1 rounded-full text-xs font-medium ${
+                        selectedOrder.admin_status === 'approved' 
+                          ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400'
+                          : selectedOrder.admin_status === 'rejected'
+                          ? 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400'
+                          : 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400'
+                      }`}>
+                        {selectedOrder.admin_status === 'approved' ? '✓ Disetujui' : 
+                         selectedOrder.admin_status === 'rejected' ? '✗ Ditolak' : '⏳ Menunggu'}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Rejection Reason from Approval */}
+                  {selectedOrder.approval_status === 'rejected' && selectedOrder.approval_rejection_reason && (
+                    <div className="mt-3 pt-3 border-t border-blue-200 dark:border-blue-700">
+                      <p className="text-xs font-medium text-red-700 dark:text-red-400 mb-1">Alasan Penolakan dari Approval:</p>
+                      <p className="text-sm text-gray-700 dark:text-gray-300 bg-red-50 dark:bg-red-900/10 p-2 rounded">
+                        {selectedOrder.approval_rejection_reason}
+                      </p>
+                    </div>
+                  )}
+                </div>
+
+                {selectedOrder.status === 'pending' && selectedOrder.approval_status === 'approved' && (
                   <div className="mt-6">
-                    <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">Ubah Status</p>
+                    <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">Admin Approval (Persetujuan Final)</p>
                     <div className="flex gap-2 mb-4">
                       <button
                         onClick={() => {
@@ -500,7 +556,7 @@ export default function AdminOrdersPage() {
                         className="flex-1 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                       >
                         <CheckCircle className="w-4 h-4 inline mr-2" />
-                        Setujui Pesanan
+                        Setujui Pesanan (Final)
                       </button>
                       <button
                         onClick={() => {
@@ -514,6 +570,14 @@ export default function AdminOrdersPage() {
                         Batalkan Pesanan
                       </button>
                     </div>
+                  </div>
+                )}
+                
+                {selectedOrder.status === 'pending' && selectedOrder.approval_status !== 'approved' && (
+                  <div className="mt-6 p-4 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg border border-yellow-200 dark:border-yellow-800">
+                    <p className="text-sm text-yellow-800 dark:text-yellow-300">
+                      ⚠️ Pesanan ini belum disetujui oleh Approval Team. Admin hanya dapat menyetujui pesanan setelah Approval Team menyetujuinya terlebih dahulu.
+                    </p>
                   </div>
                 )}
 

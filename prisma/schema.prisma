@@ -32,6 +32,9 @@ model Order {
   items              Json
   totalAmount        Float
   status             String   @default("pending")
+  approvalStatus     String   @default("pending") // pending, approved, rejected - untuk Approval role
+  adminStatus        String   @default("pending") // pending, approved, rejected - untuk Admin role
+  vendorStatus       String   @default("pending") // pending, accepted, processing, shipped, completed, rejected - untuk Vendor/Pendor
   kegiatan           String?
   tamu               String?
   jumlahTamu         Int?
@@ -44,6 +47,16 @@ model Order {
   waktu              String?
   keterangan         String?
   rejectionReason    String?
+  approvalRejectionReason    String?
+  adminRejectionReason       String?
+  vendorRejectionReason      String?
+  approvedByApproval String?
+  approvedByAdmin    String?
+  processedByVendor  String?
+  approvalDate       DateTime?
+  adminApprovalDate  DateTime?
+  vendorAcceptedDate DateTime?
+  vendorCompletedDate DateTime?
   createdAt          DateTime @default(now())
   updatedAt          DateTime @updatedAt
 

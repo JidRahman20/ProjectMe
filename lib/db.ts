@@ -179,6 +179,9 @@ export const db = {
       items: unknown
       total_amount: number
       status: string
+      approval_status: string
+      admin_status: string
+      vendor_status: string
       kegiatan: string | null
       tamu: string | null
       jumlah_tamu: number | null
@@ -191,6 +194,16 @@ export const db = {
       waktu: string | null
       keterangan: string | null
       rejection_reason: string | null
+      approval_rejection_reason: string | null
+      admin_rejection_reason: string | null
+      vendor_rejection_reason: string | null
+      approved_by_approval: string | null
+      approved_by_admin: string | null
+      processed_by_vendor: string | null
+      approval_date: Date | null
+      admin_approval_date: Date | null
+      vendor_accepted_date: Date | null
+      vendor_completed_date: Date | null
     }>) {
       const { data, error } = await supabase
         .from('orders')

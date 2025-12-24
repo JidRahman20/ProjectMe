@@ -20,6 +20,9 @@ interface Order {
   items: OrderItem[];
   totalAmount: number;
   status: string;
+  approval_status?: string;
+  admin_status?: string;
+  vendor_status?: string;
   kegiatan?: string;
   tamu?: string;
   jumlahTamu?: number;
@@ -63,17 +66,29 @@ export default function PendorHomePage() {
       const ordersData = await ordersResponse.json();
       
       if (ordersData.success) {
-        const allOrders = ordersData.orders;
-        setOrders(allOrders);
+        // Filter: hanya tampilkan pesanan yang sudah di-approve oleh Admin
+        const approvedByAdmin = ordersData.orders.filter((o: Order) => 
+          o.status === 'approved' && o.admin_status === 'approved'
+        );
+        setOrders(approvedByAdmin);
         
         setStats({
           totalMenu: 0,
-          pesananBaru: allOrders.filter((o: Order) => o.status === 'approved').length,
-          pesananDiproses: allOrders.filter((o: Order) => 
-            o.status === 'accepted' || o.status === 'processing' || o.status === 'shipped'
+          // Pesanan baru = yang sudah approved admin tapi belum di-accept vendor
+          pesananBaru: approvedByAdmin.filter((o: Order) => 
+            !o.vendor_status || o.vendor_status === 'pending'
           ).length,
-          pesananSelesai: allOrders.filter((o: Order) => o.status === 'completed').length,
-          totalPesanan: allOrders.length
+          // Pesanan diproses = yang sudah di-accept, processing, atau shipped
+          pesananDiproses: approvedByAdmin.filter((o: Order) => 
+            o.vendor_status === 'accepted' || 
+            o.vendor_status === 'processing' || 
+            o.vendor_status === 'shipped'
+          ).length,
+          // Pesanan selesai = yang sudah completed
+          pesananSelesai: approvedByAdmin.filter((o: Order) => 
+            o.vendor_status === 'completed'
+          ).length,
+          totalPesanan: approvedByAdmin.length
         });
       }
     } catch (error) {
@@ -102,7 +117,11 @@ export default function PendorHomePage() {
       const response = await fetch(`/api/konsumsi/orders/${selectedOrderCode}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ status: 'accepted' })
+        body: JSON.stringify({ 
+          status: 'accepted',
+          role: 'vendor',
+          vendorName: user?.name || 'Vendor'
+        })
       });
 
       const data = await response.json();

@@ -31,11 +31,19 @@ export async function PATCH(
   try {
     const { code } = await context.params
     const body = await request.json()
-    const { status, rejectionReason } = body
+    const { status, rejectionReason, role, approverName, vendorName } = body
 
     if (!status) {
       return NextResponse.json(
         { success: false, error: 'Status is required' },
+        { status: 400 }
+      )
+    }
+
+    // Validate role
+    if (!role || (role !== 'approval' && role !== 'admin' && role !== 'vendor')) {
+      return NextResponse.json(
+        { success: false, error: 'Valid role (approval, admin, or vendor) is required' },
         { status: 400 }
       )
     }
@@ -52,13 +60,72 @@ export async function PATCH(
     const existingOrder = await db.orders.findByCode(code)
     
     // Prepare update data
-    const updateData: any = { status }
-    if (rejectionReason) {
-      updateData.rejection_reason = rejectionReason
+    const updateData: any = {}
+    
+    // Handle approval role (first tier)
+    if (role === 'approval') {
+      
+      updateData.approval_status = status
+      if (status === 'approved') {
+        updateData.approved_by_approval = approverName || 'Approval'
+        updateData.approval_date = new Date()
+        // Status keseluruhan tetap pending sampai admin approve
+        updateData.status = 'pending'
+      } else if (status === 'rejected') {
+        updateData.approval_rejection_reason = rejectionReason
+        updateData.status = 'rejected' // Rejected di approval berarti order ditolak
+      }
     }
     
-    // Update status
+    // Handle admin role (second tier)
+    else if (role === 'admin') {
+      // Admin hanya bisa approve jika approval sudah approve
+      if (existingOrder.approval_status !== 'approved') {
+        return NextResponse.json(
+          { success: false, error: 'Order must be approved by Approval first before Admin can approve' },
+          { status: 400 }
+        )
+      }
+      
+      updateData.admin_status = status
+      if (status === 'approved') {
+        updateData.approved_by_admin = approverName || 'Admin'
+        updateData.admin_approval_date = new Date()
+        updateData.status = 'approved' // Approved oleh admin, siap untuk vendor
+        updateData.vendor_status = 'pending' // Set vendor status ke pending
+      } else if (status === 'rejected') {
+        updateData.admin_rejection_reason = rejectionReason
+        updateData.status = 'rejected'
+      }
+    }
+    
+    // Handle vendor role (third tier)
+    else if (role === 'vendor') {
+      // Vendor hanya bisa process jika sudah approved oleh admin
+      if (existingOrder.status !== 'approved' || existingOrder.admin_status !== 'approved') {
+        return NextResponse.json(
+          { success: false, error: 'Order must be approved by Admin first before Vendor can process' },
+          { status: 400 }
+        )
+      }
+      
+      // Vendor can accept, process, ship, complete, or reject
+      updateData.vendor_status = status
+      if (status === 'accepted') {
+        updateData.processed_by_vendor = vendorName || 'Vendor'
+        updateData.vendor_accepted_date = new Date()
+      } else if (status === 'completed') {
+        updateData.vendor_completed_date = new Date()
+      } else if (status === 'rejected') {
+        updateData.vendor_rejection_reason = rejectionReason
+        updateData.status = 'rejected'
+      }
+    }
+    
+    // Update order
+    console.log('📝 Updating order:', existingOrder.id, 'with data:', updateData)
     const updatedOrder = await db.orders.update(existingOrder.id, updateData)
+    console.log('✅ Order updated successfully:', updatedOrder)
 
     return NextResponse.json({
       success: true,
@@ -66,6 +133,8 @@ export async function PATCH(
     })
   } catch (error) {
     const err = error as Error
+    console.error('❌ Error updating order:', err.message)
+    console.error('Error stack:', err.stack)
     return NextResponse.json(
       { success: false, error: 'Failed to update order', message: err.message },
       { status: 500 }

@@ -12,6 +12,8 @@ interface Order {
   tanggal_kegiatan: string;
   total: number;
   status: string;
+  approval_status?: string;
+  admin_status?: string;
   created_at: string;
   users?: {
     name: string;
@@ -30,6 +32,8 @@ export default function DetailPengajuanPage() {
   const [statusFilter, setStatusFilter] = useState("pending");
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const [showModal, setShowModal] = useState(false);
+  const [showRejectModal, setShowRejectModal] = useState(false);
+  const [rejectionReason, setRejectionReason] = useState("");
   const [notification, setNotification] = useState<{ show: boolean; message: string; type: 'success' | 'error' }>({
     show: false,
     message: '',
@@ -79,26 +83,37 @@ export default function DetailPengajuanPage() {
     setFilteredOrders(filtered);
   };
 
-  const handleStatusChange = async (orderId: string, newStatus: string) => {
+  const handleStatusChange = async (orderCode: string, newStatus: string, reason?: string) => {
     try {
-      const response = await fetch(`/api/konsumsi/orders/${orderId}`, {
+      const response = await fetch(`/api/konsumsi/orders/${orderCode}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ status: newStatus }),
+        body: JSON.stringify({ 
+          status: newStatus,
+          role: 'approval',
+          approverName: 'Approval Team',
+          rejectionReason: reason || undefined
+        }),
       });
 
       const data = await response.json();
 
       if (data.success) {
+        const message = newStatus === 'approved' 
+          ? 'Pengajuan berhasil disetujui! Pesanan akan diteruskan ke Admin untuk persetujuan final.'
+          : 'Pengajuan berhasil ditolak!';
+        
         setNotification({
           show: true,
-          message: `Pengajuan berhasil ${newStatus === 'approved' ? 'disetujui' : 'ditolak'}!`,
+          message,
           type: 'success'
         });
         fetchOrders();
         setShowModal(false);
+        setShowRejectModal(false);
+        setRejectionReason('');
         setTimeout(() => setNotification({ show: false, message: '', type: 'success' }), 3000);
       } else {
         throw new Error(data.error);
@@ -276,8 +291,8 @@ export default function DetailPengajuanPage() {
 
           {/* Detail Modal */}
           {showModal && selectedOrder && (
-            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-              <div className="bg-white dark:bg-gray-800 rounded-xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="fixed inset-0 bg-black/30 flex items-center justify-center z-50 p-4" onClick={() => setShowModal(false)}>
+              <div className="bg-white dark:bg-gray-800 rounded-xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
                 <div className="p-6">
                   <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
                     Detail Pengajuan
@@ -355,7 +370,7 @@ export default function DetailPengajuanPage() {
                   </div>
 
                   {/* Action Buttons */}
-                  {selectedOrder.status === 'pending' && (
+                  {(!selectedOrder.approval_status || selectedOrder.approval_status === 'pending') && (
                     <div className="flex gap-4 mb-4">
                       <button
                         onClick={() => handleStatusChange(selectedOrder.code, 'approved')}
@@ -365,12 +380,28 @@ export default function DetailPengajuanPage() {
                         Setujui
                       </button>
                       <button
-                        onClick={() => handleStatusChange(selectedOrder.code, 'rejected')}
+                        onClick={() => setShowRejectModal(true)}
                         className="flex-1 bg-red-500 hover:bg-red-600 text-white font-semibold py-3 px-6 rounded-lg transition-colors flex items-center justify-center gap-2"
                       >
                         <XCircle className="w-5 h-5" />
                         Tolak
                       </button>
+                    </div>
+                  )}
+
+                  {selectedOrder.approval_status === 'approved' && (
+                    <div className="p-4 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-800 mb-4">
+                      <p className="text-sm text-green-800 dark:text-green-300 text-center">
+                        ✓ Pengajuan ini sudah Anda setujui. Menunggu persetujuan dari Admin.
+                      </p>
+                    </div>
+                  )}
+
+                  {selectedOrder.approval_status === 'rejected' && (
+                    <div className="p-4 bg-red-50 dark:bg-red-900/20 rounded-lg border border-red-200 dark:border-red-800 mb-4">
+                      <p className="text-sm text-red-800 dark:text-red-300 text-center">
+                        ✗ Pengajuan ini sudah Anda tolak.
+                      </p>
                     </div>
                   )}
 
@@ -380,6 +411,70 @@ export default function DetailPengajuanPage() {
                   >
                     Tutup
                   </button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Reject Reason Modal */}
+          {showRejectModal && selectedOrder && (
+            <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-[60] p-4" onClick={() => setShowRejectModal(false)}>
+              <div className="bg-white dark:bg-gray-800 rounded-xl shadow-2xl max-w-md w-full" onClick={(e) => e.stopPropagation()}>
+                <div className="p-6">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="w-12 h-12 bg-red-100 dark:bg-red-900/30 rounded-full flex items-center justify-center">
+                      <XCircle className="w-6 h-6 text-red-600 dark:text-red-400" />
+                    </div>
+                    <div>
+                      <h3 className="text-xl font-bold text-gray-900 dark:text-white">Tolak Pengajuan</h3>
+                      <p className="text-sm text-gray-600 dark:text-gray-400">#{selectedOrder.code}</p>
+                    </div>
+                  </div>
+
+                  <div className="mb-4">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                      Alasan Penolakan <span className="text-red-500">*</span>
+                    </label>
+                    <textarea
+                      value={rejectionReason}
+                      onChange={(e) => setRejectionReason(e.target.value)}
+                      placeholder="Masukkan alasan penolakan pesanan ini..."
+                      className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-red-500 dark:bg-gray-700 dark:text-white resize-none"
+                      rows={4}
+                    />
+                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                      Alasan ini akan dikirim ke Admin untuk review.
+                    </p>
+                  </div>
+
+                  <div className="flex gap-3">
+                    <button
+                      onClick={() => {
+                        setShowRejectModal(false);
+                        setRejectionReason('');
+                      }}
+                      className="flex-1 px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-white rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600"
+                    >
+                      Batal
+                    </button>
+                    <button
+                      onClick={() => {
+                        if (!rejectionReason.trim()) {
+                          setNotification({
+                            show: true,
+                            message: 'Alasan penolakan wajib diisi!',
+                            type: 'error'
+                          });
+                          setTimeout(() => setNotification({ show: false, message: '', type: 'success' }), 3000);
+                          return;
+                        }
+                        handleStatusChange(selectedOrder.code, 'rejected', rejectionReason);
+                      }}
+                      className="flex-1 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg"
+                    >
+                      Tolak Pengajuan
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
