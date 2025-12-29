@@ -2,7 +2,7 @@
 
 import { ProtectedRoute } from "@/components/ui/protected-route";
 import { useEffect, useState } from "react";
-import { Plus, Edit, Trash2, X, Upload, Search, UtensilsCrossed } from "lucide-react";
+import { Plus, Edit, Trash2, X, Search, UtensilsCrossed } from "lucide-react";
 import Image from "next/image";
 
 interface MenuItem {
@@ -43,6 +43,7 @@ export default function MenuManagementPage() {
 
   useEffect(() => {
     filterMenus();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [menus, searchTerm]);
 
   const fetchMenus = async () => {
@@ -110,7 +111,7 @@ export default function MenuManagementPage() {
       } else {
         throw new Error(data.error);
       }
-    } catch (error) {
+    } catch (_error) {
       setNotification({
         show: true,
         message: 'Gagal menyimpan menu',
@@ -139,7 +140,7 @@ export default function MenuManagementPage() {
         fetchMenus();
         setTimeout(() => setNotification({ show: false, message: '', type: 'success' }), 3000);
       }
-    } catch (error) {
+    } catch (_error) {
       setNotification({
         show: true,
         message: 'Gagal menghapus menu',
@@ -233,7 +234,7 @@ export default function MenuManagementPage() {
               <div className="col-span-full text-center py-12">
                 <UtensilsCrossed className="w-16 h-16 mx-auto text-gray-400 mb-4" />
                 <p className="text-gray-500 dark:text-gray-400 text-lg">
-                  Belum ada menu. Klik "Tambah Menu" untuk mulai menambahkan.
+                  Belum ada menu. Klik &quot;Tambah Menu&quot; untuk mulai menambahkan.
                 </p>
               </div>
             ) : (

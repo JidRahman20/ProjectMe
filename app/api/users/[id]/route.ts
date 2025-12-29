@@ -5,10 +5,10 @@ import bcrypt from 'bcrypt'
 // GET - Get user by ID
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const userId = params.id
+    const { id: userId } = await params
 
     const { data: user, error } = await supabase
       .from('users')
@@ -31,12 +31,12 @@ export async function GET(
 // PUT - Update user
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const body = await request.json()
     const { name, email, role, password } = body
-    const userId = params.id
+    const { id: userId } = await params
 
     // Build update object
     const updateData: Record<string, string> = {
@@ -73,10 +73,10 @@ export async function PUT(
 // DELETE - Delete user
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const userId = params.id
+    const { id: userId } = await params
 
     const { error } = await supabase
       .from('users')

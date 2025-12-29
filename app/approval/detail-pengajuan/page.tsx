@@ -46,6 +46,7 @@ export default function DetailPengajuanPage() {
 
   useEffect(() => {
     filterOrders();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [orders, searchTerm, statusFilter]);
 
   const fetchOrders = async () => {
@@ -118,7 +119,7 @@ export default function DetailPengajuanPage() {
       } else {
         throw new Error(data.error);
       }
-    } catch (error) {
+    } catch (_error) {
       setNotification({
         show: true,
         message: 'Gagal mengubah status',

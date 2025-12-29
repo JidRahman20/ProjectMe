@@ -5,7 +5,6 @@ import { useAuth } from "@/context/auth-context";
 import { DemplonLogo } from "@/components/ui/demplon-logo";
 import { 
   UtensilsCrossed, 
-  FileText, 
   Users, 
   BookOpen,
   Calendar,

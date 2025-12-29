@@ -42,11 +42,25 @@ export async function POST(request: Request) {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { password: _password, ...userWithoutPassword } = user
 
-    return NextResponse.json({
+    // Set HttpOnly cookie untuk keamanan
+    const response = NextResponse.json({
       success: true,
       user: userWithoutPassword,
       message: 'Login successful'
     })
+
+    // Set cookie dengan HttpOnly dan Secure flags
+    response.cookies.set({
+      name: 'auth-token',
+      value: JSON.stringify({ userId: user.id, role: user.role }),
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      maxAge: 60 * 60 * 24 * 7, // 7 hari
+      path: '/'
+    })
+
+    return response
   } catch (error) {
     const err = error as Error
     console.error('Login error:', err)

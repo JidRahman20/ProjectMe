@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react"
 import { ProtectedRoute } from "@/components/ui/protected-route"
-import { UserPlus, Mail, Lock, User, Shield, Eye, EyeOff, CheckCircle, XCircle, Users, Edit2, Trash2, X } from "lucide-react"
+import { UserPlus, Mail, Lock, User, Shield, Eye, EyeOff, CheckCircle, XCircle, Users, Edit2, Trash2 } from "lucide-react"
 
 interface UserData {
   id: string
@@ -126,7 +126,7 @@ export default function AdminUsersPage() {
           setShowNotification(true)
         }
       }
-    } catch (error) {
+    } catch (_error) {
       setMessage({ 
         type: 'error', 
         text: 'Terjadi kesalahan saat menyimpan akun',
@@ -196,7 +196,7 @@ export default function AdminUsersPage() {
         })
         setShowNotification(true)
       }
-    } catch (error) {
+    } catch (_error) {
       setMessage({ 
         type: 'error', 
         text: 'Terjadi kesalahan',

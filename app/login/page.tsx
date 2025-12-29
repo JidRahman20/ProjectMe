@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/auth-context";
 import Link from "next/link";
@@ -15,7 +15,21 @@ export default function LoginPage() {
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
-  const { login } = useAuth();
+  const { login, user, isLoading: authLoading } = useAuth();
+
+  // Redirect jika user sudah login
+  useEffect(() => {
+    if (!authLoading && user) {
+      const roleHomeMap: Record<string, string> = {
+        'approval': '/approval',
+        'admin': '/admin',
+        'pendor': '/pendor',
+        'user': '/user',
+      };
+      const userHome = roleHomeMap[user.role.toLowerCase()] || '/user';
+      router.replace(userHome);
+    }
+  }, [user, authLoading, router]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

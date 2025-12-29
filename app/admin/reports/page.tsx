@@ -33,6 +33,7 @@ export default function AdminReportsPage() {
 
   useEffect(() => {
     fetchReportData()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedMonth])
 
   const fetchReportData = async () => {
@@ -94,12 +95,12 @@ export default function AdminReportsPage() {
 
     // Summary section
     doc.setFontSize(14)
-    doc.setFont(undefined, 'bold')
+    doc.setFont('helvetica', 'bold')
     doc.text('Ringkasan', 14, currentY)
     currentY += 8
     
     doc.setFontSize(10)
-    doc.setFont(undefined, 'normal')
+    doc.setFont('helvetica', 'normal')
     doc.text(`Total Pesanan: ${reportData.totalOrders}`, 14, currentY)
     currentY += 6
     doc.text(`Total Biaya: ${formatCurrency(reportData.totalCost)}`, 14, currentY)
@@ -110,7 +111,7 @@ export default function AdminReportsPage() {
     // Vendor table
     if (reportType === 'monthly' || reportType === 'vendor') {
       doc.setFontSize(12)
-      doc.setFont(undefined, 'bold')
+      doc.setFont('helvetica', 'bold')
       doc.text('Rekapitulasi per Vendor', 14, currentY)
       currentY += 6
       
@@ -151,7 +152,7 @@ export default function AdminReportsPage() {
       }
       
       doc.setFontSize(12)
-      doc.setFont(undefined, 'bold')
+      doc.setFont('helvetica', 'bold')
       doc.text('Rekapitulasi per Divisi', 14, currentY)
       currentY += 6
       

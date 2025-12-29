@@ -51,6 +51,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const res = await fetch('/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include', // Penting untuk mengirim/menerima cookies
         body: JSON.stringify({ email, password })
       })
       if (!res.ok) return { success: false }
@@ -89,9 +90,31 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }
 
-  const logout = () => {
+  const logout = async () => {
+    try {
+      // Panggil API logout untuk menghapus cookie di server
+      await fetch('/api/auth/logout', {
+        method: 'POST',
+        credentials: 'include',
+      });
+    } catch (error) {
+      console.error('Logout API error:', error);
+    }
+    
+    // Hapus data user dari state dan localStorage
     setUser(null);
     localStorage.removeItem("user");
+    
+    // Hapus semua cookies di client side
+    if (typeof document !== 'undefined') {
+      document.cookie.split(";").forEach((c) => {
+        document.cookie = c
+          .replace(/^ +/, "")
+          .replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
+      });
+    }
+    
+    // Redirect ke halaman login
     if (typeof window !== 'undefined') {
       window.location.href = '/login';
     }

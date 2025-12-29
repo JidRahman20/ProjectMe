@@ -60,7 +60,7 @@ export async function PATCH(
     const existingOrder = await db.orders.findByCode(code)
     
     // Prepare update data
-    const updateData: any = {}
+    const updateData: Record<string, unknown> = {}
     
     // Handle approval role (first tier)
     if (role === 'approval') {

@@ -1,6 +1,6 @@
 "use client"
 
-import ProtectedRoute from "@/components/ui/protected-route"
+import { ProtectedRoute } from "@/components/ui/protected-route"
 import { Settings as SettingsIcon, Bell, Shield, Palette, Database } from "lucide-react"
 
 export default function AdminSettingsPage() {

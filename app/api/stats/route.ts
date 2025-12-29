@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server"
+import { NextResponse } from "next/server"
 import { supabase } from "@/lib/supabase"
 
 // GET - Get dashboard statistics
@@ -21,12 +21,12 @@ export async function GET() {
     }
 
     // Get orders by status
-    const { data: pendingOrders, error: pendingError } = await supabase
+    const { data: pendingOrders } = await supabase
       .from('orders')
       .select('id')
       .eq('status', 'pending')
 
-    const { data: approvedOrders, error: approvedError } = await supabase
+    const { data: approvedOrders } = await supabase
       .from('orders')
       .select('id')
       .eq('status', 'approved')
@@ -41,7 +41,7 @@ export async function GET() {
 
     // Get today's orders
     const today = now.toISOString().split('T')[0]
-    const { data: todayOrders, error: todayError } = await supabase
+    const { data: todayOrders } = await supabase
       .from('orders')
       .select('*')
       .eq('tanggal_kegiatan', today)

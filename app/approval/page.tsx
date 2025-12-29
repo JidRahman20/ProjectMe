@@ -26,11 +26,14 @@ export default function ApprovalHomePage() {
       const data = await response.json();
       
       if (data.success) {
-        const orders = data.orders;
+        interface OrderStatus {
+          status: string;
+        }
+        const orders: OrderStatus[] = data.orders;
         setStats({
-          pending: orders.filter((o: any) => o.status === 'pending').length,
-          approved: orders.filter((o: any) => o.status === 'approved').length,
-          rejected: orders.filter((o: any) => o.status === 'rejected').length,
+          pending: orders.filter((o) => o.status === 'pending').length,
+          approved: orders.filter((o) => o.status === 'approved').length,
+          rejected: orders.filter((o) => o.status === 'rejected').length,
           total: orders.length
         });
       }

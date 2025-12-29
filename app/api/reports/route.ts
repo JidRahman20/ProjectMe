@@ -1,12 +1,21 @@
 import { NextRequest, NextResponse } from "next/server"
 import { supabase } from "@/lib/supabase"
 
+interface Order {
+  id: number;
+  code: string;
+  status: string;
+  created_at: string;
+  updated_at: string;
+  total_amount?: number;
+  [key: string]: unknown;
+}
+
 // GET - Get report data
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url)
     const month = searchParams.get('month') // Format: YYYY-MM
-    const type = searchParams.get('type') // monthly, vendor, division
 
     // Get all orders (filter by month if provided)
     const query = supabase
@@ -20,7 +29,7 @@ export async function GET(request: NextRequest) {
         )
       `)
 
-    let orders: any[] = []
+    let orders: Order[] = []
 
     if (month) {
       const [year, monthNum] = month.split('-')
@@ -75,7 +84,7 @@ export async function GET(request: NextRequest) {
       byVendor[vendor].cost += order.total_amount || 0
 
       // Group by division (assuming division field exists)
-      const division = order.division || 'Unknown'
+      const division = String(order.division || 'Unknown')
       if (!byDivision[division]) {
         byDivision[division] = { orders: 0, cost: 0 }
       }

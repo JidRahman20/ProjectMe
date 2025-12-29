@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react"
 import { ProtectedRoute } from "@/components/ui/protected-route"
-import { ShoppingCart, Calendar, User, Package, CheckCircle, XCircle, Clock, Search, Eye } from "lucide-react"
+import { ShoppingCart, User, Package, CheckCircle, XCircle, Clock, Search, Eye } from "lucide-react"
 
 type Order = {
   id: string
