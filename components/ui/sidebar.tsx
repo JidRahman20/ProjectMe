@@ -30,7 +30,6 @@ import {
   TrendingUp
 } from "lucide-react"
 import Image from "next/image"
-import DemplonLogo from "./demplon-logo"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 
@@ -140,9 +139,22 @@ export const Sidebar: React.FC<SidebarProps> = ({
         ${isMobileOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"}`}
       >
       {/* Logo/Brand Section at the top */}
-      <div className={`h-16 flex items-center ${isCollapsed ? "justify-center px-2" : "px-4"}`}>
-        {/* Custom wordmark to match requested minimalist brand style */}
-        <DemplonLogo className={isCollapsed ? "scale-90" : ""} size={28} />
+      <div className={`h-16 flex items-center gap-3 border-b border-gray-200 dark:border-gray-700 ${isCollapsed ? "justify-center px-2" : "px-4"}`}>
+        {/* Demplon Logo Icon */}
+        <Image
+          src="/logoDem.png"
+          alt="Demplon Logo"
+          width={32}
+          height={32}
+          className="flex-shrink-0 object-contain"
+          priority
+        />
+        {/* Demplon Text - only show when expanded */}
+        {!isCollapsed && (
+          <span className="text-2xl font-bold text-gray-900 dark:text-white tracking-tight">
+            DEMPLON
+          </span>
+        )}
       </div>
       
       {/* Toggle button - hanya tampil di desktop (lg:block), hidden di mobile */}

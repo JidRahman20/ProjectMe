@@ -53,8 +53,22 @@ export default function PendorHomePage() {
   // Modal states
   const [showAcceptModal, setShowAcceptModal] = useState(false);
   const [showRejectModal, setShowRejectModal] = useState(false);
+  const [showStatusUpdateModal, setShowStatusUpdateModal] = useState(false);
   const [selectedOrderCode, setSelectedOrderCode] = useState<string>('');
+  const [selectedOrderForUpdate, setSelectedOrderForUpdate] = useState<{ code: string; currentStatus: string; nextStatus: string; label: string } | null>(null);
   const [rejectionReason, setRejectionReason] = useState('');
+  
+  // Notification state
+  const [notification, setNotification] = useState<{ show: boolean; message: string; type: 'success' | 'error' }>({
+    show: false,
+    message: '',
+    type: 'success'
+  });
+
+  const showNotification = (message: string, type: 'success' | 'error' = 'success') => {
+    setNotification({ show: true, message, type });
+    setTimeout(() => setNotification({ show: false, message: '', type: 'success' }), 4000);
+  };
 
   useEffect(() => {
     fetchData();
@@ -114,6 +128,8 @@ export default function PendorHomePage() {
 
     setProcessingId(selectedOrderCode);
     try {
+      console.log('Accepting order:', selectedOrderCode);
+      
       const response = await fetch(`/api/konsumsi/orders/${selectedOrderCode}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
@@ -124,17 +140,25 @@ export default function PendorHomePage() {
         })
       });
 
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('Server error:', response.status, errorText);
+        throw new Error(`Server error: ${response.status}`);
+      }
+
       const data = await response.json();
       
       if (data.success) {
         setShowAcceptModal(false);
         fetchData();
+        showNotification('✓ Pesanan berhasil diterima!', 'success');
       } else {
-        alert('✗ Gagal menerima pesanan.');
+        console.error('Accept failed:', data);
+        showNotification('✗ Gagal menerima pesanan: ' + (data.error || 'Unknown error'), 'error');
       }
     } catch (error) {
       console.error('Error accepting order:', error);
-      alert('✗ Terjadi kesalahan.');
+      showNotification('✗ Terjadi kesalahan saat menerima pesanan. Silakan coba lagi.', 'error');
     } finally {
       setProcessingId(null);
     }
@@ -144,20 +168,30 @@ export default function PendorHomePage() {
     if (processingId) return;
     
     if (!rejectionReason.trim()) {
-      alert('Alasan penolakan wajib diisi!');
+      showNotification('⚠ Alasan penolakan wajib diisi!', 'error');
       return;
     }
 
     setProcessingId(selectedOrderCode);
     try {
+      console.log('Rejecting order:', selectedOrderCode, 'with reason:', rejectionReason);
+      
       const response = await fetch(`/api/konsumsi/orders/${selectedOrderCode}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 
           status: 'rejected',
-          rejectionReason: rejectionReason.trim()
+          role: 'vendor',
+          rejectionReason: rejectionReason.trim(),
+          vendorName: user?.name || 'Vendor'
         })
       });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('Server error:', response.status, errorText);
+        throw new Error(`Server error: ${response.status}`);
+      }
 
       const data = await response.json();
       
@@ -165,12 +199,14 @@ export default function PendorHomePage() {
         setShowRejectModal(false);
         setRejectionReason('');
         fetchData();
+        showNotification('✓ Pesanan berhasil ditolak', 'success');
       } else {
-        alert('✗ Gagal menolak pesanan.');
+        console.error('Reject failed:', data);
+        showNotification('✗ Gagal menolak pesanan: ' + (data.error || 'Unknown error'), 'error');
       }
     } catch (error) {
       console.error('Error rejecting order:', error);
-      alert('✗ Terjadi kesalahan.');
+      showNotification('✗ Terjadi kesalahan saat menolak pesanan. Silakan coba lagi.', 'error');
     } finally {
       setProcessingId(null);
     }
@@ -186,7 +222,10 @@ export default function PendorHomePage() {
     };
 
     const nextStatus = statusFlow[currentStatus];
-    if (!nextStatus) return;
+    if (!nextStatus) {
+      console.error('Invalid status flow:', currentStatus);
+      return;
+    }
 
     const statusLabels: Record<string, string> = {
       'processing': 'Diproses',
@@ -194,28 +233,55 @@ export default function PendorHomePage() {
       'completed': 'Selesai'
     };
 
-    const confirmed = confirm(`Update status menjadi "${statusLabels[nextStatus]}"?`);
-    if (!confirmed) return;
+    // Show modal instead of confirm
+    setSelectedOrderForUpdate({
+      code: orderCode,
+      currentStatus,
+      nextStatus,
+      label: statusLabels[nextStatus]
+    });
+    setShowStatusUpdateModal(true);
+  };
 
-    setProcessingId(orderCode);
+  const confirmStatusUpdate = async () => {
+    if (!selectedOrderForUpdate || processingId) return;
+
+    const { code, nextStatus } = selectedOrderForUpdate;
+    setProcessingId(code);
+    
     try {
-      const response = await fetch(`/api/konsumsi/orders/${orderCode}`, {
+      console.log('Updating order:', code, 'to', nextStatus);
+      
+      const response = await fetch(`/api/konsumsi/orders/${code}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ status: nextStatus })
+        body: JSON.stringify({ 
+          status: nextStatus,
+          role: 'vendor',
+          vendorName: user?.name || 'Vendor'
+        })
       });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('Server error:', response.status, errorText);
+        throw new Error(`Server error: ${response.status}`);
+      }
 
       const data = await response.json();
       
       if (data.success) {
-        alert('Status berhasil diperbarui!');
+        setShowStatusUpdateModal(false);
+        setSelectedOrderForUpdate(null);
         fetchData();
+        showNotification('✓ Status berhasil diperbarui!', 'success');
       } else {
-        alert('Gagal memperbarui status.');
+        console.error('Update failed:', data);
+        showNotification('✗ Gagal memperbarui status: ' + (data.error || 'Unknown error'), 'error');
       }
     } catch (error) {
       console.error('Error updating status:', error);
-      alert('Terjadi kesalahan.');
+      showNotification('✗ Terjadi kesalahan saat update status. Silakan coba lagi.', 'error');
     } finally {
       setProcessingId(null);
     }
@@ -243,13 +309,61 @@ export default function PendorHomePage() {
     );
   };
 
-  // Hanya tampilkan pesanan yang sudah di-approve oleh Admin/Approval
-  const pendingOrders = orders.filter(o => o.status === 'approved');
-  const activeOrders = orders.filter(o => ['accepted', 'processing', 'shipped'].includes(o.status));
+  // Filter pesanan berdasarkan vendor_status
+  const pendingOrders = orders.filter(o => !o.vendor_status || o.vendor_status === 'pending');
+  const activeOrders = orders.filter(o => ['accepted', 'processing', 'shipped'].includes(o.vendor_status || ''));
 
   return (
     <ProtectedRoute>
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+        {/* Toast Notification */}
+        {notification.show && (
+          <div className="fixed top-4 right-4 z-50 animate-in slide-in-from-top-2 duration-300">
+            <div className={`rounded-xl shadow-2xl border-2 px-6 py-4 min-w-[320px] max-w-md ${
+              notification.type === 'success' 
+                ? 'bg-green-50 dark:bg-green-900/30 border-green-500 dark:border-green-600' 
+                : 'bg-red-50 dark:bg-red-900/30 border-red-500 dark:border-red-600'
+            }`}>
+              <div className="flex items-center gap-3">
+                <div className={`flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center ${
+                  notification.type === 'success'
+                    ? 'bg-green-500 dark:bg-green-600'
+                    : 'bg-red-500 dark:bg-red-600'
+                }`}>
+                  {notification.type === 'success' ? (
+                    <CheckCircle2 className="w-6 h-6 text-white" />
+                  ) : (
+                    <X className="w-6 h-6 text-white" />
+                  )}
+                </div>
+                <div className="flex-1">
+                  <p className={`font-semibold text-sm ${
+                    notification.type === 'success'
+                      ? 'text-green-900 dark:text-green-100'
+                      : 'text-red-900 dark:text-red-100'
+                  }`}>
+                    {notification.message}
+                  </p>
+                </div>
+                <button
+                  onClick={() => setNotification({ show: false, message: '', type: 'success' })}
+                  className={`flex-shrink-0 p-1 rounded-lg transition-colors ${
+                    notification.type === 'success'
+                      ? 'hover:bg-green-200 dark:hover:bg-green-800'
+                      : 'hover:bg-red-200 dark:hover:bg-red-800'
+                  }`}
+                >
+                  <X className={`w-5 h-5 ${
+                    notification.type === 'success'
+                      ? 'text-green-600 dark:text-green-400'
+                      : 'text-red-600 dark:text-red-400'
+                  }`} />
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
         <div className="container mx-auto px-4 py-8">
           {/* Header */}
           <div className="mb-8">
@@ -340,7 +454,7 @@ export default function PendorHomePage() {
                               {order.kegiatan || 'Pesanan Konsumsi'}
                             </p>
                           </div>
-                          {getStatusBadge(order.status)}
+                          {getStatusBadge(order.vendor_status || 'pending')}
                         </div>
                         
                         <div className="grid grid-cols-2 gap-4 mb-4 text-sm">
@@ -433,7 +547,7 @@ export default function PendorHomePage() {
                               {order.kegiatan || 'Pesanan Konsumsi'}
                             </p>
                           </div>
-                          {getStatusBadge(order.status)}
+                          {getStatusBadge(order.vendor_status || 'accepted')}
                         </div>
                         
                         <div className="grid grid-cols-2 gap-4 mb-4 text-sm">
@@ -459,16 +573,16 @@ export default function PendorHomePage() {
                         </div>
                       </div>
 
-                      {order.status !== 'completed' && (
+                      {order.vendor_status !== 'completed' && (
                         <div className="lg:min-w-[180px]">
                           <button
-                            onClick={() => handleStatusUpdate(order.code, order.status)}
+                            onClick={() => handleStatusUpdate(order.code, order.vendor_status || 'accepted')}
                             disabled={processingId === order.code}
                             className="w-full bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                           >
-                            {order.status === 'accepted' && '→ Mulai Proses'}
-                            {order.status === 'processing' && '→ Kirim Pesanan'}
-                            {order.status === 'shipped' && '→ Tandai Selesai'}
+                            {order.vendor_status === 'accepted' && '→ Mulai Proses'}
+                            {order.vendor_status === 'processing' && '→ Kirim Pesanan'}
+                            {order.vendor_status === 'shipped' && '→ Tandai Selesai'}
                           </button>
                         </div>
                       )}
@@ -511,49 +625,47 @@ export default function PendorHomePage() {
 
         {/* Modal Konfirmasi Terima Pesanan */}
         {showAcceptModal && (
-          <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-in fade-in duration-200">
-            <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-md animate-in zoom-in-95 duration-200">
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4" onClick={() => setShowAcceptModal(false)}>
+            <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-md" onClick={(e) => e.stopPropagation()}>
               {/* Header */}
-              <div className="bg-gradient-to-r from-green-500 to-green-600 text-white px-6 py-4 rounded-t-2xl">
+              <div className="bg-gradient-to-r from-green-500 to-green-600 px-6 py-5">
                 <div className="flex items-center gap-3">
                   <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center">
-                    <Check className="w-6 h-6" />
+                    <Check className="w-6 h-6 text-white" />
                   </div>
                   <div>
-                    <h3 className="text-xl font-bold">Konfirmasi Penerimaan</h3>
-                    <p className="text-sm text-green-100">Terima pesanan ini?</p>
+                    <h3 className="text-xl font-bold text-white">Konfirmasi Penerimaan Pesanan</h3>
+                    <p className="text-sm text-green-100">#{selectedOrderCode}</p>
                   </div>
                 </div>
               </div>
 
               {/* Content */}
-              <div className="p-6 space-y-4">
-                <div className="bg-green-50 dark:bg-green-900/20 border-l-4 border-green-500 rounded-lg p-4">
-                  <h4 className="font-semibold text-green-900 dark:text-green-100 mb-2 flex items-center gap-2">
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                    Dengan menerima pesanan ini:
-                  </h4>
-                  <ul className="space-y-2 text-sm text-green-800 dark:text-green-200">
+              <div className="p-6">
+                <div className="bg-green-50 dark:bg-green-900/20 rounded-lg p-4 mb-4">
+                  <p className="text-gray-800 dark:text-gray-200 text-center mb-3">
+                    Dengan menerima pesanan ini, Anda menyetujui untuk:
+                  </p>
+                  <ul className="space-y-2 text-sm text-gray-700 dark:text-gray-300">
                     <li className="flex items-start gap-2">
-                      <Check className="w-4 h-4 flex-shrink-0 mt-0.5" />
-                      <span>Anda bertanggung jawab memproses pesanan</span>
+                      <CheckCircle2 className="w-5 h-5 text-green-600 dark:text-green-400 flex-shrink-0 mt-0.5" />
+                      <span>Memproses pesanan sesuai spesifikasi</span>
                     </li>
                     <li className="flex items-start gap-2">
-                      <Check className="w-4 h-4 flex-shrink-0 mt-0.5" />
-                      <span>Pesanan akan masuk ke daftar aktif Anda</span>
+                      <CheckCircle2 className="w-5 h-5 text-green-600 dark:text-green-400 flex-shrink-0 mt-0.5" />
+                      <span>Mengirimkan tepat waktu</span>
                     </li>
                     <li className="flex items-start gap-2">
-                      <Check className="w-4 h-4 flex-shrink-0 mt-0.5" />
-                      <span>Pemesan akan menerima notifikasi konfirmasi</span>
+                      <CheckCircle2 className="w-5 h-5 text-green-600 dark:text-green-400 flex-shrink-0 mt-0.5" />
+                      <span>Memberikan kualitas terbaik</span>
                     </li>
                   </ul>
                 </div>
 
-                <p className="text-sm text-gray-600 dark:text-gray-400 text-center">
-                  Pastikan Anda siap memenuhi pesanan ini
-                </p>
+                <div className="flex items-center justify-center gap-2 text-sm text-gray-600 dark:text-gray-400">
+                  <AlertCircle className="w-4 h-4" />
+                  <span>Pemesan akan menerima notifikasi konfirmasi</span>
+                </div>
               </div>
 
               {/* Footer */}
@@ -592,35 +704,35 @@ export default function PendorHomePage() {
 
         {/* Modal Tolak Pesanan dengan Alasan */}
         {showRejectModal && (
-          <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-in fade-in duration-200">
-            <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-lg animate-in zoom-in-95 duration-200">
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4" onClick={() => setShowRejectModal(false)}>
+            <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-lg" onClick={(e) => e.stopPropagation()}>
               {/* Header */}
-              <div className="bg-gradient-to-r from-red-500 to-red-600 text-white px-6 py-4 rounded-t-2xl">
+              <div className="bg-gradient-to-r from-red-500 to-red-600 px-6 py-5">
                 <div className="flex items-center gap-3">
                   <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center">
-                    <X className="w-6 h-6" />
+                    <X className="w-6 h-6 text-white" />
                   </div>
                   <div>
-                    <h3 className="text-xl font-bold">Alasan Penolakan Pesanan</h3>
-                    <p className="text-sm text-red-100">Mohon berikan alasan penolakan</p>
+                    <h3 className="text-xl font-bold text-white">Tolak Pesanan</h3>
+                    <p className="text-sm text-red-100">#{selectedOrderCode}</p>
                   </div>
                 </div>
               </div>
 
               {/* Content */}
-              <div className="p-6 space-y-4">
-                <div className="bg-amber-50 dark:bg-amber-900/20 border-l-4 border-amber-500 rounded-lg p-4">
-                  <h4 className="font-semibold text-amber-900 dark:text-amber-100 mb-2 flex items-center gap-2">
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                    </svg>
-                    Contoh Alasan:
-                  </h4>
-                  <ul className="space-y-1 text-sm text-amber-800 dark:text-amber-200">
-                    <li>• Kapasitas produksi sudah penuh</li>
-                    <li>• Tidak bisa memenuhi jumlah pesanan</li>
+              <div className="p-6">
+                <div className="bg-amber-50 dark:bg-amber-900/20 rounded-lg p-4 mb-4">
+                  <div className="flex items-start gap-2 mb-2">
+                    <AlertCircle className="w-5 h-5 text-amber-600 dark:text-amber-400 flex-shrink-0 mt-0.5" />
+                    <p className="text-sm font-medium text-amber-800 dark:text-amber-200">
+                      Contoh alasan penolakan yang baik:
+                    </p>
+                  </div>
+                  <ul className="space-y-1 text-xs text-amber-700 dark:text-amber-300 ml-7">
+                    <li>• Kapasitas produksi sudah penuh untuk tanggal tersebut</li>
+                    <li>• Tidak bisa memenuhi jumlah pesanan yang diminta</li>
                     <li>• Tanggal pengiriman terlalu dekat</li>
-                    <li>• Bahan baku tidak tersedia</li>
+                    <li>• Bahan baku tidak tersedia saat ini</li>
                   </ul>
                 </div>
 
@@ -635,7 +747,8 @@ export default function PendorHomePage() {
                     rows={4}
                     className="w-full px-4 py-3 rounded-lg border-2 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 focus:border-red-500 focus:ring-2 focus:ring-red-200 dark:focus:ring-red-900 outline-none transition-all resize-none"
                   />
-                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-2 flex items-center gap-1">
+                    <AlertCircle className="w-3 h-3" />
                     Alasan ini akan dikirim ke pemesan
                   </p>
                 </div>
@@ -670,6 +783,77 @@ export default function PendorHomePage() {
                     <>
                       <X className="w-5 h-5" />
                       <span>Tolak Pesanan</span>
+                    </>
+                  )}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Status Update Confirmation Modal */}
+        {showStatusUpdateModal && selectedOrderForUpdate && (
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4" onClick={() => setShowStatusUpdateModal(false)}>
+            <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl max-w-md w-full overflow-hidden" onClick={(e) => e.stopPropagation()}>
+              {/* Header */}
+              <div className="bg-gradient-to-r from-blue-500 to-blue-600 px-6 py-5">
+                <div className="flex items-center gap-3">
+                  <div className="w-12 h-12 bg-white/20 backdrop-blur rounded-full flex items-center justify-center">
+                    <Package className="w-6 h-6 text-white" />
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-bold text-white">Konfirmasi Update Status</h3>
+                    <p className="text-sm text-blue-100">#{selectedOrderForUpdate.code}</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Body */}
+              <div className="p-6">
+                <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-4 mb-4">
+                  <p className="text-gray-800 dark:text-gray-200 text-center">
+                    Apakah Anda yakin ingin mengubah status pesanan menjadi:
+                  </p>
+                  <p className="text-2xl font-bold text-blue-600 dark:text-blue-400 text-center mt-2">
+                    {selectedOrderForUpdate.label}
+                  </p>
+                </div>
+                
+                <div className="flex items-center justify-center gap-2 text-sm text-gray-600 dark:text-gray-400">
+                  <AlertCircle className="w-4 h-4" />
+                  <span>Perubahan status akan diinformasikan ke pemesan</span>
+                </div>
+              </div>
+
+              {/* Footer */}
+              <div className="flex gap-3 px-6 pb-6">
+                <button
+                  onClick={() => {
+                    setShowStatusUpdateModal(false);
+                    setSelectedOrderForUpdate(null);
+                  }}
+                  disabled={processingId !== null}
+                  className="flex-1 px-4 py-3 rounded-lg border-2 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 font-medium hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors disabled:opacity-50"
+                >
+                  Batal
+                </button>
+                <button
+                  onClick={confirmStatusUpdate}
+                  disabled={processingId !== null}
+                  className="flex-1 px-4 py-3 rounded-lg bg-blue-500 hover:bg-blue-600 text-white font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                >
+                  {processingId ? (
+                    <>
+                      <svg className="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                      </svg>
+                      <span>Memproses...</span>
+                    </>
+                  ) : (
+                    <>
+                      <CheckCircle2 className="w-5 h-5" />
+                      <span>Ya, Update</span>
                     </>
                   )}
                 </button>

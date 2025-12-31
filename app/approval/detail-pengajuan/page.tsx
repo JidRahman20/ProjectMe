@@ -32,6 +32,7 @@ export default function DetailPengajuanPage() {
   const [statusFilter, setStatusFilter] = useState("pending");
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const [showModal, setShowModal] = useState(false);
+  const [showApproveModal, setShowApproveModal] = useState(false);
   const [showRejectModal, setShowRejectModal] = useState(false);
   const [rejectionReason, setRejectionReason] = useState("");
   const [notification, setNotification] = useState<{ show: boolean; message: string; type: 'success' | 'error' }>({
@@ -113,6 +114,7 @@ export default function DetailPengajuanPage() {
         });
         fetchOrders();
         setShowModal(false);
+        setShowApproveModal(false);
         setShowRejectModal(false);
         setRejectionReason('');
         setTimeout(() => setNotification({ show: false, message: '', type: 'success' }), 3000);
@@ -374,7 +376,7 @@ export default function DetailPengajuanPage() {
                   {(!selectedOrder.approval_status || selectedOrder.approval_status === 'pending') && (
                     <div className="flex gap-4 mb-4">
                       <button
-                        onClick={() => handleStatusChange(selectedOrder.code, 'approved')}
+                        onClick={() => setShowApproveModal(true)}
                         className="flex-1 bg-green-500 hover:bg-green-600 text-white font-semibold py-3 px-6 rounded-lg transition-colors flex items-center justify-center gap-2"
                       >
                         <CheckCircle2 className="w-5 h-5" />
@@ -412,6 +414,55 @@ export default function DetailPengajuanPage() {
                   >
                     Tutup
                   </button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Approve Confirmation Modal */}
+          {showApproveModal && selectedOrder && (
+            <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-[60] p-4" onClick={() => setShowApproveModal(false)}>
+              <div className="bg-white dark:bg-gray-800 rounded-xl shadow-2xl max-w-md w-full" onClick={(e) => e.stopPropagation()}>
+                <div className="p-6">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="w-12 h-12 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center">
+                      <CheckCircle2 className="w-6 h-6 text-green-600 dark:text-green-400" />
+                    </div>
+                    <div>
+                      <h3 className="text-xl font-bold text-gray-900 dark:text-white">Konfirmasi Persetujuan</h3>
+                      <p className="text-sm text-gray-600 dark:text-gray-400">#{selectedOrder.code}</p>
+                    </div>
+                  </div>
+
+                  <div className="mb-4 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+                    <p className="text-sm text-blue-800 dark:text-blue-300">
+                      Apakah Anda yakin ingin menyetujui pengajuan ini? Pengajuan akan diteruskan ke Admin untuk persetujuan final.
+                    </p>
+                  </div>
+
+                  <div className="mb-4">
+                    <p className="text-sm text-gray-700 dark:text-gray-300"><strong>Nama Kegiatan:</strong> {selectedOrder.nama_kegiatan}</p>
+                    <p className="text-sm text-gray-700 dark:text-gray-300"><strong>Vendor:</strong> {selectedOrder.vendor}</p>
+                    <p className="text-sm text-gray-700 dark:text-gray-300"><strong>Total:</strong> Rp {(selectedOrder.total || 0).toLocaleString('id-ID')}</p>
+                  </div>
+
+                  <div className="flex gap-3">
+                    <button
+                      onClick={() => setShowApproveModal(false)}
+                      className="flex-1 px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-white rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600"
+                    >
+                      Batal
+                    </button>
+                    <button
+                      onClick={() => {
+                        handleStatusChange(selectedOrder.code, 'approved');
+                        setShowApproveModal(false);
+                      }}
+                      className="flex-1 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg"
+                    >
+                      Ya, Setujui
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>

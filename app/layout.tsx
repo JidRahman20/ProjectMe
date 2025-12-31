@@ -11,9 +11,7 @@ const inter = Inter({ subsets: ["latin"] });
 export const metadata: Metadata = {
   title: "DEMPLON",
   description: "Sistem Informasi Master",
-  icons: {
-    icon: "/logo12.jpeg",
-  },
+  icons: "/logoDem.png",
 };
 
 export default function RootLayout({
